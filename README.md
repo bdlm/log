@@ -22,7 +22,7 @@ import (
 
 func main() {
     log.AddSecret("some-secret-text")
-    log.Infoln("the secret is 'some-secret-text'")
+    log.Info("the secret is 'some-secret-text'")
 
     // Output: the secret is '****************'
 }
