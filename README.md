@@ -1,7 +1,7 @@
 # log
 
 <p align="center">
-	<a href="https://github.com/bdlm/log/blob/master/LICENSE"><img src="https://img.shields.io/github/license/bdlm/log.svg" alt="BSD-2-Clause"></a>
+	<a href="https://github.com/bdlm/cast/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT%20License-blue.svg" alt="MIT"></a>
 	<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#beta"><img src="https://img.shields.io/badge/stability-beta-33bbff.svg" alt="Beta"></a>
 	<a href="https://travis-ci.org/bdlm/log"><img src="https://travis-ci.org/bdlm/log.svg?branch=master" alt="Build status"></a>
 	<a href="https://codecov.io/gh/bdlm/log"><img src="https://img.shields.io/codecov/c/github/bdlm/log/master.svg" alt="Coverage status"></a>
@@ -11,7 +11,7 @@
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 </p>
 
-`log` is a fork of [`sirupsen/logrus`](https://github.com/sirupsen/logrus) that adds support for sanitizing secrets from log output to prevent accidental output.
+`log` is a fork of [`sirupsen/logrus`](https://github.com/bdlm/log) that adds support for sanitizing secrets from log output to prevent accidental output.
 
 ## usage
 
@@ -33,23 +33,6 @@ func main() {
 Logrus is a structured logger for Go (golang), completely API compatible with
 the standard library logger.
 
-**Seeing weird case-sensitive problems?** It's in the past been possible to
-import Logrus as both upper- and lower-case. Due to the Go package environment,
-this caused issues in the community and we needed a standard. Some environments
-experienced problems with the upper-case variant, so the lower-case was decided.
-Everything using `logrus` will need to use the lower-case:
-`github.com/sirupsen/logrus`. Any package that isn't, should be changed.
-
-To fix Glide, see [these
-comments](https://github.com/sirupsen/logrus/issues/553#issuecomment-306591437).
-For an in-depth explanation of the casing issue, see [this
-comment](https://github.com/sirupsen/logrus/issues/570#issuecomment-313933276).
-
-**Are you interested in assisting in maintaining Logrus?** Currently I have a
-lot of obligations, and I am unable to provide Logrus with the maintainership it
-needs. If you'd like to help, please reach out to me at `simon at author's
-username dot com`.
-
 Nicely color-coded in development (when a TTY is attached, otherwise just
 plain text):
 
@@ -59,20 +42,15 @@ With `log.SetFormatter(&log.JSONFormatter{})`, for easy parsing by logstash
 or Splunk:
 
 ```json
-{"animal":"walrus","level":"info","msg":"A group of walrus emerges from the
-ocean","size":10,"time":"2014-03-10 19:57:38.562264131 -0400 EDT"}
+{"animal":"walrus","level":"info","msg":"A group of walrus emerges from the ocean","size":10,"time":"2014-03-10 19:57:38.562264131 -0400 EDT"}
 
-{"level":"warning","msg":"The group's number increased tremendously!",
-"number":122,"omg":true,"time":"2014-03-10 19:57:38.562471297 -0400 EDT"}
+{"level":"warning","msg":"The group's number increased tremendously!","number":122,"omg":true,"time":"2014-03-10 19:57:38.562471297 -0400 EDT"}
 
-{"animal":"walrus","level":"info","msg":"A giant walrus appears!",
-"size":10,"time":"2014-03-10 19:57:38.562500591 -0400 EDT"}
+{"animal":"walrus","level":"info","msg":"A giant walrus appears!","size":10,"time":"2014-03-10 19:57:38.562500591 -0400 EDT"}
 
-{"animal":"walrus","level":"info","msg":"Tremendously sized cow enters the ocean.",
-"size":9,"time":"2014-03-10 19:57:38.562527896 -0400 EDT"}
+{"animal":"walrus","level":"info","msg":"Tremendously sized cow enters the ocean.","size":9,"time":"2014-03-10 19:57:38.562527896 -0400 EDT"}
 
-{"level":"fatal","msg":"The ice breaks!","number":100,"omg":true,
-"time":"2014-03-10 19:57:38.562543128 -0400 EDT"}
+{"level":"fatal","msg":"The ice breaks!","number":100,"omg":true,"time":"2014-03-10 19:57:38.562543128 -0400 EDT"}
 ```
 
 With the default `log.SetFormatter(&log.TextFormatter{})` when a TTY is not
@@ -89,12 +67,6 @@ time="2015-03-26T01:27:38-04:00" level=fatal msg="The ice breaks!" err=&{0x20822
 exit status 1
 ```
 
-#### Case-sensitivity
-
-The organization's name was changed to lower-case--and this will not be changed
-back. If you are getting import conflicts due to case sensitivity, please use
-the lower-case import: `github.com/sirupsen/logrus`.
-
 #### Example
 
 The simplest way to use Logrus is simply the package-level exported logger:
@@ -103,7 +75,7 @@ The simplest way to use Logrus is simply the package-level exported logger:
 package main
 
 import (
-  log "github.com/sirupsen/logrus"
+  log "github.com/bdlm/log"
 )
 
 func main() {
@@ -114,7 +86,7 @@ func main() {
 ```
 
 Note that it's completely api-compatible with the stdlib logger, so you can
-replace your `log` imports everywhere with `log "github.com/sirupsen/logrus"`
+replace your `log` imports everywhere with `log "github.com/bdlm/log"`
 and you'll now have the flexibility of Logrus. You can customize it all you
 want:
 
@@ -123,7 +95,7 @@ package main
 
 import (
   "os"
-  log "github.com/sirupsen/logrus"
+  log "github.com/bdlm/log"
 )
 
 func init() {
@@ -174,7 +146,7 @@ package main
 
 import (
   "os"
-  "github.com/sirupsen/logrus"
+  "github.com/bdlm/log"
 )
 
 // Create a new instance of the logger. You can have any number of instances.
@@ -249,9 +221,9 @@ Logrus comes with [built-in hooks](hooks/). Add those, or your custom hook, in
 
 ```go
 import (
-  log "github.com/sirupsen/logrus"
+  log "github.com/bdlm/log"
   "gopkg.in/gemnasium/logrus-airbrake-hook.v2" // the package is named "airbrake"
-  logrus_syslog "github.com/sirupsen/logrus/hooks/syslog"
+  logrus_syslog "github.com/bdlm/log/hooks/syslog"
   "log/syslog"
 )
 
@@ -271,7 +243,7 @@ func init() {
 ```
 Note: Syslog hook also support connecting to local syslog (Ex. "/dev/log" or "/var/run/syslog" or "/var/run/log"). For the detail, please check the [syslog hook README](hooks/syslog/README.md).
 
-A list of currently known of service hook can be found in this wiki [page](https://github.com/sirupsen/logrus/wiki/Hooks)
+A list of currently known of service hook can be found in this wiki [page](https://github.com/bdlm/log/wiki/Hooks)
 
 
 #### Level logging
@@ -321,7 +293,7 @@ could do:
 
 ```go
 import (
-  log "github.com/sirupsen/logrus"
+  log "github.com/bdlm/log"
 )
 
 init() {
@@ -352,9 +324,9 @@ The built-in logging formatters are:
     [github.com/mattn/go-colorable](https://github.com/mattn/go-colorable).
   * When colors are enabled, levels are truncated to 4 characters by default. To disable
     truncation set the `DisableLevelTruncation` field to `true`.
-  * All options are listed in the [generated docs](https://godoc.org/github.com/sirupsen/logrus#TextFormatter).
+  * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#TextFormatter).
 * `logrus.JSONFormatter`. Logs fields as JSON.
-  * All options are listed in the [generated docs](https://godoc.org/github.com/sirupsen/logrus#JSONFormatter).
+  * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#JSONFormatter).
 
 Third party logging formatters:
 
@@ -438,8 +410,8 @@ Logrus has a built in facility for asserting the presence of log messages. This 
 
 ```go
 import(
-  "github.com/sirupsen/logrus"
-  "github.com/sirupsen/logrus/hooks/test"
+  "github.com/bdlm/log"
+  "github.com/bdlm/log/hooks/test"
   "github.com/stretchr/testify/assert"
   "testing"
 )
