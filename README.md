@@ -11,7 +11,7 @@
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 </p>
 
-`log` is a fork of [`sirupsen/logrus`](https://github.com/sirupsen/logrus) that adds support for sanitizing secrets from log output.
+`log` is a fork of [`sirupsen/logrus`](https://github.com/sirupsen/logrus) that adds support for sanitizing secrets from log output to prevent accidental output.
 
 ## usage
 
