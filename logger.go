@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+// Logger defines properties for managing logs and implements the std.Logger
+// interface.
 type Logger struct {
 	// The logs are `io.Copy`'d to this in a mutex. It's common to set this to a
 	// file, or leave it default which is `os.Stderr`. You can also set this to
@@ -55,7 +57,7 @@ func (mw *MutexWrap) Disable() {
 	mw.disabled = true
 }
 
-// Creates a new logger. Configuration should be set by changing `Formatter`,
+// New creates a new logger. Configuration should be set by changing `Formatter`,
 // `Out` and `Hooks` directly on the default logger instance. You can also just
 // instantiate your own:
 //
@@ -88,7 +90,7 @@ func (logger *Logger) releaseEntry(entry *Entry) {
 	logger.entryPool.Put(entry)
 }
 
-// Adds a field to the log entry, note that it doesn't log until you call
+// WithField adds a field to the log entry, note that it doesn't log until you call
 // Debug, Print, Info, Warn, Error, Fatal or Panic. It only creates a log entry.
 // If you want multiple fields, use `WithFields`.
 func (logger *Logger) WithField(key string, value interface{}) *Entry {
@@ -97,15 +99,15 @@ func (logger *Logger) WithField(key string, value interface{}) *Entry {
 	return entry.WithField(key, value)
 }
 
-// Adds a struct of fields to the log entry. All it does is call `WithField` for
-// each `Field`.
+// WithFields adds a struct of fields to the log entry. All it does is call
+// `WithField` for each `Field`.
 func (logger *Logger) WithFields(fields Fields) *Entry {
 	entry := logger.newEntry()
 	defer logger.releaseEntry(entry)
 	return entry.WithFields(fields)
 }
 
-// Add an error as single field to the log entry.  All it does is call
+// WithError adds an error as single field to the log entry.  All it does is call
 // `WithError` for the given `error`.
 func (logger *Logger) WithError(err error) *Entry {
 	entry := logger.newEntry()
@@ -113,7 +115,7 @@ func (logger *Logger) WithError(err error) *Entry {
 	return entry.WithError(err)
 }
 
-// Overrides the time of the log entry.
+// WithTime overrides the time of the log entry.
 func (logger *Logger) WithTime(t time.Time) *Entry {
 	entry := logger.newEntry()
 	defer logger.releaseEntry(entry)
