@@ -133,7 +133,10 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
 	if isColorTerm {
-		termTemplate.Execute(logLine, data)
+		err := termTemplate.Execute(logLine, data)
+		if nil != err {
+			return nil, err
+		}
 		f.printColored(b, entry, keys, timestampFormat)
 
 	} else {
