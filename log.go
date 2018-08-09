@@ -32,7 +32,7 @@ func (level Level) String() string {
 	return "unknown"
 }
 
-// ParseLevel takes a string level and returns the Logrus log level constant.
+// ParseLevel takes a string level and returns the log level constant.
 func ParseLevel(lvl string) (Level, error) {
 	switch strings.ToLower(lvl) {
 	case "panic":
@@ -64,7 +64,7 @@ var AllLevels = []Level{
 }
 
 // These are the different logging levels. You can set the logging level to log
-// on your instance of logger, obtained with `logrus.New()`.
+// on your instance of logger, obtained with `New()`.
 const (
 	// PanicLevel level, highest level of severity. Logs and then calls panic with the
 	// message passed to Debug, Info, ...
@@ -91,8 +91,8 @@ var (
 	_ StdLogger = &Logger{}
 )
 
-// StdLogger is what your logrus-enabled library should take, that way
-// it'll accept a stdlib logger and a logrus logger. There's no standard
+// StdLogger is what your bdlm/log-enabled library should take, that way
+// it'll accept a stdlib logger and a bdlm/log logger. There's no standard
 // interface, this is the closest we get, unfortunately.
 type StdLogger interface {
 	Print(...interface{})

@@ -44,8 +44,7 @@ func getCaller() string {
 }
 
 /*
-getData is a helper function that extracts log data from the logrus
-entry.
+getData is a helper function that extracts log data from the Entry.
 */
 func getData(entry *Entry) *logData {
 	var levelColor int

@@ -1,9 +1,9 @@
 package log
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
-	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
@@ -19,11 +19,11 @@ func TestRegister(t *testing.T) {
 }
 
 func TestHandler(t *testing.T) {
-	tempDir, err := ioutil.TempDir("", "test_handler")
+	tempDir, err := ioutil.TempDir("", "bdlm_log_test_")
 	if err != nil {
 		log.Fatalf("can't create temp dir. %q", err)
 	}
-	defer os.RemoveAll(tempDir)
+	//defer os.RemoveAll(tempDir)
 
 	gofile := filepath.Join(tempDir, "gofile.go")
 	if err := ioutil.WriteFile(gofile, testprog, 0666); err != nil {
@@ -45,6 +45,8 @@ func TestHandler(t *testing.T) {
 	if string(data) != arg {
 		t.Fatalf("bad data. Expected %q, got %q", data, arg)
 	}
+	fmt.Printf(tempDir)
+	t.Fatalf("asdf")
 }
 
 var testprog = []byte(`
@@ -53,7 +55,7 @@ var testprog = []byte(`
 package main
 
 import (
-	"github.com/sirupsen/logrus"
+	"github.com/bdlm/log"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -76,8 +78,8 @@ func main() {
 	outfile = flag.Arg(0)
 	data = flag.Arg(1)
 
-	logrus.RegisterExitHandler(handler)
-	logrus.RegisterExitHandler(badHandler)
-	logrus.Fatal("Bye bye")
+	log.RegisterExitHandler(handler)
+	log.RegisterExitHandler(badHandler)
+	log.Fatal("Bye bye")
 }
 `)
