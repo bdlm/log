@@ -23,10 +23,10 @@ var (
 	baseTimestamp time.Time
 	emptyFieldMap FieldMap
 	textTemplate  = template.Must(
-		template.New("log").Parse(`time="{{.Timestamp}}" level={{.Level}} msg={{.Message}} {{range $k, $v := .Data}}{{$k}}={{$v}} {{end}}caller={{.Caller}} host={{.Hostname}}`),
+		template.New("log").Parse(`{{if not eq .Timestap ""}}time="{{.Timestamp}}" {{end}}level={{.Level}} msg={{.Message}} {{range $k, $v := .Data}}{{$k}}={{$v}} {{end}}caller={{.Caller}} host={{.Hostname}}`),
 	)
 	termTemplate = template.Must(
-		template.New("log").Parse("{{.Timestamp}} [\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
+		template.New("log").Parse("{{if not eq .Timestap \"\"}}{{.Timestamp}} {{end}}[\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
 	)
 )
 
@@ -45,6 +45,9 @@ type TextFormatter struct {
 	// Disable timestamp logging. useful when output is redirected to logging
 	// system that already adds timestamps.
 	DisableTimestamp bool
+
+	// Disable hostname logging.
+	DisableHostname bool
 
 	// Enable logging the full timestamp when a TTY is attached instead of just
 	// the time passed since beginning of execution.
@@ -117,14 +120,18 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		logLine = &bytes.Buffer{}
 	}
-	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
+
 	data := getData(entry)
 	if f.DisableTimestamp {
 		data.Timestamp = ""
 	} else if "" != f.TimestampFormat {
 		data.Timestamp = entry.Time.Format(f.TimestampFormat)
 	}
+	if f.DisableHostname {
+		data.Hostname = ""
+	}
 
+	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
 	if isColorTerm {
 		termTemplate.Execute(logLine, data)
 		f.printColored(b, entry, keys, timestampFormat)
