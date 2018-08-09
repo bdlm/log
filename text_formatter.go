@@ -23,10 +23,11 @@ var (
 	baseTimestamp time.Time
 	emptyFieldMap FieldMap
 	textTemplate  = template.Must(
-		template.New("log").Parse(`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" msg="{{.Message}}" {{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}caller="{{.Caller}}"{{if .Hostname}} host="{{.Hostname}}"{{end}}`),
+		template.New("log").Parse(`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" msg="{{.Message}}" {{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}caller="{{.Caller}}"{{if .Hostname}} host="{{.Hostname}}"{{end}}
+`),
 	)
 	termTemplate = template.Must(
-		template.New("log").Parse("{{if .Timestamp}}{{.Timestamp}} {{end}}[\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
+		template.New("log").Parse("{{if .Timestamp}}{{.Timestamp}} {{end}}[\x1b[{{.Color}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}\n"),
 	)
 )
 
@@ -101,14 +102,6 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		sort.Strings(keys)
 	}
 
-	var b *bytes.Buffer
-	if entry.Buffer != nil {
-		b = entry.Buffer
-	} else {
-		b = &bytes.Buffer{}
-	}
-	f.Do(func() { f.init(entry) })
-
 	timestampFormat := f.TimestampFormat
 	if timestampFormat == "" {
 		timestampFormat = defaultTimestampFormat
@@ -120,6 +113,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		logLine = &bytes.Buffer{}
 	}
+	f.Do(func() { f.init(entry) })
 
 	data := getData(entry)
 	if f.DisableTimestamp {
@@ -133,11 +127,12 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
 	if isColorTerm {
+		//fmt.Printf("\n\n%v\n\n", data)
 		err := termTemplate.Execute(logLine, data)
 		if nil != err {
 			return nil, err
 		}
-		f.printColored(b, entry, keys, timestampFormat)
+		return logLine.Bytes(), nil
 
 	} else {
 		err := textTemplate.Execute(logLine, data)
@@ -159,8 +154,8 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		//}
 	}
 
-	b.WriteByte('\n')
-	return b.Bytes(), nil
+	//b.WriteByte('\n')
+	//return b.Bytes(), nil
 }
 
 func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []string, timestampFormat string) {
