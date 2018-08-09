@@ -66,7 +66,7 @@ func TestHookCanModifyEntry(t *testing.T) {
 		log.Hooks.Add(hook)
 		log.WithField("wow", "elephant").Print("test")
 	}, func(data logData) {
-		assert.Equal(t, data.Data["wow"], "whale")
+		assert.Equal(t, "whale", data.Data["wow"])
 	})
 }
 

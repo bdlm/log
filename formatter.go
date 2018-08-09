@@ -70,20 +70,27 @@ func getData(entry *Entry) *logData {
 	}
 
 	keys := make([]string, 0)
-	for k := range entry.Data {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
 	for k, v := range entry.Data {
-		switch v.(type) {
-		case string:
-			data.Data[k] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
-		case error:
-			data.Data[k] = v.(error).Error()
+		switch k {
+		case fieldMap.resolve(LabelCaller):
+		case fieldMap.resolve(LabelData):
+		case fieldMap.resolve(LabelHost):
+		case fieldMap.resolve(LabelLevel):
+		case fieldMap.resolve(LabelMsg):
+		case fieldMap.resolve(LabelTime):
 		default:
-			data.Data[k] = v
+			keys = append(keys, k)
+			switch v.(type) {
+			case string:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
+			case error:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v.(error).Error()
+			default:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v
+			}
 		}
 	}
+	sort.Strings(keys)
 
 	return data
 }
@@ -115,21 +122,20 @@ type Formatter interface {
 // It's not exported because it's still using Data in an opinionated way. It's to
 // avoid code duplication between the two default formatters.
 func prefixFieldClashes(data Fields, fieldMap FieldMap) {
-	timeKey := fieldMap.resolve(FieldKeyTime)
-	if t, ok := data[timeKey]; ok {
-		data["fields."+timeKey] = t
-		delete(data, timeKey)
-	}
+	var key string
 
-	msgKey := fieldMap.resolve(FieldKeyMsg)
-	if m, ok := data[msgKey]; ok {
-		data["fields."+msgKey] = m
-		delete(data, msgKey)
-	}
-
-	levelKey := fieldMap.resolve(FieldKeyLevel)
-	if l, ok := data[levelKey]; ok {
-		data["fields."+levelKey] = l
-		delete(data, levelKey)
+	for _, field := range []FieldLabel{
+		LabelCaller,
+		LabelData,
+		LabelHost,
+		LabelLevel,
+		LabelMsg,
+		LabelTime,
+	} {
+		key = fieldMap.resolve(field)
+		if t, ok := data[key]; ok {
+			data[fieldMap.resolve(LabelData)+"."+key] = t
+			delete(data, key)
+		}
 	}
 }

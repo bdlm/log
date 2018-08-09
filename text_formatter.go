@@ -72,11 +72,11 @@ type TextFormatter struct {
 
 	// FieldMap allows users to customize the names of keys for default fields.
 	// As an example:
-	// formatter := &TextFormatter{
-	//     FieldMap: FieldMap{
-	//         FieldKeyTime:  "@timestamp",
-	//         FieldKeyLevel: "@level",
-	//         FieldKeyMsg:   "@message"}}
+	// 	formatter := &TextFormatter{FieldMap: FieldMap{
+	// 		LabelTime:  "@timestamp",
+	// 		LabelLevel: "@level",
+	// 		LabelMsg:   "@message",
+	// 	}}
 	FieldMap FieldMap
 
 	sync.Once
@@ -147,16 +147,16 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		logLine.WriteByte('\n')
 		return logLine.Bytes(), nil
 
-		if !f.DisableTimestamp {
-			f.appendKeyValue(b, f.FieldMap.resolve(FieldKeyTime), entry.Time.Format(timestampFormat))
-		}
-		f.appendKeyValue(b, f.FieldMap.resolve(FieldKeyLevel), entry.Level.String())
-		if entry.Message != "" {
-			f.appendKeyValue(b, f.FieldMap.resolve(FieldKeyMsg), entry.Message)
-		}
-		for _, key := range keys {
-			f.appendKeyValue(b, key, entry.Data[key])
-		}
+		//if !f.DisableTimestamp {
+		//	f.appendKeyValue(b, f.FieldMap.resolve(LabelTime), entry.Time.Format(timestampFormat))
+		//}
+		//f.appendKeyValue(b, f.FieldMap.resolve(LabelLevel), entry.Level.String())
+		//if entry.Message != "" {
+		//	f.appendKeyValue(b, f.FieldMap.resolve(LabelMsg), entry.Message)
+		//}
+		//for _, key := range keys {
+		//	f.appendKeyValue(b, key, entry.Data[key])
+		//}
 	}
 
 	b.WriteByte('\n')

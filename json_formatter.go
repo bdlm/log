@@ -5,24 +5,28 @@ import (
 	"fmt"
 )
 
-type fieldKey string
+type FieldLabel string
 
 // FieldMap allows customization of the key names for default fields.
-type FieldMap map[fieldKey]string
+type FieldMap map[FieldLabel]string
+
+var fieldMap = FieldMap{}
 
 // Default key names for the default fields
 const (
-	FieldKeyMsg   = "msg"
-	FieldKeyLevel = "level"
-	FieldKeyTime  = "time"
+	LabelCaller = "caller"
+	LabelData   = "data"
+	LabelHost   = "host"
+	LabelLevel  = "level"
+	LabelMsg    = "msg"
+	LabelTime   = "time"
 )
 
-func (f FieldMap) resolve(key fieldKey) string {
-	if k, ok := f[key]; ok {
-		return k
+func (f FieldMap) resolve(fieldLabel FieldLabel) string {
+	if definedLabel, ok := f[fieldLabel]; ok {
+		return definedLabel
 	}
-
-	return string(key)
+	return string(fieldLabel)
 }
 
 // JSONFormatter formats logs into parsable json
@@ -42,13 +46,11 @@ type JSONFormatter struct {
 
 	// FieldMap allows users to customize the names of keys for default fields.
 	// As an example:
-	// formatter := &JSONFormatter{
-	//   	FieldMap: FieldMap{
-	// 		 FieldKeyTime: "@timestamp",
-	// 		 FieldKeyLevel: "@level",
-	// 		 FieldKeyMsg: "@message",
-	//    },
-	// }
+	//  formatter := &JSONFormatter{FieldMap: FieldMap{
+	//      LabelTime:  "@timestamp",
+	//      LabelLevel: "@level",
+	//      LabelMsg:   "@message",
+	//  }}
 	FieldMap FieldMap
 }
 
@@ -80,23 +82,27 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	data := getData(entry)
-	if f.DisableTimestamp {
-		data.Timestamp = ""
-	} else if "" != f.TimestampFormat {
-		data.Timestamp = entry.Time.Format(f.TimestampFormat)
+	jsonData := map[string]interface{}{}
+
+	if !f.DisableTimestamp && "" != f.TimestampFormat {
+		jsonData[fieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
 	}
-	if f.DisableHostname {
-		data.Hostname = ""
+	if !f.DisableHostname {
+		jsonData[fieldMap.resolve(LabelTime)] = data.Hostname
 	}
+	jsonData[fieldMap.resolve(LabelCaller)] = data.Caller
+	jsonData[fieldMap.resolve(LabelData)] = data.Data
+	jsonData[fieldMap.resolve(LabelLevel)] = data.Level
+	jsonData[fieldMap.resolve(LabelMsg)] = data.Message
 
 	//	if f.DisableTimestamp {
-	//		data[f.FieldMap.resolve(FieldKeyTime)] = ""
+	//		data[f.FieldMap.resolve(LabelTime)] = ""
 	//	} else {
-	//		data[f.FieldMap.resolve(FieldKeyTime)] = entry.Time.Format(timestampFormat)
+	//		data[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(timestampFormat)
 	//	}
 	//
-	//	data[f.FieldMap.resolve(FieldKeyMsg)] = entry.Message
-	//	data[f.FieldMap.resolve(FieldKeyLevel)] = entry.Level.String()
+	//	data[f.FieldMap.resolve(LabelMsg)] = entry.Message
+	//	data[f.FieldMap.resolve(LabelLevel)] = entry.Level.String()
 
 	serialized, err := json.Marshal(data)
 	if err != nil {

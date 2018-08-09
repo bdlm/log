@@ -143,9 +143,9 @@ func disabledTestTextFormatterFieldMap(t *testing.T) {
 	formatter := &TextFormatter{
 		DisableColors: true,
 		FieldMap: FieldMap{
-			FieldKeyMsg:   "message",
-			FieldKeyLevel: "somelevel",
-			FieldKeyTime:  "timeywimey",
+			LabelMsg:   "message",
+			LabelLevel: "somelevel",
+			LabelTime:  "timeywimey",
 		},
 	}
 

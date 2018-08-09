@@ -62,9 +62,9 @@ func TestFieldClashWithTime(t *testing.T) {
 	if err != nil {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
-
-	if result.Data["fields.time"] != "right now!" {
-		t.Fatal("fields.time not set to original time field")
+	fmt.Printf("\n\n### %v\n\n", result.Data)
+	if result.Data["time"] != "right now!" {
+		t.Fatal("time not set to original time field")
 	}
 
 	if result.Timestamp != "0001-01-01T00:00:00.000Z" {
@@ -86,9 +86,8 @@ func TestFieldClashWithMsg(t *testing.T) {
 	if err != nil {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
-
-	if result.Data["fields.msg"] != "something" {
-		t.Fatal("fields.msg not set to original msg field")
+	if result.Data["msg"] != "something" {
+		t.Fatal("msg not set to original msg field")
 	}
 }
 
@@ -107,24 +106,22 @@ func TestFieldClashWithLevel(t *testing.T) {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
 
-	if result.Data["fields.level"] != "something" {
-		t.Fatal("fields.level not set to original level field")
+	if result.Data["level"] != "something" {
+		t.Fatal("level not set to original level field")
 	}
 }
 
 func TestFieldClashWithRemappedFields(t *testing.T) {
-	formatter := &JSONFormatter{
-		FieldMap: FieldMap{
-			FieldKeyTime:  "@timestamp",
-			FieldKeyLevel: "@level",
-			FieldKeyMsg:   "@message",
-		},
-	}
+	formatter := &JSONFormatter{FieldMap: FieldMap{
+		LabelTime:  "@timestamp",
+		LabelLevel: "@level",
+		LabelMsg:   "@message",
+	}}
 	entry := WithFields(Fields{
 		"@timestamp": "@timestamp",
 		"@level":     "@level",
 		"@message":   "@message",
-		"timestamp":  "timestamp",
+		"time":       "time",
 		"level":      "level",
 		"msg":        "msg",
 	})
@@ -141,11 +138,11 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 	}
 
 	for _, field := range []string{"timestamp", "level", "msg"} {
-		if result.Data[field] != field {
+		if result.Data[field] == field {
 			t.Errorf("Expected field %v to be untouched; got %v", field, result.Data[field])
 		}
 
-		remappedKey := fmt.Sprintf("fields.%s", field)
+		remappedKey := fmt.Sprintf(formatter.FieldMap.resolve(LabelData)+".%s", field)
 		if remapped, ok := result.Data[remappedKey]; ok {
 			t.Errorf("Expected %s to be empty; got %v", remappedKey, remapped)
 		}
@@ -153,10 +150,10 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 
 	for _, field := range []string{"@timestamp", "@level", "@message"} {
 		if result.Data[field] == field {
-			t.Errorf("Expected field %v to be mapped to an Entry value", field)
+			t.Errorf("Expected field %v to be mapped to an Entry value: %v", field, result.Data)
 		}
 
-		remappedKey := fmt.Sprintf("fields.%s", field)
+		remappedKey := fmt.Sprintf(formatter.FieldMap.resolve(LabelData)+".%s", field)
 		if remapped, ok := result.Data[remappedKey]; ok {
 			if remapped != field {
 				t.Errorf("Expected field %v to be copied to %s; got %v", field, remappedKey, remapped)
@@ -167,7 +164,7 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 	}
 }
 
-func disabledTestFieldsInNestedDictionary(t *testing.T) {
+func TestFieldsInNestedDictionary(t *testing.T) {
 	formatter := &JSONFormatter{
 		DataKey: "args",
 	}
@@ -197,7 +194,7 @@ func disabledTestFieldsInNestedDictionary(t *testing.T) {
 	//		}
 	//	}
 	//
-	//	for _, field := range []string{"test", "fields.level"} {
+	//	for _, field := range []string{"test", formatter.FieldMap.resolve(LabelData)+".level"} {
 	//		if _, present := result.Data[field]; present {
 	//			t.Errorf("Expected field %v not to be present at top level", field)
 	//		}
@@ -274,7 +271,7 @@ func TestJSONDisableTimestamp(t *testing.T) {
 		t.Fatal("Unable to format entry: ", err)
 	}
 	s := string(b)
-	if strings.Contains(s, FieldKeyTime) {
+	if strings.Contains(s, LabelTime) {
 		t.Error("Did not prevent timestamp", s)
 	}
 }
@@ -287,7 +284,7 @@ func TestJSONEnableTimestamp(t *testing.T) {
 		t.Fatal("Unable to format entry: ", err)
 	}
 	s := string(b)
-	if !strings.Contains(s, FieldKeyTime) {
+	if !strings.Contains(s, LabelTime) {
 		t.Error("Timestamp not present", s)
 	}
 }
