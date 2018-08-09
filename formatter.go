@@ -6,14 +6,14 @@ import (
 	"path"
 	"runtime"
 	"sort"
+	"strconv"
 	"strings"
-	"time"
 )
 
-/*
-RFC3339Milli defines an RFC3339 date format with miliseconds
-*/
+// RFC3339Milli defines an RFC3339 date format with miliseconds
 const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
+
+const defaultTimestampFormat = RFC3339Milli
 
 type logData struct {
 	Timestamp string            `json:"time"`
@@ -29,8 +29,9 @@ func getCaller() string {
 	caller := ""
 	a := 0
 	for {
-		if pc, file, line, ok := runtime.Caller(a + 1); ok {
-			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") {
+		if pc, file, line, ok := runtime.Caller(a); ok {
+			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
+				strings.HasSuffix(strings.ToLower(file), "_test.go") {
 				caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
 				break
 			}
@@ -60,11 +61,11 @@ func getData(entry *Entry) *logData {
 	}
 
 	data := &logData{
-		Caller:    getCaller(),
+		Caller:    strconv.QuoteToASCII(getCaller()),
 		Data:      make(map[string]string),
-		Hostname:  os.Getenv("HOSTNAME"),
-		Level:     entry.Level.String(),
-		Message:   entry.Message,
+		Hostname:  strconv.QuoteToASCII(os.Getenv("HOSTNAME")),
+		Level:     strconv.QuoteToASCII(entry.Level.String()),
+		Message:   strconv.QuoteToASCII(entry.Message),
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Color:     levelColor,
 	}
@@ -75,13 +76,11 @@ func getData(entry *Entry) *logData {
 	}
 	sort.Strings(keys)
 	for k, v := range entry.Data {
-		data.Data[k] = fmt.Sprintf("%v", v)
+		data.Data[k] = strconv.QuoteToASCII(fmt.Sprintf("%v", v))
 	}
 
 	return data
 }
-
-const defaultTimestampFormat = time.RFC3339
 
 // The Formatter interface is used to implement a custom Formatter. It takes an
 // `Entry`. It exposes all the fields, including the default ones:

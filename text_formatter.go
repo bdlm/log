@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"text/template"
 	"time"
 )
 
@@ -21,13 +22,19 @@ const (
 var (
 	baseTimestamp time.Time
 	emptyFieldMap FieldMap
+	textTemplate  = template.Must(
+		template.New("log").Parse(`time="{{.Timestamp}}" level={{.Level}} msg={{.Message}} {{range $k, $v := .Data}}{{$k}}={{$v}} {{end}}caller={{.Caller}} host={{.Hostname}}`),
+	)
+	termTemplate = template.Must(
+		template.New("log").Parse("{{.Timestamp}} [\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
+	)
 )
 
 func init() {
 	baseTimestamp = time.Now()
 }
 
-// TextFormatter formats logs into text
+// TextFormatter formats logs into text.
 type TextFormatter struct {
 	// Set to true to bypass checking for a TTY before outputting colors.
 	ForceColors bool
@@ -97,18 +104,36 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		b = &bytes.Buffer{}
 	}
-
 	f.Do(func() { f.init(entry) })
-
-	isColored := (f.ForceColors || f.isTerminal) && !f.DisableColors
 
 	timestampFormat := f.TimestampFormat
 	if timestampFormat == "" {
 		timestampFormat = defaultTimestampFormat
 	}
-	if isColored {
-		f.printColored(b, entry, keys, timestampFormat)
+
+	var logLine *bytes.Buffer
+	if entry.Buffer != nil {
+		logLine = entry.Buffer
 	} else {
+		logLine = &bytes.Buffer{}
+	}
+	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
+	data := getData(entry)
+	if f.DisableTimestamp {
+		data.Timestamp = ""
+	} else if "" != f.TimestampFormat {
+		data.Timestamp = entry.Time.Format(f.TimestampFormat)
+	}
+
+	if isColorTerm {
+		termTemplate.Execute(logLine, data)
+		f.printColored(b, entry, keys, timestampFormat)
+
+	} else {
+		textTemplate.Execute(logLine, data)
+		logLine.WriteByte('\n')
+		return logLine.Bytes(), nil
+
 		if !f.DisableTimestamp {
 			f.appendKeyValue(b, f.FieldMap.resolve(FieldKeyTime), entry.Time.Format(timestampFormat))
 		}

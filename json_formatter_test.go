@@ -64,8 +64,8 @@ func TestFieldClashWithTime(t *testing.T) {
 		t.Fatal("fields.time not set to original time field")
 	}
 
-	if entry["time"] != "0001-01-01T00:00:00Z" {
-		t.Fatal("time field not set to current time, was: ", entry["time"])
+	if entry["time"] != "0001-01-01T00:00:00.000Z" {
+		t.Fatalf("time field not set to current time, was: '%s', expected: '%s'", entry["time"], "0001-01-01T00:00:00.000Z")
 	}
 }
 

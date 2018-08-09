@@ -3,6 +3,7 @@ package log
 import (
 	"bytes"
 	"encoding/json"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -41,14 +42,16 @@ func LogAndAssertText(t *testing.T, log func(*Logger), assertions func(fields ma
 	log(logger)
 
 	fields := make(map[string]string)
-	for _, kv := range strings.Split(buffer.String(), " ") {
+
+	re := regexp.MustCompile(`[a-zA-Z0-9\\.]+=\"(\\"|\\" |[\d\w\s!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?])*(" |"\n|)`)
+	for _, kv := range re.FindAllString(buffer.String(), -1) {
 		if !strings.Contains(kv, "=") {
 			continue
 		}
 		kvArr := strings.Split(kv, "=")
 		key := strings.TrimSpace(kvArr[0])
-		val := kvArr[1]
-		if kvArr[1][0] == '"' {
+		val := strings.TrimSpace(kvArr[1])
+		if '"' == kvArr[1][0] && "" != string(val) {
 			var err error
 			val, err = strconv.Unquote(val)
 			assert.NoError(t, err)
@@ -198,17 +201,21 @@ func TestUserSuppliedLevelFieldHasPrefix(t *testing.T) {
 }
 
 func TestDefaultFieldsAreNotPrefixed(t *testing.T) {
-	LogAndAssertText(t, func(log *Logger) {
-		ll := log.WithField("herp", "derp")
-		ll.Info("hello")
-		ll.Info("bye")
-	}, func(fields map[string]string) {
-		for _, fieldName := range []string{"fields.level", "fields.time", "fields.msg"} {
-			if _, ok := fields[fieldName]; ok {
-				t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
+	LogAndAssertText(
+		t,
+		func(log *Logger) {
+			ll := log.WithField("herp", "derp")
+			ll.Info("hello")
+			ll.Info("bye")
+		},
+		func(fields map[string]string) {
+			for _, fieldName := range []string{"fields.level", "fields.time", "fields.msg"} {
+				if _, ok := fields[fieldName]; ok {
+					t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
+				}
 			}
-		}
-	})
+		},
+	)
 }
 
 func TestWithTimeShouldOverrideTime(t *testing.T) {
