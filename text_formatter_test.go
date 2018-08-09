@@ -12,13 +12,13 @@ import (
 )
 
 func TestFormatting(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true}
+	tf := &TextFormatter{DisableColors: true, DisableHostname: true}
 
 	testCases := []struct {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" msg=\"\" test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\" host=\"\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" msg=\"\" test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {

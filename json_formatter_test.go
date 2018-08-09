@@ -23,7 +23,7 @@ func TestErrorNotLost(t *testing.T) {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
 
-	if result.Data["error"] != "wild walrus" {
+	if result.Data["error"].(string) != "wild walrus" {
 		t.Fatal("Error field not set")
 	}
 }

@@ -23,10 +23,10 @@ var (
 	baseTimestamp time.Time
 	emptyFieldMap FieldMap
 	textTemplate  = template.Must(
-		template.New("log").Parse(`{{if not eq .Timestap ""}}time="{{.Timestamp}}" {{end}}level={{.Level}} msg={{.Message}} {{range $k, $v := .Data}}{{$k}}={{$v}} {{end}}caller={{.Caller}} host={{.Hostname}}`),
+		template.New("log").Parse(`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" msg="{{.Message}}" {{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}caller="{{.Caller}}"{{if .Hostname}} host="{{.Hostname}}"{{end}}`),
 	)
 	termTemplate = template.Must(
-		template.New("log").Parse("{{if not eq .Timestap \"\"}}{{.Timestamp}} {{end}}[\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
+		template.New("log").Parse("{{if .Timestamp}}{{.Timestamp}} {{end}}[\x1b[{{.Level}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}"),
 	)
 )
 
@@ -137,7 +137,10 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		f.printColored(b, entry, keys, timestampFormat)
 
 	} else {
-		textTemplate.Execute(logLine, data)
+		err := textTemplate.Execute(logLine, data)
+		if nil != err {
+			return nil, err
+		}
 		logLine.WriteByte('\n')
 		return logLine.Bytes(), nil
 

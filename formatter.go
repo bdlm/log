@@ -16,13 +16,13 @@ const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
 const defaultTimestampFormat = RFC3339Milli
 
 type logData struct {
-	Timestamp string            `json:"time,omitempty"`
-	Level     string            `json:"level,omitempty"`
-	Hostname  string            `json:"host,omitempty"`
-	Message   string            `json:"msg,omitempty"`
-	Data      map[string]string `json:"data,omitempty"`
-	Caller    string            `json:"caller,omitempty"`
-	Color     int               `json:"-"`
+	Timestamp string                 `json:"time,omitempty"`
+	Level     string                 `json:"level,omitempty"`
+	Hostname  string                 `json:"host,omitempty"`
+	Message   string                 `json:"msg,omitempty"`
+	Data      map[string]interface{} `json:"data,omitempty"`
+	Caller    string                 `json:"caller,omitempty"`
+	Color     int                    `json:"-"`
 }
 
 func getCaller() string {
@@ -62,7 +62,7 @@ func getData(entry *Entry) *logData {
 
 	data := &logData{
 		Caller:    strings.Trim(strconv.QuoteToASCII(getCaller()), `"`),
-		Data:      make(map[string]string),
+		Data:      make(map[string]interface{}),
 		Hostname:  strings.Trim(strconv.QuoteToASCII(os.Getenv("HOSTNAME")), `"`),
 		Level:     strings.Trim(strconv.QuoteToASCII(entry.Level.String()), `"`),
 		Message:   strings.Trim(strconv.QuoteToASCII(entry.Message), `"`),
@@ -76,7 +76,14 @@ func getData(entry *Entry) *logData {
 	}
 	sort.Strings(keys)
 	for k, v := range entry.Data {
-		data.Data[k] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
+		switch v.(type) {
+		case string:
+			data.Data[k] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
+		case error:
+			data.Data[k] = v.(error).Error()
+		default:
+			data.Data[k] = v
+		}
 	}
 
 	return data
