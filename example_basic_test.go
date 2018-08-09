@@ -10,6 +10,7 @@ func Example_basic() {
 	var logger = log.New()
 	logger.Formatter = new(log.TextFormatter)                     //default
 	logger.Formatter.(*log.TextFormatter).DisableTimestamp = true // remove timestamp from test output
+	logger.Formatter.(*log.TextFormatter).DisableHostname = true  // remove timestamp from test output
 	logger.Level = log.DebugLevel
 	logger.Out = os.Stdout
 
