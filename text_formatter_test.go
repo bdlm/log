@@ -146,7 +146,9 @@ func TestDisableTimestampWithColoredOutput(t *testing.T) {
 func TestTextFormatterFieldMap(t *testing.T) {
 
 	formatter := &TextFormatter{
-		DisableColors: true,
+		DisableColors:   true,
+		DisableHostname: true,
+		DisableCaller:   true,
 		FieldMap: FieldMap{
 			LabelCaller: "caller-label",
 			LabelData:   "data-label",
@@ -177,12 +179,12 @@ func TestTextFormatterFieldMap(t *testing.T) {
 	assert.Equal(
 		t,
 		`time-field-label="1981-02-24T04:28:03.000Z" `+
-			`level-label="warning" msg-label="oh hi" `+
+			`level-label="warning" `+
+			`msg-label="oh hi" `+
 			`data-label.field1="f1" `+
 			`data-label.level-label="levelfield" `+
 			`data-label.msg-label="messagefield" `+
-			`data-label.time-field-label="timefield" `+
-			`caller-label="text_formatter_test.go:172 github.com/bdlm/log.TestTextFormatterFieldMap"`+"\n",
+			`data-label.time-field-label="timefield"`+"\n",
 		string(b),
 		"Formatted output doesn't respect FieldMap")
 }

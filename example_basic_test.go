@@ -11,16 +11,11 @@ func Example_basic() {
 	logger.Formatter = new(log.TextFormatter)                     //default
 	logger.Formatter.(*log.TextFormatter).DisableTimestamp = true // remove timestamp from test output
 	logger.Formatter.(*log.TextFormatter).DisableHostname = true  // remove timestamp from test output
+	logger.Formatter.(*log.TextFormatter).DisableCaller = true    // remove caller from test output
 	logger.Level = log.DebugLevel
 	logger.Out = os.Stdout
 
-	// file, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY, 0666)
-	// if err == nil {
-	// 	log.Out = file
-	// } else {
-	// 	log.Info("Failed to log to file, using default stderr")
-	// }
-
+	// Capture the panic result
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -61,10 +56,10 @@ func Example_basic() {
 	}).Panic("It's over 9000!")
 
 	// Output:
-	// level="debug" msg="Started observing beach" data.animal="walrus" data.number="8" caller="example_basic_test.go:42 github.com/bdlm/log_test.Example_basic"
-	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.size="10" caller="example_basic_test.go:47 github.com/bdlm/log_test.Example_basic"
-	// level="warning" msg="The group's number increased tremendously!" data.number="122" data.omg="true" caller="example_basic_test.go:52 github.com/bdlm/log_test.Example_basic"
-	// level="debug" msg="Temperature changes" data.temperature="-4" caller="example_basic_test.go:56 github.com/bdlm/log_test.Example_basic"
-	// level="panic" msg="It's over 9000!" data.animal="orca" data.size="9009" caller="example_basic_test.go:61 github.com/bdlm/log_test.Example_basic"
-	// level="error" msg="The ice breaks!" data.err_animal="orca" data.err_level="panic" data.err_message="It's over 9000!" data.err_size="9009" data.number="100" data.omg="true" caller="example_basic_test.go:35 github.com/bdlm/log_test.Example_basic.func1"
+	// level="debug" msg="Started observing beach" data.animal="walrus" data.number="8"
+	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.size="10"
+	// level="warning" msg="The group's number increased tremendously!" data.number="122" data.omg="true"
+	// level="debug" msg="Temperature changes" data.temperature="-4"
+	// level="panic" msg="It's over 9000!" data.animal="orca" data.size="9009"
+	// level="error" msg="The ice breaks!" data.err_animal="orca" data.err_level="panic" data.err_message="It's over 9000!" data.err_size="9009" data.number="100" data.omg="true"
 }
