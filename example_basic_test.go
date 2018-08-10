@@ -61,10 +61,10 @@ func Example_basic() {
 	}).Panic("It's over 9000!")
 
 	// Output:
-	// level="debug" msg="Started observing beach" animal="walrus" number="8" caller="example_basic_test.go:42 github.com/bdlm/log_test.Example_basic"
-	// level="info" msg="A group of walrus emerges from the ocean" animal="walrus" size="10" caller="example_basic_test.go:47 github.com/bdlm/log_test.Example_basic"
-	// level="warning" msg="The group's number increased tremendously!" number="122" omg="true" caller="example_basic_test.go:52 github.com/bdlm/log_test.Example_basic"
-	// level="debug" msg="Temperature changes" temperature="-4" caller="example_basic_test.go:56 github.com/bdlm/log_test.Example_basic"
-	// level="panic" msg="It's over 9000!" animal="orca" size="9009" caller="example_basic_test.go:61 github.com/bdlm/log_test.Example_basic"
-	// level="error" msg="The ice breaks!" err_animal="orca" err_level="panic" err_message="It's over 9000!" err_size="9009" number="100" omg="true" caller="example_basic_test.go:35 github.com/bdlm/log_test.Example_basic.func1"
+	// level="debug" msg="Started observing beach" data.animal="walrus" data.number="8" caller="example_basic_test.go:42 github.com/bdlm/log_test.Example_basic"
+	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.size="10" caller="example_basic_test.go:47 github.com/bdlm/log_test.Example_basic"
+	// level="warning" msg="The group's number increased tremendously!" data.number="122" data.omg="true" caller="example_basic_test.go:52 github.com/bdlm/log_test.Example_basic"
+	// level="debug" msg="Temperature changes" data.temperature="-4" caller="example_basic_test.go:56 github.com/bdlm/log_test.Example_basic"
+	// level="panic" msg="It's over 9000!" data.animal="orca" data.size="9009" caller="example_basic_test.go:61 github.com/bdlm/log_test.Example_basic"
+	// level="error" msg="The ice breaks!" data.err_animal="orca" data.err_level="panic" data.err_message="It's over 9000!" data.err_size="9009" data.number="100" data.omg="true" caller="example_basic_test.go:35 github.com/bdlm/log_test.Example_basic.func1"
 }

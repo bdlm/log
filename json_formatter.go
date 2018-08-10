@@ -43,11 +43,6 @@ type JSONFormatter struct {
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	prefixFieldClashes(entry.Data, f.FieldMap)
 
-	//
-	timestampFormat := f.TimestampFormat
-	if timestampFormat == "" {
-		timestampFormat = defaultTimestampFormat
-	}
 	data := getData(entry, f.FieldMap)
 	jsonData := map[string]interface{}{}
 

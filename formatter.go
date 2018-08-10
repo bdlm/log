@@ -38,13 +38,20 @@ func (f FieldMap) resolve(fieldLabel FieldLabel) string {
 }
 
 type logData struct {
-	Timestamp string                 `json:"time,omitempty"`
-	Level     string                 `json:"level,omitempty"`
-	Hostname  string                 `json:"host,omitempty"`
-	Message   string                 `json:"msg,omitempty"`
-	Data      map[string]interface{} `json:"data,omitempty"`
+	LabelCaller string
+	LabelData   string
+	LabelHost   string
+	LabelLevel  string
+	LabelMsg    string
+	LabelTime   string
+
 	Caller    string                 `json:"caller,omitempty"`
 	Color     string                 `json:"-"`
+	Data      map[string]interface{} `json:"data,omitempty"`
+	Hostname  string                 `json:"host,omitempty"`
+	Level     string                 `json:"level,omitempty"`
+	Message   string                 `json:"msg,omitempty"`
+	Timestamp string                 `json:"time,omitempty"`
 }
 
 func getCaller() string {

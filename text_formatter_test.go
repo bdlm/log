@@ -18,7 +18,7 @@ func TestFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" data.test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -143,14 +143,17 @@ func TestDisableTimestampWithColoredOutput(t *testing.T) {
 	}
 }
 
-func disabledTestTextFormatterFieldMap(t *testing.T) {
+func TestTextFormatterFieldMap(t *testing.T) {
 
 	formatter := &TextFormatter{
 		DisableColors: true,
 		FieldMap: FieldMap{
-			LabelMsg:   "message",
-			LabelLevel: "somelevel",
-			LabelTime:  "timeywimey",
+			LabelCaller: "caller-label",
+			LabelData:   "data-label",
+			LabelHost:   "host-label",
+			LabelLevel:  "level-label",
+			LabelMsg:    "msg-label",
+			LabelTime:   "time-field-label",
 		},
 	}
 
@@ -159,10 +162,10 @@ func disabledTestTextFormatterFieldMap(t *testing.T) {
 		Level:   WarnLevel,
 		Time:    time.Date(1981, time.February, 24, 4, 28, 3, 100, time.UTC),
 		Data: Fields{
-			"field1":     "f1",
-			"message":    "messagefield",
-			"somelevel":  "levelfield",
-			"timeywimey": "timeywimeyfield",
+			"field1":           "f1",
+			"msg-label":        "messagefield",
+			"level-label":      "levelfield",
+			"time-field-label": "timefield",
 		},
 	}
 
@@ -171,14 +174,15 @@ func disabledTestTextFormatterFieldMap(t *testing.T) {
 		t.Fatal("Unable to format entry: ", err)
 	}
 
-	assert.Equal(t,
-		`timeywimey="1981-02-24T04:28:03Z" `+
-			`somelevel=warning `+
-			`message="oh hi" `+
-			`field1=f1 `+
-			`fields.message=messagefield `+
-			`fields.somelevel=levelfield `+
-			`fields.timeywimey=timeywimeyfield`+"\n",
+	assert.Equal(
+		t,
+		`time-field-label="1981-02-24T04:28:03.000Z" `+
+			`level-label="warning" msg-label="oh hi" `+
+			`data-label.field1="f1" `+
+			`data-label.level-label="levelfield" `+
+			`data-label.msg-label="messagefield" `+
+			`data-label.time-field-label="timefield" `+
+			`caller-label="text_formatter_test.go:172 github.com/bdlm/log.TestTextFormatterFieldMap"`+"\n",
 		string(b),
 		"Formatted output doesn't respect FieldMap")
 }
