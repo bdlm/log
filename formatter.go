@@ -22,7 +22,7 @@ type logData struct {
 	Message   string                 `json:"msg,omitempty"`
 	Data      map[string]interface{} `json:"data,omitempty"`
 	Caller    string                 `json:"caller,omitempty"`
-	Color     int                    `json:"-"`
+	Color     string                 `json:"-"`
 }
 
 func getCaller() string {
@@ -43,20 +43,36 @@ func getCaller() string {
 	return caller
 }
 
+const (
+	DEFAULTColor = "\033[38;5;46m"
+	ERRColor     = "\033[38;5;196m"
+	WARNColor    = "\033[38;5;226m"
+	DEBUGColor   = "\033[38;5;245m"
+
+	BOLDWHITEColor = "\033[0m\033[1m"
+	BLUEColor      = "\033[38;5;4m" // -- blue
+	GREYColor      = "\033[38;5;8m" // -- grey
+	LTBLUEColor    = "\033[38;5;6m" // -- lt blue
+	PURPLEColor    = "\033[38;5;5m" // -- purple
+	WHITEColor     = "\033[38;5;7m" // -- white
+
+	TSTColor = "\033[38;5;94m" // -- tst
+)
+
 /*
 getData is a helper function that extracts log data from the Entry.
 */
 func getData(entry *Entry) *logData {
-	var levelColor int
+	var levelColor string
 	switch entry.Level {
 	case DebugLevel:
-		levelColor = gray
+		levelColor = DEBUGColor
 	case WarnLevel:
-		levelColor = yellow
+		levelColor = WARNColor
 	case ErrorLevel, FatalLevel, PanicLevel:
-		levelColor = red
+		levelColor = ERRColor
 	default:
-		levelColor = blue
+		levelColor = DEFAULTColor
 	}
 
 	data := &logData{
@@ -64,7 +80,7 @@ func getData(entry *Entry) *logData {
 		Data:      make(map[string]interface{}),
 		Hostname:  strings.Trim(strconv.QuoteToASCII(os.Getenv("HOSTNAME")), `"`),
 		Level:     strings.Trim(strconv.QuoteToASCII(entry.Level.String()), `"`),
-		Message:   strings.Trim(strconv.QuoteToASCII(entry.Message), `"`),
+		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Color:     levelColor,
 	}

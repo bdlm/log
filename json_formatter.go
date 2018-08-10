@@ -34,6 +34,9 @@ type JSONFormatter struct {
 	// TimestampFormat sets the format used for marshaling timestamps.
 	TimestampFormat string
 
+	// Disable caller data.
+	DisableCaller bool
+
 	// DisableTimestamp allows disabling automatic timestamps in output
 	DisableTimestamp bool
 
@@ -90,7 +93,9 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	if !f.DisableHostname {
 		jsonData[fieldMap.resolve(LabelTime)] = data.Hostname
 	}
-	jsonData[fieldMap.resolve(LabelCaller)] = data.Caller
+	if !f.DisableCaller {
+		jsonData[fieldMap.resolve(LabelCaller)] = data.Caller
+	}
 	jsonData[fieldMap.resolve(LabelData)] = data.Data
 	jsonData[fieldMap.resolve(LabelLevel)] = data.Level
 	jsonData[fieldMap.resolve(LabelMsg)] = data.Message

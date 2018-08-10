@@ -4,42 +4,29 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
-	"strconv"
-	"strings"
 	"sync"
 	"text/template"
 	"time"
 )
 
-const (
-	nocolor = 0
-	red     = 31
-	green   = 32
-	yellow  = 33
-	blue    = 36
-	gray    = 37
-)
-
 var (
 	baseTimestamp time.Time
 	emptyFieldMap FieldMap
-	textTemplate  = template.Must(
-		template.New("log").Parse(`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" msg="{{.Message}}" {{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}caller="{{.Caller}}"{{if .Hostname}} host="{{.Hostname}}"{{end}}
-`),
-	)
-	termTemplate = template.Must(
-		template.New("log").Parse("{{if .Timestamp}}{{.Timestamp}} {{end}}[\x1b[{{.Color}}m{{.Level}}\x1b[0m] {{.Message}} {{range $k, $v := .Data}}{{$k}}=\"{{$v}}\" {{end}}{{.Caller}}\n"),
-	)
+	termTemplate  = template.Must(template.New("tty").Parse(
+		"[{{.Color}}{{printf \"%.4s\" .Level}}\033[0m] {{if .Hostname}}\033[38;5;231m{{.Hostname}}\033[0m {{end}}{{if .Timestamp}}\033[38;5;3m{{.Timestamp}}\033[0m {{end}}{{if .Message}}\033[38;5;255m{{.Message}}\033[0m {{end}}{{range $k, $v := .Data}}\033[38;5;159m{{$k}}\033[0m=\"\033[38;5;180m{{$v}}\033[0m\" {{end}}{{if .Caller}}\033[38;5;124m{{.Caller}}\033[0m {{end}}\n",
+	))
+	textTemplate = template.Must(template.New("log").Parse(
+		`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" {{if .Message}}msg="{{.Message}}" {{end}}{{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}{{if .Caller}}caller="{{.Caller}}" {{end}}{{if .Hostname}}host="{{.Hostname}}" {{end}}` + "\n",
+	))
 )
-
-func init() {
-	baseTimestamp = time.Now()
-}
 
 // TextFormatter formats logs into text.
 type TextFormatter struct {
 	// Set to true to bypass checking for a TTY before outputting colors.
 	ForceColors bool
+
+	// Disable caller data.
+	DisableCaller bool
 
 	// Force disabling colors.
 	DisableColors bool
@@ -125,74 +112,26 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	if f.DisableHostname {
 		data.Hostname = ""
 	}
+	if f.DisableCaller {
+		data.Caller = ""
+	}
 
 	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
 	if isColorTerm {
-		tmp, err := strconv.Unquote("\"" + data.Message + "\"")
-		if nil == err {
-			data.Message = tmp
-		}
-
-		err = termTemplate.Execute(logLine, data)
+		err := termTemplate.Execute(logLine, data)
 		if nil != err {
 			return nil, err
 		}
 		return logLine.Bytes(), nil
 
-	} else {
-		err := textTemplate.Execute(logLine, data)
-		if nil != err {
-			return nil, err
-		}
-		logLine.WriteByte('\n')
-		return logLine.Bytes(), nil
-
-		//if !f.DisableTimestamp {
-		//	f.appendKeyValue(b, f.FieldMap.resolve(LabelTime), entry.Time.Format(timestampFormat))
-		//}
-		//f.appendKeyValue(b, f.FieldMap.resolve(LabelLevel), entry.Level.String())
-		//if entry.Message != "" {
-		//	f.appendKeyValue(b, f.FieldMap.resolve(LabelMsg), entry.Message)
-		//}
-		//for _, key := range keys {
-		//	f.appendKeyValue(b, key, entry.Data[key])
-		//}
 	}
 
-	//b.WriteByte('\n')
-	//return b.Bytes(), nil
-}
-
-func (f *TextFormatter) printColored(b *bytes.Buffer, entry *Entry, keys []string, timestampFormat string) {
-	var levelColor int
-	switch entry.Level {
-	case DebugLevel:
-		levelColor = gray
-	case WarnLevel:
-		levelColor = yellow
-	case ErrorLevel, FatalLevel, PanicLevel:
-		levelColor = red
-	default:
-		levelColor = blue
+	err := textTemplate.Execute(logLine, data)
+	if nil != err {
+		return nil, err
 	}
-
-	levelText := strings.ToUpper(entry.Level.String())
-	if !f.DisableLevelTruncation {
-		levelText = levelText[0:4]
-	}
-
-	if f.DisableTimestamp {
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m %-44s ", levelColor, levelText, entry.Message)
-	} else if !f.FullTimestamp {
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%04d] %-44s ", levelColor, levelText, int(entry.Time.Sub(baseTimestamp)/time.Second), entry.Message)
-	} else {
-		fmt.Fprintf(b, "\x1b[%dm%s\x1b[0m[%s] %-44s ", levelColor, levelText, entry.Time.Format(timestampFormat), entry.Message)
-	}
-	for _, k := range keys {
-		v := entry.Data[k]
-		fmt.Fprintf(b, " \x1b[%dm%s\x1b[0m=", levelColor, k)
-		f.appendValue(b, v)
-	}
+	logLine.WriteByte('\n')
+	return logLine.Bytes(), nil
 }
 
 func (f *TextFormatter) needsQuoting(text string) bool {
