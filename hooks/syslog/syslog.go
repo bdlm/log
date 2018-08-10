@@ -22,7 +22,7 @@ type Hook struct {
 // `if err == nil { log.Hooks.Add(hook) }`
 func NewHook(network, raddr string, priority syslog.Priority, tag string) (*Hook, error) {
 	w, err := syslog.Dial(network, raddr, priority, tag)
-	return &Hook{w, network, raddr}, err
+	return &Hook{Writer: w, SyslogNetwork: network, SyslogRaddr: raddr}, err
 }
 
 // Fire executes the syslog hook.
