@@ -88,11 +88,6 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		sort.Strings(keys)
 	}
 
-	timestampFormat := f.TimestampFormat
-	if timestampFormat == "" {
-		timestampFormat = defaultTimestampFormat
-	}
-
 	var logLine *bytes.Buffer
 	if entry.Buffer != nil {
 		logLine = entry.Buffer
@@ -113,6 +108,8 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		data.Timestamp = ""
 	} else if "" != f.TimestampFormat {
 		data.Timestamp = entry.Time.Format(f.TimestampFormat)
+	} else {
+		data.Timestamp = entry.Time.Format(defaultTimestampFormat)
 	}
 	if f.DisableHostname {
 		data.Hostname = ""

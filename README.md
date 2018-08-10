@@ -15,6 +15,9 @@
 
 ## usage
 
+`bdlm/log` supports a "blacklist" of values that should not be logged. This can be used to
+help prevent or mitigate leaking secrets into log files:
+
 ```go
 import (
     "github.com/bdlm/log"
@@ -28,7 +31,7 @@ func main() {
 }
 ```
 
-# Logrus
+# log
 
 `log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
@@ -52,7 +55,7 @@ With `log.SetFormatter(&log.JSONFormatter{})`, for easy parsing by logstash or S
 
 #### Example
 
-The simplest way to use Logrus is simply the package-level exported logger:
+The simplest way to use `bdlm/log` is simply the package-level exported logger:
 
 ```go
 package main
@@ -68,7 +71,9 @@ func main() {
 }
 ```
 
-Note that it's completely api-compatible with the stdlib logger, so you can replace your `log` imports everywhere with `log "github.com/bdlm/log"` and you'll now have the flexibility of Logrus. You can customize it all you want:
+Note that it is completely api-compatible with the stdlib logger, so you can replace your `log`
+imports everywhere with `"github.com/bdlm/log"` and you'll have the full flexibility of
+`bdlm/log` available. You can customize it further in your code:
 
 ```go
 package main
@@ -82,8 +87,8 @@ func init() {
   // Log as JSON instead of the default ASCII formatter.
   log.SetFormatter(&log.JSONFormatter{})
 
-  // Output to stdout instead of the default stderr
-  // Can be any io.Writer, see below for File example
+  // Output to stdout instead of the default stderr. Can be any io.Writer, see
+  // below for a File example.
   log.SetOutput(os.Stdout)
 
   // Only log the warning severity or above.
@@ -107,7 +112,7 @@ func main() {
   }).Fatal("The ice breaks!")
 
   // A common pattern is to re-use fields between logging statements by re-using
-  // the logrus.Entry returned from WithFields()
+  // the log.Entry returned from WithFields()
   contextLogger := log.WithFields(log.Fields{
     "common": "this is a common field",
     "other": "I also should be logged always",
@@ -118,7 +123,7 @@ func main() {
 }
 ```
 
-For more advanced usage such as logging to multiple locations from the same application, you can also create an instance of the `logrus` Logger:
+For more advanced usage such as logging to multiple locations from the same application, you can also create an instance of the `bdlm/log` Logger:
 
 ```go
 package main
@@ -137,14 +142,14 @@ func main() {
   logger.Out = os.Stdout
 
   // You could set this to any `io.Writer` such as a file
-  // file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY, 0666)
+  // file, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY, 0666)
   //  if err == nil {
   //    logger.Out = file
   //  } else {
   //    logger.Info("Failed to log to file, using default stderr")
   // }
 
-  logger.WithFields(logrus.Fields{
+  logger.WithFields(log.Fields{
     "animal": "walrus",
     "size":   10,
   }).Info("A group of walrus emerges from the ocean")
@@ -153,7 +158,7 @@ func main() {
 
 #### Fields
 
-Logrus encourages careful, structured logging through logging fields instead of long, unparseable error messages. For example, instead of: `log.Fatalf("Failed to send event %s to topic %s with key %d")`, you should log the much more discoverable:
+`bdlm/log` encourages careful, structured logging through logging fields instead of long, unparseable error messages. For example, instead of: `log.Fatalf("Failed to send event %s to topic %s with key %d")`, you should log the much more discoverable:
 
 ```go
 log.WithFields(log.Fields{
@@ -165,11 +170,11 @@ log.WithFields(log.Fields{
 
 We've found this API forces you to think about logging in a way that produces much more useful logging messages. We've been in countless situations where just a single added field to a log statement that was already there would've saved us hours. The `WithFields` call is optional.
 
-In general, with Logrus using any of the `printf`-family functions should be seen as a hint you should add a field, however, you can still use the `printf`-family functions with Logrus.
+In general, with `bdlm/log` using any of the `printf`-family functions should be seen as a hint you should add a field, however, you can still use the `printf`-family functions with `bdlm/log`.
 
 #### Default Fields
 
-Often it's helpful to have fields _always_ attached to log statements in an application or parts of one. For example, you may want to always log the `request_id` and `user_ip` in the context of a request. Instead of writing `log.WithFields(log.Fields{"request_id": request_id, "user_ip": user_ip})` on every line, you can create a `logrus.Entry` to pass around instead:
+Often it's helpful to have fields _always_ attached to log statements in an application or parts of one. For example, you may want to always log the `request_id` and `user_ip` in the context of a request. Instead of writing `log.WithFields(log.Fields{"request_id": request_id, "user_ip": user_ip})` on every line, you can create a `log.Entry` to pass around instead:
 
 ```go
 requestLogger := log.WithFields(log.Fields{"request_id": request_id, "user_ip": user_ip})
@@ -181,13 +186,12 @@ requestLogger.Warn("something not great happened")
 
 You can add hooks for logging levels. For example to send errors to an exception tracking service on `Error`, `Fatal` and `Panic`, info to StatsD or log to multiple places simultaneously, e.g. syslog.
 
-Logrus comes with [built-in hooks](hooks/). Add those, or your custom hook, in `init`:
+`bdlm/log` comes with [built-in hooks](hooks/). Add those, or your custom hook, in `init`:
 
 ```go
 import (
   log "github.com/bdlm/log"
-  "gopkg.in/gemnasium/logrus-airbrake-hook.v2" // the package is named "airbrake"
-  logrus_syslog "github.com/bdlm/log/hooks/syslog"
+  log_syslog "github.com/bdlm/log/hooks/syslog"
   "log/syslog"
 )
 
@@ -197,7 +201,7 @@ func init() {
   // an exception tracker. You can create custom hooks, see the Hooks section.
   log.AddHook(airbrake.NewHook(123, "xyz", "production"))
 
-  hook, err := logrus_syslog.NewSyslogHook("udp", "localhost:514", syslog.LOG_INFO, "")
+  hook, err := log_syslog.NewSyslogHook("udp", "localhost:514", syslog.LOG_INFO, "")
   if err != nil {
     log.Error("Unable to connect to local syslog daemon")
   } else {
@@ -212,7 +216,7 @@ A list of currently known of service hook can be found in this wiki [page](https
 
 #### Level logging
 
-Logrus has six logging levels: Debug, Info, Warning, Error, Fatal and Panic.
+`bdlm/log` has six logging levels: Debug, Info, Warning, Error, Fatal and Panic.
 
 ```go
 log.Debug("Useful debugging information.")
@@ -232,7 +236,7 @@ You can set the logging level on a `Logger`, then it will only log entries with 
 log.SetLevel(log.InfoLevel)
 ```
 
-It may be useful to set `log.Level = logrus.DebugLevel` in a debug or verbose environment if your application has that.
+It may be useful to set `log.Level = log.DebugLevel` in a debug or verbose environment if your application has that.
 
 #### Entries
 
@@ -244,7 +248,7 @@ Besides the fields added with `WithField` or `WithFields` some fields are automa
 
 #### Environments
 
-Logrus has no notion of environment.
+`bdlm/log` has no notion of environment.
 
 If you wish for hooks and formatters to only be used in specific environments, you should handle that yourself. For example, if your application has a global variable `Environment`, which is a string representation of the environment you could do:
 
@@ -265,25 +269,22 @@ init() {
 }
 ```
 
-This configuration is how `logrus` was intended to be used, but JSON in production is mostly only useful if you do log aggregation with tools like Splunk or Logstash.
+This configuration is how `bdlm/log` was intended to be used, but JSON in production is mostly only useful if you do log aggregation with tools like Splunk or Logstash.
 
 #### Formatters
 
 The built-in logging formatters are:
 
-* `logrus.TextFormatter`. Logs the event in colors if stdout is a tty, otherwise without colors.
+* `log.TextFormatter`. Logs the event in colors if stdout is a tty, otherwise without colors.
   * *Note:* to force colored output when there is no TTY, set the `ForceColors` field to `true`.  To force no colored output even if there is a TTY  set the `DisableColors` field to `true`. For Windows, see [github.com/mattn/go-colorable](https://github.com/mattn/go-colorable).
   * When colors are enabled, levels are truncated to 4 characters by default. To disable truncation set the `DisableLevelTruncation` field to `true`.
   * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#TextFormatter).
-* `logrus.JSONFormatter`. Logs fields as JSON.
+* `log.JSONFormatter`. Logs fields as JSON.
   * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#JSONFormatter).
 
 Third party logging formatters:
 
-* [`FluentdFormatter`](https://github.com/joonix/log). Formats entries that can be parsed by Kubernetes and Google Container Engine.
-* [`logstash`](https://github.com/bshuster-repo/logrus-logstash-hook). Logs fields as [Logstash](http://logstash.net) Events.
-* [`prefixed`](https://github.com/x-cray/logrus-prefixed-formatter). Displays log entry source along with alternative layout.
-* [`zalgo`](https://github.com/aybabtme/logzalgo). Invoking the P͉̫o̳̼̊w̖͈̰͎e̬͔̭͂r͚̼̹̲ ̫͓͉̳͈ō̠͕͖̚f̝͍̠ ͕̲̞͖͑Z̖̫̤̫ͪa͉̬͈̗l͖͎g̳̥o̰̥̅!̣͔̲̻͊̄ ̙̘̦̹̦.
+* [`FluentdFormatter`](https://github.com/joonix/log). Formats entries that can be parsed by Kubernetes and Google * [`zalgo`](https://github.com/aybabtme/logzalgo). Invoking the P͉̫o̳̼̊w̖͈̰͎e̬͔̭͂r͚̼̹̲ ̫͓͉̳͈ō̠͕͖̚f̝͍̠ ͕̲̞͖͑Z̖̫̤̫ͪa͉̬͈̗l͖͎g̳̥o̰̥̅!̣͔̲̻͊̄ ̙̘̦̹̦.
 
 You can define your formatter by implementing the `Formatter` interface, requiring a `Format` method. `Format` takes an `*Entry`. `entry.Data` is a `Fields` type (`map[string]interface{}`) with all your fields as well as the default ones (see Entries section above):
 
@@ -307,7 +308,7 @@ func (f *MyJSONFormatter) Format(entry *Entry) ([]byte, error) {
 
 #### Logger as an `io.Writer`
 
-Logrus can be transformed into an `io.Writer`. That writer is the end of an `io.Pipe` and it is your responsibility to close it.
+`bdlm/log` can be transformed into an `io.Writer`. That writer is the end of an `io.Pipe` and it is your responsibility to close it.
 
 ```go
 w := logger.Writer()
@@ -315,7 +316,7 @@ defer w.Close()
 
 srv := http.Server{
     // create a stdlib log.Logger that writes to
-    // logrus.Logger.
+    // log.Logger.
     ErrorLog: log.New(w, "", 0),
 }
 ```
@@ -325,29 +326,21 @@ Each line written to that writer will be printed the usual way, using formatters
 This means that we can override the standard library logger easily:
 
 ```go
-logger := logrus.New()
-logger.Formatter = &logrus.JSONFormatter{}
+logger := log.New()
+logger.Formatter = &log.JSONFormatter{}
 
-// Use logrus for standard log output
+// Use `bdlm/log` for standard log output
 // Note that `log` here references stdlib's log
-// Not logrus imported under the name `log`.
 log.SetOutput(logger.Writer())
 ```
 
 #### Rotation
 
-Log rotation is not provided with Logrus. Log rotation should be done by an external program (like `logrotate(8)`) that can compress and delete old log entries. It should not be a feature of the application-level logger.
-
-#### Tools
-
-| Tool | Description |
-| ---- | ----------- |
-|[Logrus Mate](https://github.com/gogap/logrus_mate)|Logrus mate is a tool for Logrus to manage loggers, you can initial logger's level, hook and formatter by config file, the logger will generated with different config at different environment.|
-|[Logrus Viper Helper](https://github.com/heirko/go-contrib/tree/master/logrusHelper)|An Helper around Logrus to wrap with spf13/Viper to load configuration with fangs! And to simplify Logrus configuration use some behavior of [Logrus Mate](https://github.com/gogap/logrus_mate). [sample](https://github.com/heirko/iris-contrib/blob/master/middleware/logrus-logger/example) |
+Log rotation is not provided with `bdlm/log`. Log rotation should be done by an external program (like `logrotate(8)`) that can compress and delete old log entries. It should not be a feature of the application-level logger.
 
 #### Testing
 
-Logrus has a built in facility for asserting the presence of log messages. This is implemented through the `test` hook and provides:
+`bdlm/log` has a built in facility for asserting the presence of log messages. This is implemented through the `test` hook and provides:
 
 * decorators for existing logger (`test.NewLocal` and `test.NewGlobal`) which basically just add the `test` hook
 * a test logger (`test.NewNullLogger`) that just records log messages (and does not output any):
@@ -365,7 +358,7 @@ func TestSomething(t*testing.T){
   logger.Error("Helloerror")
 
   assert.Equal(t, 1, len(hook.Entries))
-  assert.Equal(t, logrus.ErrorLevel, hook.LastEntry().Level)
+  assert.Equal(t, log.ErrorLevel, hook.LastEntry().Level)
   assert.Equal(t, "Helloerror", hook.LastEntry().Message)
 
   hook.Reset()
@@ -375,14 +368,14 @@ func TestSomething(t*testing.T){
 
 #### Fatal handlers
 
-Logrus can register one or more functions that will be called when any `fatal` level message is logged. The registered handlers will be executed before logrus performs a `os.Exit(1)`. This behavior may be helpful if callers need to gracefully shutdown. Unlike a `panic("Something went wrong...")` call which can be intercepted with a deferred `recover` a call to `os.Exit(1)` can not be intercepted.
+`bdlm/log` can register one or more functions that will be called when any `fatal` level message is logged. The registered handlers will be executed before `bdlm/log` performs a `os.Exit(1)`. This behavior may be helpful if callers need to gracefully shutdown. Unlike a `panic("Something went wrong...")` call which can be intercepted with a deferred `recover` a call to `os.Exit(1)` can not be intercepted.
 
 ```go
 ...
 handler := func() {
   // gracefully shutdown something...
 }
-logrus.RegisterExitHandler(handler)
+log.RegisterExitHandler(handler)
 ...
 ```
 
