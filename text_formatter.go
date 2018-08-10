@@ -2,7 +2,6 @@ package log
 
 import (
 	"bytes"
-	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -133,41 +132,4 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	return append([]byte(strings.Trim(logLine.String(), " \n")), '\n'), nil
-}
-
-func (f *TextFormatter) needsQuoting(text string) bool {
-	if f.QuoteEmptyFields && len(text) == 0 {
-		return true
-	}
-	for _, ch := range text {
-		if !((ch >= 'a' && ch <= 'z') ||
-			(ch >= 'A' && ch <= 'Z') ||
-			(ch >= '0' && ch <= '9') ||
-			ch == '-' || ch == '.' || ch == '_' || ch == '/' || ch == '@' || ch == '^' || ch == '+') {
-			return true
-		}
-	}
-	return false
-}
-
-func (f *TextFormatter) appendKeyValue(b *bytes.Buffer, key string, value interface{}) {
-	if b.Len() > 0 {
-		b.WriteByte(' ')
-	}
-	b.WriteString(key)
-	b.WriteByte('=')
-	f.appendValue(b, value)
-}
-
-func (f *TextFormatter) appendValue(b *bytes.Buffer, value interface{}) {
-	stringVal, ok := value.(string)
-	if !ok {
-		stringVal = fmt.Sprint(value)
-	}
-
-	if !f.needsQuoting(stringVal) {
-		b.WriteString(stringVal)
-	} else {
-		b.WriteString(fmt.Sprintf("%q", stringVal))
-	}
 }
