@@ -1,6 +1,5 @@
 /*
-package log is a structured logger for Go, completely API compatible with the standard library logger.
-
+Package log is a structured logger for Go, completely API compatible with the standard library logger.
 
 The simplest way to use log is simply the package-level exported logger:
 
