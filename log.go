@@ -53,7 +53,7 @@ func ParseLevel(lvl string) (Level, error) {
 	return l, fmt.Errorf("not a valid log Level: %q", lvl)
 }
 
-// A constant exposing all logging levels
+// AllLevels is a constant exposing all logging levels.
 var AllLevels = []Level{
 	PanicLevel,
 	FatalLevel,

@@ -6,18 +6,22 @@ import (
 	"runtime"
 )
 
+// Writer returns an info-level log writer.
 func (logger *Logger) Writer() *io.PipeWriter {
 	return logger.WriterLevel(InfoLevel)
 }
 
+// WriterLevel returns a log writer with a specified leve.
 func (logger *Logger) WriterLevel(level Level) *io.PipeWriter {
 	return NewEntry(logger).WriterLevel(level)
 }
 
+// Writer returns an info-level log writer.
 func (entry *Entry) Writer() *io.PipeWriter {
 	return entry.WriterLevel(InfoLevel)
 }
 
+// WriterLevel returns a log writer with a specified leve.
 func (entry *Entry) WriterLevel(level Level) *io.PipeWriter {
 	reader, writer := io.Pipe()
 

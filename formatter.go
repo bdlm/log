@@ -15,6 +15,7 @@ const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
 
 const defaultTimestampFormat = RFC3339Milli
 
+// FieldLabel is a type for defining label keys.
 type FieldLabel string
 
 // FieldMap allows customization of the key names for default fields.
@@ -73,10 +74,14 @@ func getCaller() string {
 }
 
 const (
+	// DEFAULTColor is the default TTY 'level' color.
 	DEFAULTColor = "\033[38;5;46m"
-	ERRColor     = "\033[38;5;196m"
-	WARNColor    = "\033[38;5;226m"
-	DEBUGColor   = "\033[38;5;245m"
+	// ERRColor is the TTY 'level' color for error messages.
+	ERRColor = "\033[38;5;196m"
+	// WARNColor is the TTY 'level' color for warning messages.
+	WARNColor = "\033[38;5;226m"
+	// DEBUGColor is the TTY 'level' color for debug messages.
+	DEBUGColor = "\033[38;5;245m"
 )
 
 /*

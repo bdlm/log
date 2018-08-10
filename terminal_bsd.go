@@ -7,4 +7,5 @@ import "golang.org/x/sys/unix"
 
 const ioctlReadTermios = unix.TIOCGETA
 
+// Termios contains the unix Termios value.
 type Termios unix.Termios

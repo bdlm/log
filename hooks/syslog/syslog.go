@@ -10,22 +10,23 @@ import (
 	"github.com/bdlm/log"
 )
 
-// SyslogHook to send logs via syslog.
-type SyslogHook struct {
+// Hook to send logs via syslog.
+type Hook struct {
 	Writer        *syslog.Writer
 	SyslogNetwork string
 	SyslogRaddr   string
 }
 
-// Creates a hook to be added to an instance of logger. This is called with
-// `hook, err := NewSyslogHook("udp", "localhost:514", syslog.LOG_DEBUG, "")`
+// NewHook creates a hook to be added to an instance of logger. This is called
+// with `hook, err := NewHook("udp", "localhost:514", syslog.LOG_DEBUG, "")`
 // `if err == nil { log.Hooks.Add(hook) }`
-func NewSyslogHook(network, raddr string, priority syslog.Priority, tag string) (*SyslogHook, error) {
+func NewHook(network, raddr string, priority syslog.Priority, tag string) (*Hook, error) {
 	w, err := syslog.Dial(network, raddr, priority, tag)
-	return &SyslogHook{w, network, raddr}, err
+	return &Hook{Writer: w, SyslogNetwork: network, SyslogRaddr: raddr}, err
 }
 
-func (hook *SyslogHook) Fire(entry *log.Entry) error {
+// Fire executes the syslog hook.
+func (hook *Hook) Fire(entry *log.Entry) error {
 	line, err := entry.String()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to read entry, %v", err)
@@ -50,6 +51,7 @@ func (hook *SyslogHook) Fire(entry *log.Entry) error {
 	}
 }
 
-func (hook *SyslogHook) Levels() []log.Level {
+// Levels returns all available log levels.
+func (hook *Hook) Levels() []log.Level {
 	return log.AllLevels
 }

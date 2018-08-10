@@ -1,14 +1,14 @@
 #!/bin/sh
 set -e
 
-#go get -v github.com/golang/lint/golint
-#[ "0" = "$?" ] || exit 1
+go get -v github.com/golang/lint/golint
+[ "0" = "$?" ] || exit 1
 
 go get -u github.com/golang/dep/cmd/dep
 [ "0" = "$?" ] || exit 2
 
 dep ensure
-[ "0" = "$?" ] || exit 4
+[ "0" = "$?" ] || exit 3
 
 rm -f coverage.txt
 for dir in $(go list ./... | grep -v vendor); do
@@ -23,14 +23,14 @@ for dir in $(go list ./... | grep -v vendor); do
     fi
 done
 
-#exit_code=0
-#for dir in $(go list ./... | grep -v vendor); do
-#    echo "golint $dir"
-#    result=$(golint $dir)
-#    if [ "" != "$result" ]; then
-#        echo $result
-#        exit_code=5
-#    fi
-#done
+exit_code=0
+for dir in $(go list ./... | grep -v vendor); do
+    echo "golint $dir"
+    result=$(golint $dir)
+    if [ "" != "$result" ]; then
+        echo $result
+        exit_code=5
+    fi
+done
 
 exit $exit_code
