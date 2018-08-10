@@ -4,19 +4,19 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strings"
 	"sync"
 	"text/template"
-	"time"
 )
 
 var (
-	baseTimestamp time.Time
-	emptyFieldMap FieldMap
-	termTemplate  = template.Must(template.New("tty").Parse(
-		"[{{.Color}}{{printf \"%.4s\" .Level}}\033[0m] {{if .Hostname}}\033[38;5;39m{{.Hostname}}\033[0m {{end}}{{if .Timestamp}}\033[38;5;3m{{.Timestamp}}\033[0m {{end}}{{if .Message}}\033[1;97m{{.Message}}\033[0m {{end}}{{range $k, $v := .Data}}\033[38;5;159m{{$k}}\033[0m=\"\033[38;5;180m{{$v}}\033[0m\" {{end}}{{if .Caller}}\033[38;5;124m{{.Caller}}\033[0m {{end}}\n",
+	//baseTimestamp time.Time
+	//emptyFieldMap FieldMap
+	termTemplate = template.Must(template.New("tty").Parse(
+		"[{{.Color}}{{printf \"%.4s\" .Level}}\033[0m]{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}}{{if .Message}} \033[1;97m{{.Message}}\033[0m{{end}}{{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\"\033[38;5;180m{{$v}}\033[0m\"{{end}}{{if .Caller}} \033[38;5;124m{{.Caller}}\033[0m{{end}}\n",
 	))
 	textTemplate = template.Must(template.New("log").Parse(
-		`{{if .Timestamp}}time="{{.Timestamp}}" {{end}}level="{{.Level}}" {{if .Message}}msg="{{.Message}}" {{end}}{{range $k, $v := .Data}}{{$k}}="{{$v}}" {{end}}{{if .Caller}}caller="{{.Caller}}" {{end}}{{if .Hostname}}host="{{.Hostname}}" {{end}}` + "\n",
+		`{{if .Timestamp}} time="{{.Timestamp}}"{{end}} level="{{.Level}}"{{if .Message}} msg="{{.Message}}"{{end}}{{range $k, $v := .Data}} {{$k}}="{{$v}}"{{end}}{{if .Caller}} caller="{{.Caller}}"{{end}}{{if .Hostname}} host="{{.Hostname}}"{{end}}`,
 	))
 )
 
@@ -103,7 +103,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 	f.Do(func() { f.init(entry) })
 
-	data := getData(entry)
+	data := getData(entry, f.FieldMap)
 	if f.DisableTimestamp {
 		data.Timestamp = ""
 	} else if "" != f.TimestampFormat {
@@ -122,7 +122,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		if nil != err {
 			return nil, err
 		}
-		return logLine.Bytes(), nil
+		return append([]byte(strings.Trim(string(logLine.Bytes()), " \n")), '\n'), nil
 
 	}
 
@@ -131,7 +131,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		return nil, err
 	}
 	logLine.WriteByte('\n')
-	return logLine.Bytes(), nil
+	return append([]byte(strings.Trim(string(logLine.Bytes()), " \n")), '\n'), nil
 }
 
 func (f *TextFormatter) needsQuoting(text string) bool {

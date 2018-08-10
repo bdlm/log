@@ -15,6 +15,28 @@ const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
 
 const defaultTimestampFormat = RFC3339Milli
 
+type FieldLabel string
+
+// FieldMap allows customization of the key names for default fields.
+type FieldMap map[FieldLabel]string
+
+// Default key names for the default fields
+const (
+	LabelCaller = "caller"
+	LabelData   = "data"
+	LabelHost   = "host"
+	LabelLevel  = "level"
+	LabelMsg    = "msg"
+	LabelTime   = "time"
+)
+
+func (f FieldMap) resolve(fieldLabel FieldLabel) string {
+	if definedLabel, ok := f[fieldLabel]; ok {
+		return definedLabel
+	}
+	return string(fieldLabel)
+}
+
 type logData struct {
 	Timestamp string                 `json:"time,omitempty"`
 	Level     string                 `json:"level,omitempty"`
@@ -62,7 +84,7 @@ const (
 /*
 getData is a helper function that extracts log data from the Entry.
 */
-func getData(entry *Entry) *logData {
+func getData(entry *Entry, fieldMap FieldMap) *logData {
 	var levelColor string
 	switch entry.Level {
 	case DebugLevel:
@@ -89,11 +111,18 @@ func getData(entry *Entry) *logData {
 	for k, v := range entry.Data {
 		switch k {
 		case fieldMap.resolve(LabelCaller):
-		case fieldMap.resolve(LabelData):
+			data.Caller = v.(string)
 		case fieldMap.resolve(LabelHost):
+			data.Hostname = v.(string)
 		case fieldMap.resolve(LabelLevel):
+			data.Level = v.(string)
 		case fieldMap.resolve(LabelMsg):
+			data.Message = v.(string)
 		case fieldMap.resolve(LabelTime):
+			data.Timestamp = v.(string)
+
+		case fieldMap.resolve(LabelData):
+			fallthrough
 		default:
 			keys = append(keys, k)
 			switch v.(type) {
@@ -139,7 +168,6 @@ type Formatter interface {
 // avoid code duplication between the two default formatters.
 func prefixFieldClashes(data Fields, fieldMap FieldMap) {
 	var key string
-
 	for _, field := range []FieldLabel{
 		LabelCaller,
 		LabelData,

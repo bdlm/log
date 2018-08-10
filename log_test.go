@@ -179,7 +179,7 @@ func TestUserSuppliedMsgFieldHasPrefix(t *testing.T) {
 		log.WithField("msg", "hello").Info("test")
 	}, func(data logData) {
 		assert.Equal(t, "test", data.Message)
-		assert.Equal(t, "hello", data.Data[fieldMap.resolve(LabelData)+".msg"])
+		assert.Equal(t, "hello", data.Data["msg"])
 	})
 }
 
@@ -187,7 +187,7 @@ func TestUserSuppliedTimeFieldHasPrefix(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("time", "hello").Info("test")
 	}, func(data logData) {
-		assert.Equal(t, "hello", data.Data[fieldMap.resolve(LabelData)+".time"])
+		assert.Equal(t, "hello", data.Data["time"])
 	})
 }
 
@@ -196,7 +196,7 @@ func TestUserSuppliedLevelFieldHasPrefix(t *testing.T) {
 		log.WithField("level", 1).Info("test")
 	}, func(data logData) {
 		assert.Equal(t, "info", data.Level)
-		assert.Equal(t, 1.0, data.Data[fieldMap.resolve(LabelData)+".level"]) // JSON has floats only
+		assert.Equal(t, 1.0, data.Data["level"]) // JSON has floats only
 	})
 }
 
@@ -209,6 +209,7 @@ func TestDefaultFieldsAreNotPrefixed(t *testing.T) {
 			ll.Info("bye")
 		},
 		func(fields map[string]string) {
+			fieldMap := &FieldMap{}
 			for _, fieldName := range []string{fieldMap.resolve(LabelData) + ".level", fieldMap.resolve(LabelData) + ".time", fieldMap.resolve(LabelData) + ".msg"} {
 				if _, ok := fields[fieldName]; ok {
 					t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
@@ -303,7 +304,7 @@ func TestDoubleLoggingDoesntPrefixPreviousFields(t *testing.T) {
 	assert.NoError(t, err, "should have decoded second message")
 	assert.Equal(t, "omg it is!", data.Message)
 	assert.Equal(t, "eating raw fish", data.Data["context"])
-	assert.Nil(t, data.Data[fieldMap.resolve(LabelData)+".msg"], "should not have prefixed previous `msg` entry")
+	assert.Nil(t, data.Data["msg"], "should not have prefixed previous `msg` entry")
 
 }
 

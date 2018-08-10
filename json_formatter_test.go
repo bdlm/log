@@ -113,9 +113,11 @@ func TestFieldClashWithLevel(t *testing.T) {
 
 func TestFieldClashWithRemappedFields(t *testing.T) {
 	formatter := &JSONFormatter{FieldMap: FieldMap{
-		LabelTime:  "@timestamp",
-		LabelLevel: "@level",
-		LabelMsg:   "@message",
+		LabelTime:   "@timestamp",
+		LabelLevel:  "@level",
+		LabelMsg:    "@message",
+		LabelData:   "@data",
+		LabelCaller: "@caller",
 	}}
 	entry := WithFields(Fields{
 		"@timestamp": "@timestamp",
@@ -150,16 +152,12 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 
 	for _, field := range []string{"@timestamp", "@level", "@message"} {
 		if result.Data[field] == field {
-			t.Errorf("Expected field %v to be mapped to an Entry value: %v", field, result.Data)
-		}
-
-		remappedKey := fmt.Sprintf(formatter.FieldMap.resolve(LabelData)+".%s", field)
-		if remapped, ok := result.Data[remappedKey]; ok {
-			if remapped != field {
-				t.Errorf("Expected field %v to be copied to %s; got %v", field, remappedKey, remapped)
-			}
-		} else {
-			t.Errorf("Expected field %v to be copied to %s; was absent", field, remappedKey)
+			t.Errorf(
+				"Expected field %v to be mapped to an Entry value: %v\n%s\n\n",
+				field,
+				result.Data,
+				string(b),
+			)
 		}
 	}
 }
@@ -272,7 +270,7 @@ func TestJSONDisableTimestamp(t *testing.T) {
 	}
 	s := string(b)
 	if strings.Contains(s, LabelTime) {
-		t.Error("Did not prevent timestamp", s)
+		t.Errorf("Did not prevent timestamp field '%s': %s", LabelTime, s)
 	}
 }
 
