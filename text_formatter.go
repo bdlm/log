@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"text/template"
@@ -127,8 +128,12 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	isColorTerm := (f.ForceColors || f.isTerminal) && !f.DisableColors
 	if isColorTerm {
-		//fmt.Printf("\n\n%v\n\n", data)
-		err := termTemplate.Execute(logLine, data)
+		tmp, err := strconv.Unquote("\"" + data.Message + "\"")
+		if nil == err {
+			data.Message = tmp
+		}
+
+		err = termTemplate.Execute(logLine, data)
 		if nil != err {
 			return nil, err
 		}
