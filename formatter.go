@@ -5,7 +5,6 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"sort"
 	"strconv"
 	"strings"
 )
@@ -107,7 +106,12 @@ func getData(entry *Entry, fieldMap FieldMap) *logData {
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Color:     levelColor,
 	}
+	remapData(entry, fieldMap, data)
 
+	return data
+}
+
+func remapData(entry *Entry, fieldMap FieldMap, data *logData) {
 	keys := make([]string, 0)
 	for k, v := range entry.Data {
 		switch k {
@@ -136,9 +140,6 @@ func getData(entry *Entry, fieldMap FieldMap) *logData {
 			}
 		}
 	}
-	sort.Strings(keys)
-
-	return data
 }
 
 // The Formatter interface is used to implement a custom Formatter. It takes an
