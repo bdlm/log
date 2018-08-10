@@ -84,9 +84,7 @@ const (
 	DEBUGColor = "\033[38;5;245m"
 )
 
-/*
-getData is a helper function that extracts log data from the Entry.
-*/
+// getData is a helper function that extracts log data from the Entry.
 func getData(entry *Entry, fieldMap FieldMap) *logData {
 	var levelColor string
 	switch entry.Level {

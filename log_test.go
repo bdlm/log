@@ -378,7 +378,7 @@ func TestParseLevel(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, DebugLevel, l)
 
-	l, err = ParseLevel("invalid")
+	_, err = ParseLevel("invalid")
 	assert.Equal(t, "not a valid log Level: \"invalid\"", err.Error())
 }
 
