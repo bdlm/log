@@ -210,7 +210,11 @@ func TestDefaultFieldsAreNotPrefixed(t *testing.T) {
 		},
 		func(fields map[string]string) {
 			fieldMap := &FieldMap{}
-			for _, fieldName := range []string{fieldMap.resolve(LabelData) + ".level", fieldMap.resolve(LabelData) + ".time", fieldMap.resolve(LabelData) + ".msg"} {
+			for _, fieldName := range []string{
+				fieldMap.resolve(LabelData) + ".level",
+				fieldMap.resolve(LabelData) + ".time",
+				fieldMap.resolve(LabelData) + ".msg",
+			} {
 				if _, ok := fields[fieldName]; ok {
 					t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
 				}

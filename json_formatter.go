@@ -47,40 +47,24 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	jsonData := map[string]interface{}{}
 
 	//
-	if f.DisableTimestamp {
-		delete(jsonData, f.FieldMap.resolve(LabelTime))
-	} else if "" != f.TimestampFormat {
-		jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
-	} else {
-		jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(defaultTimestampFormat)
-	}
-
-	//
-	if f.DisableHostname {
-		delete(jsonData, f.FieldMap.resolve(LabelHost))
-	} else {
-		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
-	}
-
-	//
-	if f.DisableCaller {
-		delete(jsonData, f.FieldMap.resolve(LabelCaller))
-	} else {
+	if !f.DisableCaller {
 		jsonData[f.FieldMap.resolve(LabelCaller)] = data.Caller
 	}
-
-	//
-	if f.DisableLevel {
-		delete(jsonData, f.FieldMap.resolve(LabelLevel))
-	} else {
+	if !f.DisableHostname {
+		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
+	}
+	if !f.DisableLevel {
 		jsonData[f.FieldMap.resolve(LabelLevel)] = data.Level
 	}
-
-	//
-	if f.DisableMessage {
-		delete(jsonData, f.FieldMap.resolve(LabelMsg))
-	} else {
+	if !f.DisableMessage {
 		jsonData[f.FieldMap.resolve(LabelMsg)] = data.Message
+	}
+	if !f.DisableTimestamp {
+		if "" != f.TimestampFormat {
+			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
+		} else {
+			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(defaultTimestampFormat)
+		}
 	}
 
 	//

@@ -77,15 +77,6 @@ const (
 	ERRColor     = "\033[38;5;196m"
 	WARNColor    = "\033[38;5;226m"
 	DEBUGColor   = "\033[38;5;245m"
-
-	BOLDWHITEColor = "\033[0m\033[1m"
-	BLUEColor      = "\033[38;5;4m" // -- blue
-	GREYColor      = "\033[38;5;8m" // -- grey
-	LTBLUEColor    = "\033[38;5;6m" // -- lt blue
-	PURPLEColor    = "\033[38;5;5m" // -- purple
-	WHITEColor     = "\033[38;5;7m" // -- white
-
-	TSTColor = "\033[38;5;94m" // -- tst
 )
 
 /*
