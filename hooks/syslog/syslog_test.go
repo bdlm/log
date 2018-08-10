@@ -9,7 +9,7 @@ import (
 
 func TestLocalhostAddAndPrint(t *testing.T) {
 	logger := log.New()
-	hook, err := NewSyslogHook("udp", "localhost:514", syslog.LOG_INFO, "")
+	hook, err := NewHook("udp", "localhost:514", syslog.LOG_INFO, "")
 
 	if err != nil {
 		t.Errorf("Unable to connect to local syslog.")
@@ -19,7 +19,7 @@ func TestLocalhostAddAndPrint(t *testing.T) {
 
 	for _, level := range hook.Levels() {
 		if len(logger.Hooks[level]) != 1 {
-			t.Errorf("SyslogHook was not added. The length of logger.Hooks[%v]: %v", level, len(logger.Hooks[level]))
+			t.Errorf("Hook was not added. The length of logger.Hooks[%v]: %v", level, len(logger.Hooks[level]))
 		}
 	}
 
