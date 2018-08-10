@@ -8,19 +8,14 @@ import (
 
 func Example_basic() {
 	var logger = log.New()
-	logger.Formatter = new(log.JSONFormatter)
 	logger.Formatter = new(log.TextFormatter)                     //default
 	logger.Formatter.(*log.TextFormatter).DisableTimestamp = true // remove timestamp from test output
+	logger.Formatter.(*log.TextFormatter).DisableHostname = true  // remove timestamp from test output
+	logger.Formatter.(*log.TextFormatter).DisableCaller = true    // remove caller from test output
 	logger.Level = log.DebugLevel
 	logger.Out = os.Stdout
 
-	// file, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY, 0666)
-	// if err == nil {
-	// 	log.Out = file
-	// } else {
-	// 	log.Info("Failed to log to file, using default stderr")
-	// }
-
+	// Capture the panic result
 	defer func() {
 		err := recover()
 		if err != nil {
@@ -61,10 +56,10 @@ func Example_basic() {
 	}).Panic("It's over 9000!")
 
 	// Output:
-	// level=debug msg="Started observing beach" animal=walrus number=8
-	// level=info msg="A group of walrus emerges from the ocean" animal=walrus size=10
-	// level=warning msg="The group's number increased tremendously!" number=122 omg=true
-	// level=debug msg="Temperature changes" temperature=-4
-	// level=panic msg="It's over 9000!" animal=orca size=9009
-	// level=error msg="The ice breaks!" err_animal=orca err_level=panic err_message="It's over 9000!" err_size=9009 number=100 omg=true
+	// level="debug" msg="Started observing beach" data.animal="walrus" data.number="8"
+	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.size="10"
+	// level="warning" msg="The group's number increased tremendously!" data.number="122" data.omg="true"
+	// level="debug" msg="Temperature changes" data.temperature="-4"
+	// level="panic" msg="It's over 9000!" data.animal="orca" data.size="9009"
+	// level="error" msg="The ice breaks!" data.err_animal="orca" data.err_level="panic" data.err_message="It's over 9000!" data.err_size="9009" data.number="100" data.omg="true"
 }

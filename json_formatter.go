@@ -5,83 +5,72 @@ import (
 	"fmt"
 )
 
-type fieldKey string
-
-// FieldMap allows customization of the key names for default fields.
-type FieldMap map[fieldKey]string
-
-// Default key names for the default fields
-const (
-	FieldKeyMsg   = "msg"
-	FieldKeyLevel = "level"
-	FieldKeyTime  = "time"
-)
-
-func (f FieldMap) resolve(key fieldKey) string {
-	if k, ok := f[key]; ok {
-		return k
-	}
-
-	return string(key)
-}
-
 // JSONFormatter formats logs into parsable json
 type JSONFormatter struct {
-	// TimestampFormat sets the format used for marshaling timestamps.
-	TimestampFormat string
-
-	// DisableTimestamp allows disabling automatic timestamps in output
-	DisableTimestamp bool
-
-	// DataKey allows users to put all the log entry parameters into a nested dictionary at a given key.
+	// DataKey allows users to put all the log entry parameters into a
+	// nested dictionary at a given key.
 	DataKey string
+
+	// DisableCaller controls caller logging.
+	DisableCaller bool
+
+	// DisableHostname controls hostname logging.
+	DisableHostname bool
+
+	// DisableLevel controls level logging.
+	DisableLevel bool
+
+	// DisableMessage controls message logging.
+	DisableMessage bool
+
+	// DisableTimestamp controls timestamp logging.
+	DisableTimestamp bool
 
 	// FieldMap allows users to customize the names of keys for default fields.
 	// As an example:
-	// formatter := &JSONFormatter{
-	//   	FieldMap: FieldMap{
-	// 		 FieldKeyTime: "@timestamp",
-	// 		 FieldKeyLevel: "@level",
-	// 		 FieldKeyMsg: "@message",
-	//    },
-	// }
+	//  formatter := &JSONFormatter{FieldMap: FieldMap{
+	//      LabelTime:  "@timestamp",
+	//      LabelLevel: "@level",
+	//      LabelMsg:   "@message",
+	//  }}
 	FieldMap FieldMap
+
+	// TimestampFormat sets the format used for marshaling timestamps.
+	TimestampFormat string
 }
 
 // Format renders a single log entry
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
-	data := make(Fields, len(entry.Data)+3)
-	for k, v := range entry.Data {
-		switch v := v.(type) {
-		case error:
-			// Otherwise errors are ignored by `encoding/json`
-			// https://github.com/sirupsen/logrus/issues/137
-			data[k] = v.Error()
-		default:
-			data[k] = v
+	prefixFieldClashes(entry.Data, f.FieldMap)
+
+	data := getData(entry, f.FieldMap)
+	jsonData := map[string]interface{}{}
+
+	//
+	if !f.DisableCaller {
+		jsonData[f.FieldMap.resolve(LabelCaller)] = data.Caller
+	}
+	if !f.DisableHostname {
+		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
+	}
+	if !f.DisableLevel {
+		jsonData[f.FieldMap.resolve(LabelLevel)] = data.Level
+	}
+	if !f.DisableMessage {
+		jsonData[f.FieldMap.resolve(LabelMsg)] = data.Message
+	}
+	if !f.DisableTimestamp {
+		if "" != f.TimestampFormat {
+			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
+		} else {
+			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(defaultTimestampFormat)
 		}
 	}
 
-	if f.DataKey != "" {
-		newData := make(Fields, 4)
-		newData[f.DataKey] = data
-		data = newData
-	}
+	//
+	jsonData[f.FieldMap.resolve(LabelData)] = data.Data
 
-	prefixFieldClashes(data, f.FieldMap)
-
-	timestampFormat := f.TimestampFormat
-	if timestampFormat == "" {
-		timestampFormat = defaultTimestampFormat
-	}
-
-	if !f.DisableTimestamp {
-		data[f.FieldMap.resolve(FieldKeyTime)] = entry.Time.Format(timestampFormat)
-	}
-	data[f.FieldMap.resolve(FieldKeyMsg)] = entry.Message
-	data[f.FieldMap.resolve(FieldKeyLevel)] = entry.Level.String()
-
-	serialized, err := json.Marshal(data)
+	serialized, err := json.Marshal(jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
 	}

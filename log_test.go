@@ -3,6 +3,7 @@ package log
 import (
 	"bytes"
 	"encoding/json"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -12,9 +13,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func LogAndAssertJSON(t *testing.T, log func(*Logger), assertions func(fields Fields)) {
+func LogAndAssertJSON(t *testing.T, log func(*Logger), assertions func(data logData)) {
 	var buffer bytes.Buffer
-	var fields Fields
+	var data logData
 
 	logger := New()
 	logger.SetLevel(DebugLevel)
@@ -23,10 +24,10 @@ func LogAndAssertJSON(t *testing.T, log func(*Logger), assertions func(fields Fi
 
 	log(logger)
 
-	err := json.Unmarshal(buffer.Bytes(), &fields)
+	err := json.Unmarshal(buffer.Bytes(), &data)
 	assert.Nil(t, err)
 
-	assertions(fields)
+	assertions(data)
 }
 
 func LogAndAssertText(t *testing.T, log func(*Logger), assertions func(fields map[string]string)) {
@@ -41,14 +42,16 @@ func LogAndAssertText(t *testing.T, log func(*Logger), assertions func(fields ma
 	log(logger)
 
 	fields := make(map[string]string)
-	for _, kv := range strings.Split(buffer.String(), " ") {
+
+	re := regexp.MustCompile(`[a-zA-Z0-9\\.]+=\"(\\"|\\" |[\d\w\s!@#$%^&*()_+\-=\[\]{};':\\|,.<>\/?])*(" |"\n|)`)
+	for _, kv := range re.FindAllString(buffer.String(), -1) {
 		if !strings.Contains(kv, "=") {
 			continue
 		}
 		kvArr := strings.Split(kv, "=")
 		key := strings.TrimSpace(kvArr[0])
-		val := kvArr[1]
-		if kvArr[1][0] == '"' {
+		val := strings.TrimSpace(kvArr[1])
+		if '"' == kvArr[1][0] && "" != string(val) {
 			var err error
 			val, err = strconv.Unquote(val)
 			assert.NoError(t, err)
@@ -61,81 +64,81 @@ func LogAndAssertText(t *testing.T, log func(*Logger), assertions func(fields ma
 func TestPrint(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Print("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
-		assert.Equal(t, fields["level"], "info")
+	}, func(data logData) {
+		assert.Equal(t, "test", data.Message)
+		assert.Equal(t, "info", data.Level)
 	})
 }
 
 func TestInfo(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Info("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
-		assert.Equal(t, fields["level"], "info")
+	}, func(data logData) {
+		assert.Equal(t, "test", data.Message)
+		assert.Equal(t, "info", data.Level)
 	})
 }
 
 func TestWarn(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Warn("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
-		assert.Equal(t, fields["level"], "warning")
+	}, func(data logData) {
+		assert.Equal(t, "test", data.Message)
+		assert.Equal(t, "warning", data.Level)
 	})
 }
 
 func TestInfolnShouldAddSpacesBetweenStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln("test", "test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test test")
+	}, func(data logData) {
+		assert.Equal(t, "test test", data.Message)
 	})
 }
 
 func TestInfolnShouldAddSpacesBetweenStringAndNonstring(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln("test", 10)
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test 10")
+	}, func(data logData) {
+		assert.Equal(t, "test 10", data.Message)
 	})
 }
 
 func TestInfolnShouldAddSpacesBetweenTwoNonStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln(10, 10)
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "10 10")
+	}, func(data logData) {
+		assert.Equal(t, "10 10", data.Message)
 	})
 }
 
 func TestInfoShouldAddSpacesBetweenTwoNonStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln(10, 10)
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "10 10")
+	}, func(data logData) {
+		assert.Equal(t, "10 10", data.Message)
 	})
 }
 
 func TestInfoShouldNotAddSpacesBetweenStringAndNonstring(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Info("test", 10)
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test10")
+	}, func(data logData) {
+		assert.Equal(t, "test10", data.Message)
 	})
 }
 
 func TestInfoShouldNotAddSpacesBetweenStrings(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Info("test", "test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "testtest")
+	}, func(data logData) {
+		assert.Equal(t, "testtest", data.Message)
 	})
 }
 
 func TestWithFieldsShouldAllowAssignments(t *testing.T) {
 	var buffer bytes.Buffer
-	var fields Fields
+	var data logData
 
 	logger := New()
 	logger.Out = &buffer
@@ -146,69 +149,78 @@ func TestWithFieldsShouldAllowAssignments(t *testing.T) {
 	})
 
 	localLog.WithField("key2", "value2").Info("test")
-	err := json.Unmarshal(buffer.Bytes(), &fields)
+	err := json.Unmarshal(buffer.Bytes(), &data)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "value2", fields["key2"])
-	assert.Equal(t, "value1", fields["key1"])
+	assert.Equal(t, "value2", data.Data["key2"])
+	assert.Equal(t, "value1", data.Data["key1"])
 
 	buffer = bytes.Buffer{}
-	fields = Fields{}
+	data = logData{}
 	localLog.Info("test")
-	err = json.Unmarshal(buffer.Bytes(), &fields)
+	err = json.Unmarshal(buffer.Bytes(), &data)
 	assert.Nil(t, err)
 
-	_, ok := fields["key2"]
+	_, ok := data.Data["key2"]
 	assert.Equal(t, false, ok)
-	assert.Equal(t, "value1", fields["key1"])
+	assert.Equal(t, "value1", data.Data["key1"])
 }
 
 func TestUserSuppliedFieldDoesNotOverwriteDefaults(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("msg", "hello").Info("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
+	}, func(data logData) {
+		assert.Equal(t, "test", data.Message)
 	})
 }
 
 func TestUserSuppliedMsgFieldHasPrefix(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("msg", "hello").Info("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "test")
-		assert.Equal(t, fields["fields.msg"], "hello")
+	}, func(data logData) {
+		assert.Equal(t, "test", data.Message)
+		assert.Equal(t, "hello", data.Data["msg"])
 	})
 }
 
 func TestUserSuppliedTimeFieldHasPrefix(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("time", "hello").Info("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["fields.time"], "hello")
+	}, func(data logData) {
+		assert.Equal(t, "hello", data.Data["time"])
 	})
 }
 
 func TestUserSuppliedLevelFieldHasPrefix(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("level", 1).Info("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["level"], "info")
-		assert.Equal(t, fields["fields.level"], 1.0) // JSON has floats only
+	}, func(data logData) {
+		assert.Equal(t, "info", data.Level)
+		assert.Equal(t, 1.0, data.Data["level"]) // JSON has floats only
 	})
 }
 
 func TestDefaultFieldsAreNotPrefixed(t *testing.T) {
-	LogAndAssertText(t, func(log *Logger) {
-		ll := log.WithField("herp", "derp")
-		ll.Info("hello")
-		ll.Info("bye")
-	}, func(fields map[string]string) {
-		for _, fieldName := range []string{"fields.level", "fields.time", "fields.msg"} {
-			if _, ok := fields[fieldName]; ok {
-				t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
+	LogAndAssertText(
+		t,
+		func(log *Logger) {
+			ll := log.WithField("herp", "derp")
+			ll.Info("hello")
+			ll.Info("bye")
+		},
+		func(fields map[string]string) {
+			fieldMap := &FieldMap{}
+			for _, fieldName := range []string{
+				fieldMap.resolve(LabelData) + ".level",
+				fieldMap.resolve(LabelData) + ".time",
+				fieldMap.resolve(LabelData) + ".msg",
+			} {
+				if _, ok := fields[fieldName]; ok {
+					t.Fatalf("should not have prefixed %q: %v", fieldName, fields)
+				}
 			}
-		}
-	})
+		},
+	)
 }
 
 func TestWithTimeShouldOverrideTime(t *testing.T) {
@@ -216,8 +228,8 @@ func TestWithTimeShouldOverrideTime(t *testing.T) {
 
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithTime(now).Info("foobar")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["time"], now.Format(defaultTimestampFormat))
+	}, func(data logData) {
+		assert.Equal(t, now.Format(defaultTimestampFormat), data.Timestamp)
 	})
 }
 
@@ -226,9 +238,9 @@ func TestWithTimeShouldNotOverrideFields(t *testing.T) {
 
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithField("herp", "derp").WithTime(now).Info("blah")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["time"], now.Format(defaultTimestampFormat))
-		assert.Equal(t, fields["herp"], "derp")
+	}, func(data logData) {
+		assert.Equal(t, now.Format(defaultTimestampFormat), data.Timestamp)
+		assert.Equal(t, "derp", data.Data["herp"])
 	})
 }
 
@@ -237,9 +249,9 @@ func TestWithFieldShouldNotOverrideTime(t *testing.T) {
 
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.WithTime(now).WithField("herp", "derp").Info("blah")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["time"], now.Format(defaultTimestampFormat))
-		assert.Equal(t, fields["herp"], "derp")
+	}, func(data logData) {
+		assert.Equal(t, now.Format(defaultTimestampFormat), data.Timestamp)
+		assert.Equal(t, "derp", data.Data["herp"])
 	})
 }
 
@@ -273,7 +285,7 @@ func TestTimeOverrideMultipleLogs(t *testing.T) {
 func TestDoubleLoggingDoesntPrefixPreviousFields(t *testing.T) {
 
 	var buffer bytes.Buffer
-	var fields Fields
+	var data logData
 
 	logger := New()
 	logger.Out = &buffer
@@ -283,22 +295,20 @@ func TestDoubleLoggingDoesntPrefixPreviousFields(t *testing.T) {
 
 	llog.Info("looks delicious")
 
-	err := json.Unmarshal(buffer.Bytes(), &fields)
+	err := json.Unmarshal(buffer.Bytes(), &data)
 	assert.NoError(t, err, "should have decoded first message")
-	assert.Equal(t, len(fields), 4, "should only have msg/time/level/context fields")
-	assert.Equal(t, fields["msg"], "looks delicious")
-	assert.Equal(t, fields["context"], "eating raw fish")
+	assert.Equal(t, "looks delicious", data.Message)
+	assert.Equal(t, "eating raw fish", data.Data["context"])
 
 	buffer.Reset()
 
 	llog.Warn("omg it is!")
 
-	err = json.Unmarshal(buffer.Bytes(), &fields)
+	err = json.Unmarshal(buffer.Bytes(), &data)
 	assert.NoError(t, err, "should have decoded second message")
-	assert.Equal(t, len(fields), 4, "should only have msg/time/level/context fields")
-	assert.Equal(t, fields["msg"], "omg it is!")
-	assert.Equal(t, fields["context"], "eating raw fish")
-	assert.Nil(t, fields["fields.msg"], "should not have prefixed previous `msg` entry")
+	assert.Equal(t, "omg it is!", data.Message)
+	assert.Equal(t, "eating raw fish", data.Data["context"])
+	assert.Nil(t, data.Data["msg"], "should not have prefixed previous `msg` entry")
 
 }
 
@@ -439,11 +449,11 @@ func TestEntryWriter(t *testing.T) {
 	log.WithField("foo", "bar").WriterLevel(WarnLevel).Write([]byte("hello\n"))
 
 	bs := <-cw
-	var fields Fields
-	err := json.Unmarshal(bs, &fields)
+	var data logData
+	err := json.Unmarshal(bs, &data)
 	assert.Nil(t, err)
-	assert.Equal(t, fields["foo"], "bar")
-	assert.Equal(t, fields["level"], "warning")
+	assert.Equal(t, "bar", data.Data["foo"])
+	assert.Equal(t, "warning", data.Level)
 }
 
 func TestLogSecrets(t *testing.T) {
@@ -453,22 +463,22 @@ func TestLogSecrets(t *testing.T) {
 
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Debugln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "my secret text is '**************'. and I know ******* and *******")
+	}, func(data logData) {
+		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "my secret text is '**************'. and I know ******* and *******")
+	}, func(data logData) {
+		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Warnln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "my secret text is '**************'. and I know ******* and *******")
+	}, func(data logData) {
+		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Errorln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["msg"], "my secret text is '**************'. and I know ******* and *******")
+	}, func(data logData) {
+		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
 	})
 }

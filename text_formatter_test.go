@@ -12,61 +12,27 @@ import (
 )
 
 func TestFormatting(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true}
+	tf := &TextFormatter{DisableColors: true, DisableHostname: true}
 
 	testCases := []struct {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00Z\" level=panic test=foo\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" data.test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
 		b, _ := tf.Format(WithField("test", tc.value))
 
 		if string(b) != tc.expected {
-			t.Errorf("formatting expected for %q (result was %q instead of %q)", tc.value, string(b), tc.expected)
+			t.Errorf(
+				"formatting expected for %q (result was %q instead of %q)",
+				tc.value,
+				string(b),
+				tc.expected,
+			)
 		}
 	}
-}
-
-func TestQuoting(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true}
-
-	checkQuoting := func(q bool, value interface{}) {
-		b, _ := tf.Format(WithField("test", value))
-		idx := bytes.Index(b, ([]byte)("test="))
-		cont := bytes.Contains(b[idx+5:], []byte("\""))
-		if cont != q {
-			if q {
-				t.Errorf("quoting expected for: %#v", value)
-			} else {
-				t.Errorf("quoting not expected for: %#v", value)
-			}
-		}
-	}
-
-	checkQuoting(false, "")
-	checkQuoting(false, "abcd")
-	checkQuoting(false, "v1.0")
-	checkQuoting(false, "1234567890")
-	checkQuoting(false, "/foobar")
-	checkQuoting(false, "foo_bar")
-	checkQuoting(false, "foo@bar")
-	checkQuoting(false, "foobar^")
-	checkQuoting(false, "+/-_^@f.oobar")
-	checkQuoting(true, "foobar$")
-	checkQuoting(true, "&foobar")
-	checkQuoting(true, "x y")
-	checkQuoting(true, "x,y")
-	checkQuoting(false, errors.New("invalid"))
-	checkQuoting(true, errors.New("invalid argument"))
-
-	// Test for quoting empty fields.
-	tf.QuoteEmptyFields = true
-	checkQuoting(true, "")
-	checkQuoting(false, "abcd")
-	checkQuoting(true, errors.New("invalid argument"))
 }
 
 func TestEscaping(t *testing.T) {
@@ -113,7 +79,7 @@ func TestTimestampFormat(t *testing.T) {
 	checkTimeStr := func(format string) {
 		customFormatter := &TextFormatter{DisableColors: true, TimestampFormat: format}
 		customStr, _ := customFormatter.Format(WithField("test", "test"))
-		timeStart := bytes.Index(customStr, ([]byte)("time="))
+		timeStart := bytes.Index(customStr, ([]byte)("time=\""))
 		timeEnd := bytes.Index(customStr, ([]byte)("level="))
 		timeStr := customStr[timeStart+5+len("\"") : timeEnd-1-len("\"")]
 		if format == "" {
@@ -121,7 +87,7 @@ func TestTimestampFormat(t *testing.T) {
 		}
 		_, e := time.Parse(format, (string)(timeStr))
 		if e != nil {
-			t.Errorf("time string \"%s\" did not match provided time format \"%s\": %s", timeStr, format, e)
+			t.Errorf(`time string '%s' did not match provided time format '%s': %s`, timeStr, format, e)
 		}
 	}
 
@@ -130,43 +96,43 @@ func TestTimestampFormat(t *testing.T) {
 	checkTimeStr("")
 }
 
-func TestDisableLevelTruncation(t *testing.T) {
-	entry := &Entry{
-		Time:    time.Now(),
-		Message: "testing",
-	}
-	keys := []string{}
-	timestampFormat := "Mon Jan 2 15:04:05 -0700 MST 2006"
-	checkDisableTruncation := func(disabled bool, level Level) {
-		tf := &TextFormatter{DisableLevelTruncation: disabled}
-		var b bytes.Buffer
-		entry.Level = level
-		tf.printColored(&b, entry, keys, timestampFormat)
-		logLine := (&b).String()
-		if disabled {
-			expected := strings.ToUpper(level.String())
-			if !strings.Contains(logLine, expected) {
-				t.Errorf("level string expected to be %s when truncation disabled", expected)
-			}
-		} else {
-			expected := strings.ToUpper(level.String())
-			if len(level.String()) > 4 {
-				if strings.Contains(logLine, expected) {
-					t.Errorf("level string %s expected to be truncated to %s when truncation is enabled", expected, expected[0:4])
-				}
-			} else {
-				if !strings.Contains(logLine, expected) {
-					t.Errorf("level string expected to be %s when truncation is enabled and level string is below truncation threshold", expected)
-				}
-			}
-		}
-	}
-
-	checkDisableTruncation(true, DebugLevel)
-	checkDisableTruncation(true, InfoLevel)
-	checkDisableTruncation(false, ErrorLevel)
-	checkDisableTruncation(false, InfoLevel)
-}
+//func TestDisableLevelTruncation(t *testing.T) {
+//	entry := &Entry{
+//		Time:    time.Now(),
+//		Message: "testing",
+//	}
+//	keys := []string{}
+//	timestampFormat := "Mon Jan 2 15:04:05 -0700 MST 2006"
+//	checkDisableTruncation := func(disabled bool, level Level) {
+//		tf := &TextFormatter{DisableLevelTruncation: disabled}
+//		var b bytes.Buffer
+//		entry.Level = level
+//		tf.printColored(&b, entry, keys, timestampFormat)
+//		logLine := (&b).String()
+//		if disabled {
+//			expected := strings.ToUpper(level.String())
+//			if !strings.Contains(logLine, expected) {
+//				t.Errorf("level string expected to be %s when truncation disabled", expected)
+//			}
+//		} else {
+//			expected := strings.ToUpper(level.String())
+//			if len(level.String()) > 4 {
+//				if strings.Contains(logLine, expected) {
+//					t.Errorf("level string %s expected to be truncated to %s when truncation is enabled", expected, expected[0:4])
+//				}
+//			} else {
+//				if !strings.Contains(logLine, expected) {
+//					t.Errorf("level string expected to be %s when truncation is enabled and level string is below truncation threshold", expected)
+//				}
+//			}
+//		}
+//	}
+//
+//	checkDisableTruncation(true, DebugLevel)
+//	checkDisableTruncation(true, InfoLevel)
+//	checkDisableTruncation(false, ErrorLevel)
+//	checkDisableTruncation(false, InfoLevel)
+//}
 
 func TestDisableTimestampWithColoredOutput(t *testing.T) {
 	tf := &TextFormatter{DisableTimestamp: true, ForceColors: true}
@@ -178,12 +144,18 @@ func TestDisableTimestampWithColoredOutput(t *testing.T) {
 }
 
 func TestTextFormatterFieldMap(t *testing.T) {
+
 	formatter := &TextFormatter{
-		DisableColors: true,
+		DisableColors:   true,
+		DisableHostname: true,
+		DisableCaller:   true,
 		FieldMap: FieldMap{
-			FieldKeyMsg:   "message",
-			FieldKeyLevel: "somelevel",
-			FieldKeyTime:  "timeywimey",
+			LabelCaller: "caller-label",
+			LabelData:   "data-label",
+			LabelHost:   "host-label",
+			LabelLevel:  "level-label",
+			LabelMsg:    "msg-label",
+			LabelTime:   "time-field-label",
 		},
 	}
 
@@ -192,10 +164,10 @@ func TestTextFormatterFieldMap(t *testing.T) {
 		Level:   WarnLevel,
 		Time:    time.Date(1981, time.February, 24, 4, 28, 3, 100, time.UTC),
 		Data: Fields{
-			"field1":     "f1",
-			"message":    "messagefield",
-			"somelevel":  "levelfield",
-			"timeywimey": "timeywimeyfield",
+			"field1":           "f1",
+			"msg-label":        "messagefield",
+			"level-label":      "levelfield",
+			"time-field-label": "timefield",
 		},
 	}
 
@@ -204,14 +176,15 @@ func TestTextFormatterFieldMap(t *testing.T) {
 		t.Fatal("Unable to format entry: ", err)
 	}
 
-	assert.Equal(t,
-		`timeywimey="1981-02-24T04:28:03Z" `+
-			`somelevel=warning `+
-			`message="oh hi" `+
-			`field1=f1 `+
-			`fields.message=messagefield `+
-			`fields.somelevel=levelfield `+
-			`fields.timeywimey=timeywimeyfield`+"\n",
+	assert.Equal(
+		t,
+		`time-field-label="1981-02-24T04:28:03.000Z" `+
+			`level-label="warning" `+
+			`msg-label="oh hi" `+
+			`data-label.field1="f1" `+
+			`data-label.level-label="levelfield" `+
+			`data-label.msg-label="messagefield" `+
+			`data-label.time-field-label="timefield"`+"\n",
 		string(b),
 		"Formatted output doesn't respect FieldMap")
 }

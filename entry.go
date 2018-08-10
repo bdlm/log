@@ -19,13 +19,13 @@ func init() {
 	}
 }
 
-// Defines the key when adding errors using WithError.
+// ErrorKey defines the key when adding errors using WithError.
 var ErrorKey = "error"
 
-// An entry is the final or intermediate Logrus logging entry. It contains all
-// the fields passed with WithField{,s}. It's finally logged when Debug, Info,
-// Warn, Error, Fatal or Panic is called on it. These objects can be reused and
-// passed around as much as you wish to avoid field duplication.
+// Entry is the final or intermediate logging entry. It contains all the
+// fields passed with WithField{,s}. It's finally logged when Debug, Info,
+// Warn, Error, Fatal or Panic is called on it. These objects can be reused
+// and passed around as much as you wish to avoid field duplication.
 type Entry struct {
 	Logger *Logger
 
@@ -56,9 +56,7 @@ func NewEntry(logger *Logger) *Entry {
 	}
 }
 
-/*
-AddSecret adds a string to the sanitization list.
-*/
+// AddSecret adds a string to the sanitization list.
 func AddSecret(secret string) {
 	for _, str := range sanitizeStrings {
 		if str == secret {
@@ -68,7 +66,7 @@ func AddSecret(secret string) {
 	sanitizeStrings = append(sanitizeStrings, secret)
 }
 
-// Returns the string representation from the reader and ultimately the
+// String returns the string representation from the reader and ultimately the
 // formatter.
 func (entry *Entry) String() (string, error) {
 	serialized, err := entry.Logger.Formatter.Format(entry)
@@ -79,29 +77,31 @@ func (entry *Entry) String() (string, error) {
 	return str, nil
 }
 
-// Add an error as single field (using the key defined in ErrorKey) to the Entry.
+// WithError add an error as single field (using the key defined in ErrorKey) to the Entry.
 func (entry *Entry) WithError(err error) *Entry {
 	return entry.WithField(ErrorKey, err)
 }
 
-// Add a single field to the Entry.
+// WithField add a single field to the Entry.
 func (entry *Entry) WithField(key string, value interface{}) *Entry {
 	return entry.WithFields(Fields{key: value})
 }
 
-// Add a map of fields to the Entry.
+// WithFields adds a map of fields to the Entry.
 func (entry *Entry) WithFields(fields Fields) *Entry {
-	data := make(Fields, len(entry.Data)+len(fields))
+
+	data := Fields{}
 	for k, v := range entry.Data {
 		data[k] = v
 	}
 	for k, v := range fields {
 		data[k] = v
 	}
+
 	return &Entry{Logger: entry.Logger, Data: data, Time: entry.Time}
 }
 
-// Overrides the time of the Entry.
+// WithTime overrides the time of the Entry.
 func (entry *Entry) WithTime(t time.Time) *Entry {
 	return &Entry{Logger: entry.Logger, Data: entry.Data, Time: t}
 }

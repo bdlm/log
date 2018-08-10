@@ -1,8 +1,142 @@
 package log
 
-import "time"
+import (
+	"fmt"
+	"os"
+	"path"
+	"runtime"
+	"sort"
+	"strconv"
+	"strings"
+)
 
-const defaultTimestampFormat = time.RFC3339
+// RFC3339Milli defines an RFC3339 date format with miliseconds
+const RFC3339Milli = "2006-01-02T15:04:05.000Z07:00"
+
+const defaultTimestampFormat = RFC3339Milli
+
+type FieldLabel string
+
+// FieldMap allows customization of the key names for default fields.
+type FieldMap map[FieldLabel]string
+
+// Default key names for the default fields
+const (
+	LabelCaller = "caller"
+	LabelData   = "data"
+	LabelHost   = "host"
+	LabelLevel  = "level"
+	LabelMsg    = "msg"
+	LabelTime   = "time"
+)
+
+func (f FieldMap) resolve(fieldLabel FieldLabel) string {
+	if definedLabel, ok := f[fieldLabel]; ok {
+		return definedLabel
+	}
+	return string(fieldLabel)
+}
+
+type logData struct {
+	LabelCaller string
+	LabelData   string
+	LabelHost   string
+	LabelLevel  string
+	LabelMsg    string
+	LabelTime   string
+
+	Caller    string                 `json:"caller,omitempty"`
+	Color     string                 `json:"-"`
+	Data      map[string]interface{} `json:"data,omitempty"`
+	Hostname  string                 `json:"host,omitempty"`
+	Level     string                 `json:"level,omitempty"`
+	Message   string                 `json:"msg,omitempty"`
+	Timestamp string                 `json:"time,omitempty"`
+}
+
+func getCaller() string {
+	caller := ""
+	a := 0
+	for {
+		if pc, file, line, ok := runtime.Caller(a); ok {
+			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
+				strings.HasSuffix(strings.ToLower(file), "_test.go") {
+				caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+				break
+			}
+		} else {
+			break
+		}
+		a++
+	}
+	return caller
+}
+
+const (
+	DEFAULTColor = "\033[38;5;46m"
+	ERRColor     = "\033[38;5;196m"
+	WARNColor    = "\033[38;5;226m"
+	DEBUGColor   = "\033[38;5;245m"
+)
+
+/*
+getData is a helper function that extracts log data from the Entry.
+*/
+func getData(entry *Entry, fieldMap FieldMap) *logData {
+	var levelColor string
+	switch entry.Level {
+	case DebugLevel:
+		levelColor = DEBUGColor
+	case WarnLevel:
+		levelColor = WARNColor
+	case ErrorLevel, FatalLevel, PanicLevel:
+		levelColor = ERRColor
+	default:
+		levelColor = DEFAULTColor
+	}
+
+	data := &logData{
+		Caller:    strings.Trim(strconv.QuoteToASCII(getCaller()), `"`),
+		Data:      make(map[string]interface{}),
+		Hostname:  strings.Trim(strconv.QuoteToASCII(os.Getenv("HOSTNAME")), `"`),
+		Level:     strings.Trim(strconv.QuoteToASCII(entry.Level.String()), `"`),
+		Message:   entry.Message,
+		Timestamp: entry.Time.Format(RFC3339Milli),
+		Color:     levelColor,
+	}
+
+	keys := make([]string, 0)
+	for k, v := range entry.Data {
+		switch k {
+		case fieldMap.resolve(LabelCaller):
+			data.Caller = v.(string)
+		case fieldMap.resolve(LabelHost):
+			data.Hostname = v.(string)
+		case fieldMap.resolve(LabelLevel):
+			data.Level = v.(string)
+		case fieldMap.resolve(LabelMsg):
+			data.Message = v.(string)
+		case fieldMap.resolve(LabelTime):
+			data.Timestamp = v.(string)
+
+		case fieldMap.resolve(LabelData):
+			fallthrough
+		default:
+			keys = append(keys, k)
+			switch v.(type) {
+			case string:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
+			case error:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v.(error).Error()
+			default:
+				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v
+			}
+		}
+	}
+	sort.Strings(keys)
+
+	return data
+}
 
 // The Formatter interface is used to implement a custom Formatter. It takes an
 // `Entry`. It exposes all the fields, including the default ones:
@@ -21,7 +155,7 @@ type Formatter interface {
 // This is to not silently overwrite `time`, `msg` and `level` fields when
 // dumping it. If this code wasn't there doing:
 //
-//  log.WithField("level", 1).Info("hello")
+//  WithField("level", 1).Info("hello")
 //
 // Would just silently drop the user provided level. Instead with this code
 // it'll logged as:
@@ -31,21 +165,19 @@ type Formatter interface {
 // It's not exported because it's still using Data in an opinionated way. It's to
 // avoid code duplication between the two default formatters.
 func prefixFieldClashes(data Fields, fieldMap FieldMap) {
-	timeKey := fieldMap.resolve(FieldKeyTime)
-	if t, ok := data[timeKey]; ok {
-		data["fields."+timeKey] = t
-		delete(data, timeKey)
-	}
-
-	msgKey := fieldMap.resolve(FieldKeyMsg)
-	if m, ok := data[msgKey]; ok {
-		data["fields."+msgKey] = m
-		delete(data, msgKey)
-	}
-
-	levelKey := fieldMap.resolve(FieldKeyLevel)
-	if l, ok := data[levelKey]; ok {
-		data["fields."+levelKey] = l
-		delete(data, levelKey)
+	var key string
+	for _, field := range []FieldLabel{
+		LabelCaller,
+		LabelData,
+		LabelHost,
+		LabelLevel,
+		LabelMsg,
+		LabelTime,
+	} {
+		key = fieldMap.resolve(field)
+		if t, ok := data[key]; ok {
+			data[fieldMap.resolve(LabelData)+"."+key] = t
+			delete(data, key)
+		}
 	}
 }

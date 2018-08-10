@@ -19,7 +19,7 @@ func TestRegister(t *testing.T) {
 }
 
 func TestHandler(t *testing.T) {
-	tempDir, err := ioutil.TempDir("", "test_handler")
+	tempDir, err := ioutil.TempDir("", "bdlm_log_test_")
 	if err != nil {
 		log.Fatalf("can't create temp dir. %q", err)
 	}
@@ -53,7 +53,7 @@ var testprog = []byte(`
 package main
 
 import (
-	"github.com/sirupsen/logrus"
+	"github.com/bdlm/log"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -76,8 +76,8 @@ func main() {
 	outfile = flag.Arg(0)
 	data = flag.Arg(1)
 
-	logrus.RegisterExitHandler(handler)
-	logrus.RegisterExitHandler(badHandler)
-	logrus.Fatal("Bye bye")
+	log.RegisterExitHandler(handler)
+	log.RegisterExitHandler(badHandler)
+	log.Fatal("Bye bye")
 }
 `)

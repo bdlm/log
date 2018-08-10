@@ -35,7 +35,7 @@ func TestHookFires(t *testing.T) {
 		assert.Equal(t, hook.Fired, false)
 
 		log.Print("test")
-	}, func(fields Fields) {
+	}, func(data logData) {
 		assert.Equal(t, hook.Fired, true)
 	})
 }
@@ -65,8 +65,8 @@ func TestHookCanModifyEntry(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Hooks.Add(hook)
 		log.WithField("wow", "elephant").Print("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["wow"], "whale")
+	}, func(data logData) {
+		assert.Equal(t, "whale", data.Data["wow"])
 	})
 }
 
@@ -79,8 +79,8 @@ func TestCanFireMultipleHooks(t *testing.T) {
 		log.Hooks.Add(hook2)
 
 		log.WithField("wow", "elephant").Print("test")
-	}, func(fields Fields) {
-		assert.Equal(t, fields["wow"], "whale")
+	}, func(data logData) {
+		assert.Equal(t, data.Data["wow"], "whale")
 		assert.Equal(t, hook2.Fired, true)
 	})
 }
@@ -106,7 +106,7 @@ func TestErrorHookShouldntFireOnInfo(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Hooks.Add(hook)
 		log.Info("test")
-	}, func(fields Fields) {
+	}, func(data logData) {
 		assert.Equal(t, hook.Fired, false)
 	})
 }
@@ -117,7 +117,7 @@ func TestErrorHookShouldFireOnError(t *testing.T) {
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Hooks.Add(hook)
 		log.Error("test")
-	}, func(fields Fields) {
+	}, func(data logData) {
 		assert.Equal(t, hook.Fired, true)
 	})
 }
@@ -136,7 +136,7 @@ func TestAddHookRace(t *testing.T) {
 			log.Error("test")
 		}()
 		wg.Wait()
-	}, func(fields Fields) {
+	}, func(data logData) {
 		// the line may have been logged
 		// before the hook was added, so we can't
 		// actually assert on the hook
