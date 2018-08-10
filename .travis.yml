@@ -21,6 +21,7 @@ go:
 
 env:
     - GOMAXPROCS=4 GORACE=halt_on_error=1
+
 script:
     - sh .travis.sh
 
