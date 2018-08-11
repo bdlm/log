@@ -11,7 +11,11 @@
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 </p>
 
-`bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/bdlm/log) package that adds support for sanitizing strings from log output to aid in preventing leaking sensitive data.
+`bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/bdlm/log) package. This package adds:
+
+* support for sanitizing strings from log output to aid in preventing leaking sensitive data.
+* additional default fields `host` and `caller`
+* support for supporessing any default field
 
 # log
 
@@ -437,5 +441,4 @@ Situation when locking is not needed includes:
 * Writing to logger.Out is already thread-safe, for example:
   1. logger.Out is protected by locks.
   1. logger.Out is a os.File handler opened with `O_APPEND` flag, and every write is smaller than 4k. (This allow multi-thread/multi-process writing)
-
   (Refer to http://www.notthewizard.com/2014/06/17/are-files-appends-really-atomic/)
