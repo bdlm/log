@@ -7,6 +7,12 @@ import (
 
 // JSONFormatter formats logs into parsable json
 type JSONFormatter struct {
+	// Force disabling colors.
+	DisableTTY bool
+
+	// Set to true to bypass checking for a TTY before outputting colors.
+	ForceTTY bool
+
 	// DataKey allows users to put all the log entry parameters into a
 	// nested dictionary at a given key.
 	DataKey string

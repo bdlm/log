@@ -33,10 +33,10 @@ time="2018-08-10T20:44:08.708-06:00" level="panic" msg="The walrus are attacking
 time="2018-08-10T20:44:08.708-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:24 main.main.func1" host="myhost"
 ```
 
-For development, color-coded output formated for humans is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
+For development, color-coded output formated for humans is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
 
 <p align="center">
-  <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
 </p>
 
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
@@ -53,13 +53,13 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 The full list of `Formatter` properties that can be set is:
 ```go
 // Set to true to bypass checking for a TTY before outputting colors.
-ForceColors bool
+ForceTTY bool
 
 // Disable caller data.
 DisableCaller bool
 
 // Force disabling colors.
-DisableColors bool
+DisableTTY bool
 
 // Disable timestamp logging. useful when output is redirected to logging
 // system that already adds timestamps.
@@ -88,73 +88,95 @@ FieldMap FieldMap
 
 #### Simple usage
 
-The simplest way to use `bdlm/log` is simply the package-level exported logger:
+The simplest way to use `bdlm/log` is simply the exported package logger:
 
 ```go
 package main
 
 import (
-  log "github.com/bdlm/log"
+    log "github.com/bdlm/log"
 )
 
 func main() {
-  log.WithFields(log.Fields{
-    "animal": "walrus",
-  }).Info("A walrus appears")
+    log.WithFields(log.Fields{
+        "animal": "walrus",
+    }).Info("A walrus appears")
 }
 ```
 
 #### Compatibility
 
-Note that it is completely api-compatible with the stdlib logger, so you can replace your `log`
-imports everywhere with `"github.com/bdlm/log"` and you'll have the full flexibility of
-`bdlm/log` available. You can customize it further in your code:
+Note that it is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
+
+#### Customization
+
+The logger has several options youc an use to further customize it's output in your code:
 
 ```go
 package main
 
 import (
-  "os"
-  log "github.com/bdlm/log"
+    "os"
+    log "github.com/bdlm/log"
 )
 
 func init() {
-  // Log as JSON instead of the default ASCII formatter.
-  log.SetFormatter(&log.JSONFormatter{})
+    // Blacklist a string from appearing in the log. The characters in any
+    // substring match to a word that has been added will be replaced with
+    // asterisks (*).
+    log.AddSecret("some-secret-text")
 
-  // Output to stdout instead of the default stderr. Can be any io.Writer, see
-  // below for a File example.
-  log.SetOutput(os.Stdout)
+    // Register a function that will execute prior to the os.Exit call when a
+    // fatal error is logged.
+    log.RegisterExitHandler(func() {
+        // gracefully shutdown something...
+    })
 
-  // Only log the warning severity or above.
-  log.SetLevel(log.WarnLevel)
+    // Log as JSON instead of the default ASCII formatter.
+    log.SetFormatter(&log.TextFormatter{
+        // Set various formatter options:
+        //   DisableCaller:    true
+        //   DisableTTY:    true
+        //   DisableTimestamp: true
+        //   DisableHostname:  true
+        //   ForceTTY:      true
+        //   TimestampFormat:  "2006"
+        //   FieldMap:         FieldMap{LabelMsg: "message"}
+    })
+
+    // Output to stdout instead of the default stderr. Can be any io.Writer, see
+    // below for a File example.
+    log.SetOutput(os.Stdout)
+
+    // Only log the warning severity or above.
+    log.SetLevel(log.WarnLevel)
 }
 
 func main() {
-  log.WithFields(log.Fields{
-    "animal": "walrus",
-    "size":   10,
-  }).Info("A group of walrus emerges from the ocean")
+    log.WithFields(log.Fields{
+        "animal": "walrus",
+        "size":   10,
+    }).Info("A group of walrus emerges from the ocean")
 
-  log.WithFields(log.Fields{
-    "omg":    true,
-    "number": 122,
-  }).Warn("The group's number increased tremendously!")
+    log.WithFields(log.Fields{
+        "omg":    true,
+        "number": 122,
+    }).Warn("The group's number increased tremendously!")
 
-  log.WithFields(log.Fields{
-    "omg":    true,
-    "number": 100,
-  }).Fatal("The ice breaks!")
+    log.WithFields(log.Fields{
+        "omg":    true,
+        "number": 100,
+    }).Fatal("The ice breaks!")
 
-  // A common pattern is to re-use fields between logging statements by re-using
-  // the log.Entry returned from WithFields()
-  contextLogger := log.WithFields(log.Fields{
-    "common": "this is a common field",
-    "other": "I also should be logged always",
-  })
+    // A common pattern is to re-use fields between logging statements by re-using
+    // the log.Entry returned from WithFields()
+    contextLogger := log.WithFields(log.Fields{
+        "common": "this is a common field",
+        "other": "I also should be logged always",
+    })
 
-  contextLogger.Info("I'll be logged with common and other field")
-  contextLogger.Info("Me too")
+    contextLogger.Info("I'll be logged with common and other field")
+    contextLogger.Info("Me too")
 }
 ```
 
@@ -183,30 +205,30 @@ For more advanced usage such as logging to multiple locations from the same appl
 package main
 
 import (
-  "os"
-  "github.com/bdlm/log"
+    "os"
+    "github.com/bdlm/log"
 )
 
 // Create a new instance of the logger. You can have any number of instances.
 var logger = log.New()
 
 func main() {
-  // The API for setting attributes is a little different than the package level
-  // exported logger. See Godoc.
-  logger.Out = os.Stdout
+    // The API for setting attributes is a little different than the package level
+    // exported logger. See Godoc.
+    logger.Out = os.Stdout
 
-  // You could set this to any `io.Writer` such as a file
-  // file, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY, 0666)
-  //  if err == nil {
-  //    logger.Out = file
-  //  } else {
-  //    logger.Info("Failed to log to file, using default stderr")
-  // }
+    // You could set this to any `io.Writer` such as a file
+    // file, err := os.OpenFile("log.log", os.O_CREATE|os.O_WRONLY, 0666)
+    //  if err == nil {
+    //    logger.Out = file
+    //  } else {
+    //    logger.Info("Failed to log to file, using default stderr")
+    // }
 
-  logger.WithFields(log.Fields{
-    "animal": "walrus",
-    "size":   10,
-  }).Info("A group of walrus emerges from the ocean")
+    logger.WithFields(log.Fields{
+        "animal": "walrus",
+        "size":   10,
+    }).Info("A group of walrus emerges from the ocean")
 }
 ```
 
@@ -216,9 +238,9 @@ func main() {
 
 ```go
 log.WithFields(log.Fields{
-  "event": event,
-  "topic": topic,
-  "key": key,
+    "event": event,
+    "topic": topic,
+    "key": key,
 }).Fatal("Failed to send event")
 ```
 
@@ -244,23 +266,22 @@ You can add hooks for logging levels. For example to send errors to an exception
 
 ```go
 import (
-  log "github.com/bdlm/log"
-  log_syslog "github.com/bdlm/log/hooks/syslog"
-  "log/syslog"
+    log "github.com/bdlm/log"
+    log_syslog "github.com/bdlm/log/hooks/syslog"
+    "log/syslog"
 )
 
 func init() {
+    // Use the Airbrake hook to report errors that have Error severity or above to
+    // an exception tracker. You can create custom hooks, see the Hooks section.
+    log.AddHook(airbrake.NewHook(123, "xyz", "production"))
 
-  // Use the Airbrake hook to report errors that have Error severity or above to
-  // an exception tracker. You can create custom hooks, see the Hooks section.
-  log.AddHook(airbrake.NewHook(123, "xyz", "production"))
-
-  hook, err := log_syslog.NewSyslogHook("udp", "localhost:514", syslog.LOG_INFO, "")
-  if err != nil {
-    log.Error("Unable to connect to local syslog daemon")
-  } else {
-    log.AddHook(hook)
-  }
+    hook, err := log_syslog.NewSyslogHook("udp", "localhost:514", syslog.LOG_INFO, "")
+    if err != nil {
+        log.Error("Unable to connect to local syslog daemon")
+    } else {
+        log.AddHook(hook)
+    }
 }
 ```
 Note: Syslog hook also support connecting to local syslog (Ex. "/dev/log" or "/var/run/syslog" or "/var/run/log"). For the detail, please check the [syslog hook README](hooks/syslog/README.md).
@@ -314,14 +335,14 @@ import (
 )
 
 init() {
-  // do something here to set environment depending on an environment variable
-  // or command-line flag
-  if Environment == "production" {
-    log.SetFormatter(&log.JSONFormatter{})
-  } else {
-    // The TextFormatter is default, you don't actually have to do this.
-    log.SetFormatter(&log.TextFormatter{})
-  }
+    // do something here to set environment depending on an environment variable
+    // or command-line flag
+    if Environment == "production" {
+        log.SetFormatter(&log.JSONFormatter{})
+    } else {
+        // The TextFormatter is default, you don't actually have to do this.
+        log.SetFormatter(&log.TextFormatter{})
+    }
 }
 ```
 
@@ -332,7 +353,7 @@ This configuration is how `bdlm/log` was intended to be used, but JSON in produc
 The built-in logging formatters are:
 
 * `log.TextFormatter`. Logs the event in colors if stdout is a tty, otherwise without colors.
-  * *Note:* to force colored output when there is no TTY, set the `ForceColors` field to `true`.  To force no colored output even if there is a TTY  set the `DisableColors` field to `true`. For Windows, see [github.com/mattn/go-colorable](https://github.com/mattn/go-colorable).
+  * *Note:* to force colored output when there is no TTY, set the `ForceTTY` field to `true`.  To force no colored output even if there is a TTY  set the `DisableTTY` field to `true`. For Windows, see [github.com/mattn/go-colorable](https://github.com/mattn/go-colorable).
   * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#TextFormatter).
 * `log.JSONFormatter`. Logs fields as JSON.
   * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#JSONFormatter).
@@ -348,14 +369,14 @@ type MyJSONFormatter struct {
 log.SetFormatter(new(MyJSONFormatter))
 
 func (f *MyJSONFormatter) Format(entry *Entry) ([]byte, error) {
-  // Note this doesn't include Time, Level and Message which are available on
-  // the Entry. Consult `godoc` on information about those fields or read the
-  // source of the official loggers.
-  serialized, err := json.Marshal(entry.Data)
-    if err != nil {
-      return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
-    }
-  return append(serialized, '\n'), nil
+    // Note this doesn't include Time, Level and Message which are available on
+    // the Entry. Consult `godoc` on information about those fields or read the
+    // source of the official loggers.
+    serialized, err := json.Marshal(entry.Data)
+        if err != nil {
+            return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
+        }
+    return append(serialized, '\n'), nil
 }
 ```
 
@@ -400,22 +421,22 @@ Log rotation is not provided with `bdlm/log`. Log rotation should be done by an 
 
 ```go
 import(
-  "github.com/bdlm/log"
-  "github.com/bdlm/log/hooks/test"
-  "github.com/stretchr/testify/assert"
-  "testing"
+    "github.com/bdlm/log"
+    "github.com/bdlm/log/hooks/test"
+    "github.com/stretchr/testify/assert"
+    "testing"
 )
 
 func TestSomething(t*testing.T){
-  logger, hook := test.NewNullLogger()
-  logger.Error("Helloerror")
+    logger, hook := test.NewNullLogger()
+    logger.Error("Helloerror")
 
-  assert.Equal(t, 1, len(hook.Entries))
-  assert.Equal(t, log.ErrorLevel, hook.LastEntry().Level)
-  assert.Equal(t, "Helloerror", hook.LastEntry().Message)
+    assert.Equal(t, 1, len(hook.Entries))
+    assert.Equal(t, log.ErrorLevel, hook.LastEntry().Level)
+    assert.Equal(t, "Helloerror", hook.LastEntry().Message)
 
-  hook.Reset()
-  assert.Nil(t, hook.LastEntry())
+    hook.Reset()
+    assert.Nil(t, hook.LastEntry())
 }
 ```
 
@@ -426,10 +447,11 @@ func TestSomething(t*testing.T){
 ```go
 ...
 handler := func() {
-  // gracefully shutdown something...
+    // gracefully shutdown something...
 }
 log.RegisterExitHandler(handler)
-...
+// ...
+log.Fatal("handler will fire before os.Exit(1) is called")
 ```
 
 ## Thread safety

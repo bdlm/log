@@ -12,7 +12,7 @@ import (
 )
 
 func TestFormatting(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true, DisableHostname: true}
+	tf := &TextFormatter{DisableTTY: true, DisableHostname: true}
 
 	testCases := []struct {
 		value    string
@@ -36,7 +36,7 @@ func TestFormatting(t *testing.T) {
 }
 
 func TestEscaping(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true}
+	tf := &TextFormatter{DisableTTY: true}
 
 	testCases := []struct {
 		value    string
@@ -55,7 +55,7 @@ func TestEscaping(t *testing.T) {
 }
 
 func TestEscaping_Interface(t *testing.T) {
-	tf := &TextFormatter{DisableColors: true}
+	tf := &TextFormatter{DisableTTY: true}
 
 	ts := time.Now()
 
@@ -77,7 +77,7 @@ func TestEscaping_Interface(t *testing.T) {
 
 func TestTimestampFormat(t *testing.T) {
 	checkTimeStr := func(format string) {
-		customFormatter := &TextFormatter{DisableColors: true, TimestampFormat: format}
+		customFormatter := &TextFormatter{DisableTTY: true, TimestampFormat: format}
 		customStr, _ := customFormatter.Format(WithField("test", "test"))
 		timeStart := bytes.Index(customStr, ([]byte)("time=\""))
 		timeEnd := bytes.Index(customStr, ([]byte)("level="))
@@ -135,7 +135,7 @@ func TestTimestampFormat(t *testing.T) {
 //}
 
 func TestDisableTimestampWithColoredOutput(t *testing.T) {
-	tf := &TextFormatter{DisableTimestamp: true, ForceColors: true}
+	tf := &TextFormatter{DisableTimestamp: true, ForceTTY: true}
 
 	b, _ := tf.Format(WithField("test", "test"))
 	if strings.Contains(string(b), "[0000]") {
@@ -146,7 +146,7 @@ func TestDisableTimestampWithColoredOutput(t *testing.T) {
 func TestTextFormatterFieldMap(t *testing.T) {
 
 	formatter := &TextFormatter{
-		DisableColors:   true,
+		DisableTTY:      true,
 		DisableHostname: true,
 		DisableCaller:   true,
 		FieldMap: FieldMap{
