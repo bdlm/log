@@ -14,8 +14,8 @@
 `bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/bdlm/log) package. This package adds:
 
 * support for sanitizing strings from log output to aid in preventing leaking sensitive data.
-* additional default fields `host` and `caller`
-* support for supporessing any default field
+* additional default fields `host` and `caller`.
+* support for suppressing any default field.
 
 #
 
