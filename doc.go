@@ -142,10 +142,10 @@ available for easy parsing by logstash or Splunk:
   log.SetFormatter(&log.JSONFormatter{})
 
 Output:
-  {"caller":"main.go:37 main.main","data"{"animal":"walrus"},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T23:08:02.860Z"}
+  {"caller":"main.go:37 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T23:08:02.860Z"}
   {"caller":"main.go:61 main.main","host":"myhost","level":"warning","msg":"The group's number increased tremendously!","number":122,"omg":true,"time":"2018-08-10T23:08:02.863Z"}
-  {"caller":"main.go:99 main.main","data"{"animal":"walrus"},"host":"myhost","level":"info","msg":"A giant walrus appears!","time":"2018-08-10T23:08:02.877Z"}
-  {"caller":"main.go:61 main.main","data"{"animal":"walrus","host":"myhost","level":"info","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T23:08:02.877Z"}
+  {"caller":"main.go:99 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A giant walrus appears!","time":"2018-08-10T23:08:02.877Z"}
+  {"caller":"main.go:61 main.main","data":{"animal":"walrus","host":"myhost","level":"info","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T23:08:02.877Z"}
   {"caller":"main.go:99 main.main","host":"myhost","level":"fatal","msg":"The ice breaks!","number":100,"omg":true,"time":"2018-08-10T23:08:03.566Z"}
 
 For a full guide visit https://github.com/bdlm/log

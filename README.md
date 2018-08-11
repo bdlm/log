@@ -11,49 +11,27 @@
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 </p>
 
-`log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/bdlm/log) package that adds support for sanitizing strings from logs to prevent accidental output of sensitive data.
-
-## usage
-
-`bdlm/log` supports a "blacklist" of values that should not be logged. This can be used to
-help prevent or mitigate leaking secrets into log files:
-
-```go
-import (
-    "github.com/bdlm/log"
-)
-
-func main() {
-    log.AddSecret("some-secret-text")
-    log.Info("the secret is 'some-secret-text'")
-
-    // Output: the secret is '****************'
-}
-```
+`bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/bdlm/log) package that adds support for sanitizing strings from logs to prevent accidental output of sensitive data.
 
 # log
 
-`log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
+`bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
 Color-coded output when attached to a TTY for development:
 
-![Colored](http://i.imgur.com/PY7qMwd.png)
+<img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="600px">
 
 With `log.SetFormatter(&log.JSONFormatter{})`, for easy parsing by logstash or Splunk:
 
 ```json
-{"animal":"walrus","level":"info","msg":"A group of walrus emerges from the ocean","size":10,"time":"2014-03-10 19:57:38.562264131 -0400 EDT"}
-
-{"level":"warning","msg":"The group's number increased tremendously!","number":122,"omg":true,"time":"2014-03-10 19:57:38.562471297 -0400 EDT"}
-
-{"animal":"walrus","level":"info","msg":"A giant walrus appears!","size":10,"time":"2014-03-10 19:57:38.562500591 -0400 EDT"}
-
-{"animal":"walrus","level":"info","msg":"Tremendously sized cow enters the ocean.","size":9,"time":"2014-03-10 19:57:38.562527896 -0400 EDT"}
-
-{"level":"fatal","msg":"The ice breaks!","number":100,"omg":true,"time":"2014-03-10 19:57:38.562543128 -0400 EDT"}
+{"caller":"main.go:37 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T23:08:02.860Z"}
+{"caller":"main.go:61 main.main","host":"myhost","level":"warning","msg":"The group's number increased tremendously!","number":122,"omg":true,"time":"2018-08-10T23:08:02.863Z"}
+{"caller":"main.go:99 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A giant walrus appears!","time":"2018-08-10T23:08:02.877Z"}
+{"caller":"main.go:61 main.main","data":{"animal":"walrus","host":"myhost","level":"info","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T23:08:02.877Z"}
+{"caller":"main.go:99 main.main","host":"myhost","level":"fatal","msg":"The ice breaks!","number":100,"omg":true,"time":"2018-08-10T23:08:03.566Z"}
 ```
 
-#### Example
+## Examples
 
 The simplest way to use `bdlm/log` is simply the package-level exported logger:
 
@@ -123,6 +101,21 @@ func main() {
 }
 ```
 
+`bdlm/log` supports a "blacklist" of values that should not be logged. This can be used to help prevent or mitigate leaking secrets into log files:
+
+```go
+import (
+    "github.com/bdlm/log"
+)
+
+func main() {
+    log.AddSecret("some-secret-text")
+    log.Info("the secret is 'some-secret-text'")
+
+    // Output: the secret is '****************'
+}
+```
+
 For more advanced usage such as logging to multiple locations from the same application, you can also create an instance of the `bdlm/log` Logger:
 
 ```go
@@ -156,7 +149,7 @@ func main() {
 }
 ```
 
-#### Fields
+## Fields
 
 `bdlm/log` encourages careful, structured logging through logging fields instead of long, unparseable error messages. For example, instead of: `log.Fatalf("Failed to send event %s to topic %s with key %d")`, you should log the much more discoverable:
 
@@ -172,7 +165,7 @@ We've found this API forces you to think about logging in a way that produces mu
 
 In general, with `bdlm/log` using any of the `printf`-family functions should be seen as a hint you should add a field, however, you can still use the `printf`-family functions with `bdlm/log`.
 
-#### Default Fields
+### Default Fields
 
 Often it's helpful to have fields _always_ attached to log statements in an application or parts of one. For example, you may want to always log the `request_id` and `user_ip` in the context of a request. Instead of writing `log.WithFields(log.Fields{"request_id": request_id, "user_ip": user_ip})` on every line, you can create a `log.Entry` to pass around instead:
 
@@ -182,7 +175,7 @@ requestLogger.Info("something happened on that request") # will log request_id a
 requestLogger.Warn("something not great happened")
 ```
 
-#### Hooks
+## Hooks
 
 You can add hooks for logging levels. For example to send errors to an exception tracking service on `Error`, `Fatal` and `Panic`, info to StatsD or log to multiple places simultaneously, e.g. syslog.
 
@@ -214,7 +207,7 @@ Note: Syslog hook also support connecting to local syslog (Ex. "/dev/log" or "/v
 A list of currently known of service hook can be found in this wiki [page](https://github.com/bdlm/log/wiki/Hooks)
 
 
-#### Level logging
+## Level logging
 
 `bdlm/log` has six logging levels: Debug, Info, Warning, Error, Fatal and Panic.
 
@@ -238,7 +231,7 @@ log.SetLevel(log.InfoLevel)
 
 It may be useful to set `log.Level = log.DebugLevel` in a debug or verbose environment if your application has that.
 
-#### Entries
+## Entries
 
 Besides the fields added with `WithField` or `WithFields` some fields are automatically added to all logging events:
 
@@ -246,7 +239,7 @@ Besides the fields added with `WithField` or `WithFields` some fields are automa
 1. `msg`. The logging message passed to `{Info,Warn,Error,Fatal,Panic}` after the `AddFields` call. E.g. `Failed to send event.`
 1. `level`. The logging level. E.g. `info`.
 
-#### Environments
+## Environments
 
 `bdlm/log` has no notion of environment.
 
@@ -271,7 +264,7 @@ init() {
 
 This configuration is how `bdlm/log` was intended to be used, but JSON in production is mostly only useful if you do log aggregation with tools like Splunk or Logstash.
 
-#### Formatters
+## Formatters
 
 The built-in logging formatters are:
 
@@ -306,7 +299,7 @@ func (f *MyJSONFormatter) Format(entry *Entry) ([]byte, error) {
 }
 ```
 
-#### Logger as an `io.Writer`
+## Logger as an `io.Writer`
 
 `bdlm/log` can be transformed into an `io.Writer`. That writer is the end of an `io.Pipe` and it is your responsibility to close it.
 
@@ -334,11 +327,11 @@ logger.Formatter = &log.JSONFormatter{}
 log.SetOutput(logger.Writer())
 ```
 
-#### Rotation
+## Rotation
 
 Log rotation is not provided with `bdlm/log`. Log rotation should be done by an external program (like `logrotate(8)`) that can compress and delete old log entries. It should not be a feature of the application-level logger.
 
-#### Testing
+## Testing
 
 `bdlm/log` has a built in facility for asserting the presence of log messages. This is implemented through the `test` hook and provides:
 
@@ -366,7 +359,7 @@ func TestSomething(t*testing.T){
 }
 ```
 
-#### Fatal handlers
+## Fatal handlers
 
 `bdlm/log` can register one or more functions that will be called when any `fatal` level message is logged. The registered handlers will be executed before `bdlm/log` performs a `os.Exit(1)`. This behavior may be helpful if callers need to gracefully shutdown. Unlike a `panic("Something went wrong...")` call which can be intercepted with a deferred `recover` a call to `os.Exit(1)` can not be intercepted.
 
@@ -379,7 +372,7 @@ log.RegisterExitHandler(handler)
 ...
 ```
 
-#### Thread safety
+## Thread safety
 
 By default, Logger is protected by a mutex for concurrent writes. The mutex is held when calling hooks and writing logs. If you are sure such locking is not needed, you can call logger.SetNoLock() to disable the locking.
 
