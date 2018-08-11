@@ -296,10 +296,7 @@ The built-in logging formatters are:
 * `log.JSONFormatter`. Logs fields as JSON.
   * All options are listed in the [generated docs](https://godoc.org/github.com/bdlm/log#JSONFormatter).
 
-Third party logging formatters:
-
-* [`FluentdFormatter`](https://github.com/joonix/log). Formats entries that can be parsed by Kubernetes and Google
-* [`zalgo`](https://github.com/aybabtme/logzalgo). Invoking the P͉̫o̳̼̊w̖͈̰͎e̬͔̭͂r͚̼̹̲ ̫͓͉̳͈ō̠͕͖̚f̝͍̠ ͕̲̞͖͑Z̖̫̤̫ͪa͉̬͈̗l͖͎g̳̥o̰̥̅!̣͔̲̻͊̄ ̙̘̦̹̦.
+### Custom log formatting:
 
 You can define your formatter by implementing the `Formatter` interface, requiring a `Format` method. `Format` takes an `*Entry`. `entry.Data` is a `Fields` type (`map[string]interface{}`) with all your fields as well as the default ones (see Entries section above):
 
