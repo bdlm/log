@@ -50,7 +50,7 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 {"caller":"main.go:24 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T20:44:46.177-06:00"}
 ```
 
-The JSON formatter also makes adjustments by default when a `tty` terminal is detected:
+The JSON formatter also makes adjustments by default when a `tty` terminal is detected and can be disabled similarly with `log.SetFormatter(&log.JSONFormatter{DisableTTY: true})`:
 
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="400px">
