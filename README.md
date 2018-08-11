@@ -17,18 +17,31 @@
 
 `bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
-Color-coded output when attached to a TTY for development:
+## Formats
+
+By default, `bdlm/log` uses a basic text format:
+```javascript
+time="2018-08-10T18:19:09.424-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:19 main.main"
+time="2018-08-10T18:19:09.424-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:23 main.main"
+time="2018-08-10T18:19:09.424-06:00" level="warning" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:27 main.main"
+time="2018-08-10T18:19:09.424-06:00" level="warning" msg="A giant walrus monster appears!" data.animal="walrus" data.run="true" caller="main.go:31 main.main"
+time="2018-08-10T18:19:09.424-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:35 main.main"
+time="2018-08-10T18:19:09.424-06:00" level="fatal" msg="The walrus are attacking!" data.animal="walrus" data.panic="true" caller="main.go:39 main.main"
+```
+
+Color-coded output is used when a TTY terminal is detected for development:
 
 <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="600px">
 
-With `log.SetFormatter(&log.JSONFormatter{})`, for easy parsing by logstash or Splunk:
+JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
 
 ```json
-{"caller":"main.go:37 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T23:08:02.860Z"}
-{"caller":"main.go:61 main.main","host":"myhost","level":"warning","msg":"The group's number increased tremendously!","number":122,"omg":true,"time":"2018-08-10T23:08:02.863Z"}
-{"caller":"main.go:99 main.main","data":{"animal":"walrus"},"host":"myhost","level":"info","msg":"A giant walrus appears!","time":"2018-08-10T23:08:02.877Z"}
-{"caller":"main.go:61 main.main","data":{"animal":"walrus","host":"myhost","level":"info","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T23:08:02.877Z"}
-{"caller":"main.go:99 main.main","host":"myhost","level":"fatal","msg":"The ice breaks!","number":100,"omg":true,"time":"2018-08-10T23:08:03.566Z"}
+{"caller":"main.go:17 main.main","data":{"animal":"bird","count":1},"host":"","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:21 main.main","data":{"animal":"walrus","count":20},"host":"","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:25 main.main","data":{"animal":"walrus","count":100},"host":"","level":"warning","msg":"The group's number increased tremendously!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:29 main.main","data":{"animal":"walrus","run":true},"host":"","level":"warning","msg":"A giant walrus monster appears!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:33 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:37 main.main","data":{"animal":"walrus","panic":true},"host":"","level":"fatal","msg":"The walrus are attacking!","time":"2018-08-10T18:17:13.723-06:00"}
 ```
 
 ## Examples
