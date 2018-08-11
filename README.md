@@ -36,7 +36,7 @@ time="2018-08-10T20:16:15.898-06:00" level="fatal" msg="That could have gone bet
 For development, color-coded output is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
 
 <p align="center">
-  <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="800px">
+  <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
 </p>
 
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
