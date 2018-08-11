@@ -46,6 +46,8 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 
 ## Examples
 
+#### Simple usage
+
 The simplest way to use `bdlm/log` is simply the package-level exported logger:
 
 ```go
@@ -61,6 +63,8 @@ func main() {
   }).Info("A walrus appears")
 }
 ```
+
+#### Compatibility
 
 Note that it is completely api-compatible with the stdlib logger, so you can replace your `log`
 imports everywhere with `"github.com/bdlm/log"` and you'll have the full flexibility of
@@ -114,6 +118,8 @@ func main() {
 }
 ```
 
+#### Secrets
+
 `bdlm/log` supports a "blacklist" of values that should not be logged. This can be used to help prevent or mitigate leaking secrets into log files:
 
 ```go
@@ -128,6 +134,8 @@ func main() {
     // Output: the secret is '****************'
 }
 ```
+
+#### Advanced usage
 
 For more advanced usage such as logging to multiple locations from the same application, you can also create an instance of the `bdlm/log` Logger:
 
