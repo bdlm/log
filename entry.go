@@ -3,6 +3,7 @@ package log
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 	"sync"
@@ -116,6 +117,10 @@ func (entry *Entry) WithTime(t time.Time) *Entry {
 // This function is not declared with a pointer value because otherwise
 // race conditions will occur when using multiple goroutines
 func (entry Entry) log(level Level, msg string) {
+	if nil == entry.Logger.Out || entry.Logger.Out == ioutil.Discard {
+		return
+	}
+
 	var buffer *bytes.Buffer
 
 	// Default to now, but allow users to override if they want.
