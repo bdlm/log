@@ -84,7 +84,7 @@ func TestWarn(t *testing.T) {
 		log.Warn("test")
 	}, func(data logData) {
 		assert.Equal(t, "test", data.Message)
-		assert.Equal(t, "warning", data.Level)
+		assert.Equal(t, "warn", data.Level)
 	})
 }
 
@@ -315,7 +315,7 @@ func TestDoubleLoggingDoesntPrefixPreviousFields(t *testing.T) {
 func TestConvertLevelToString(t *testing.T) {
 	assert.Equal(t, "debug", DebugLevel.String())
 	assert.Equal(t, "info", InfoLevel.String())
-	assert.Equal(t, "warning", WarnLevel.String())
+	assert.Equal(t, "warn", WarnLevel.String())
 	assert.Equal(t, "error", ErrorLevel.String())
 	assert.Equal(t, "fatal", FatalLevel.String())
 	assert.Equal(t, "panic", PanicLevel.String())
@@ -453,7 +453,7 @@ func TestEntryWriter(t *testing.T) {
 	err := json.Unmarshal(bs, &data)
 	assert.Nil(t, err)
 	assert.Equal(t, "bar", data.Data["foo"])
-	assert.Equal(t, "warning", data.Level)
+	assert.Equal(t, "warn", data.Level)
 }
 
 func TestLogSecrets(t *testing.T) {

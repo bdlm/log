@@ -67,11 +67,14 @@ TimestampFormat string
 isTerminal bool
 
 // FieldMap allows users to customize the names of keys for default fields.
-// As an example:
+// For example:
 // 	formatter := &TextFormatter{FieldMap: FieldMap{
-// 		LabelTime:  "@timestamp",
-// 		LabelLevel: "@level",
-// 		LabelMsg:   "@message",
+//      LabelCaller: "@caller",
+//      LabelData:   "@data",
+//      LabelHost:   "@hostname",
+//      LabelLevel:  "@loglevel",
+//      LabelMsg:    "@message",
+//      LabelTime:   "@timestamp",
 // 	}}
 FieldMap FieldMap
 ```

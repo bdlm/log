@@ -179,8 +179,7 @@ func TestTextFormatterFieldMap(t *testing.T) {
 	assert.Equal(
 		t,
 		`time-field-label="1981-02-24T04:28:03.000Z" `+
-			`level-label="warning" `+
-			`msg-label="oh hi" `+
+			`level-label="warn" msg-label="oh hi" `+
 			`data-label.field1="f1" `+
 			`data-label.level-label="levelfield" `+
 			`data-label.msg-label="messagefield" `+
