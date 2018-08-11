@@ -33,7 +33,7 @@ time="2018-08-10T20:16:15.898-06:00" level="panic" msg="The walrus are attacking
 time="2018-08-10T20:16:15.898-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:23 main.main.func1" host="myhost"
 ```
 
-For development, color-coded output is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
+For development, color-coded output formated for humans is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
 
 <p align="center">
   <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
