@@ -59,7 +59,6 @@ The JSON formatter also makes adjustments by default when a `tty` terminal is de
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="400px">
 </p>
 
-
 The full list of `Formatter` properties that can be set is:
 ```go
 // Set to true to bypass checking for a TTY before outputting colors.
