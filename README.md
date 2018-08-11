@@ -68,14 +68,14 @@ isTerminal bool
 
 // FieldMap allows users to customize the names of keys for default fields.
 // For example:
-// 	formatter := &TextFormatter{FieldMap: FieldMap{
-//      LabelCaller: "@caller",
-//      LabelData:   "@data",
-//      LabelHost:   "@hostname",
-//      LabelLevel:  "@loglevel",
-//      LabelMsg:    "@message",
-//      LabelTime:   "@timestamp",
-// 	}}
+//  formatter := &TextFormatter{FieldMap: FieldMap{
+//    LabelCaller: "@caller",
+//    LabelData:   "@data",
+//    LabelHost:   "@hostname",
+//    LabelLevel:  "@loglevel",
+//    LabelMsg:    "@message",
+//    LabelTime:   "@timestamp",
+//  }}
 FieldMap FieldMap
 ```
 
