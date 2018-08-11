@@ -136,10 +136,10 @@ func init() {
     log.SetFormatter(&log.TextFormatter{
         // Set various formatter options:
         //   DisableCaller:    true
-        //   DisableTTY:    true
+        //   DisableTTY:       true
         //   DisableTimestamp: true
         //   DisableHostname:  true
-        //   ForceTTY:      true
+        //   ForceTTY:         true
         //   TimestampFormat:  "2006"
         //   FieldMap:         FieldMap{LabelMsg: "message"}
     })
