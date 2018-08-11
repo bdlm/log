@@ -33,7 +33,7 @@ time="2018-08-10T20:44:08.708-06:00" level="panic" msg="The walrus are attacking
 time="2018-08-10T20:44:08.708-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:24 main.main.func1" host="myhost"
 ```
 
-For development, color-coded output formated for humans is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
+For development, color-coded output formated for humans is automatically enabled when a `tty` terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
 
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
@@ -49,6 +49,13 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 {"caller":"main.go:48 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-10T20:44:46.177-06:00"}
 {"caller":"main.go:24 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T20:44:46.177-06:00"}
 ```
+
+The JSON formatter also makes adjustments by default when a `tty` terminal is detected:
+
+<p align="center">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="750px">
+</p>
+
 
 The full list of `Formatter` properties that can be set is:
 ```go

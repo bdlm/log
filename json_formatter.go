@@ -3,6 +3,8 @@ package log
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+	"sync"
 )
 
 // JSONFormatter formats logs into parsable json
@@ -43,11 +45,23 @@ type JSONFormatter struct {
 
 	// TimestampFormat sets the format used for marshaling timestamps.
 	TimestampFormat string
+
+	// Whether the logger's out is to a terminal
+	isTerminal bool
+
+	sync.Once
+}
+
+func (f *JSONFormatter) init(entry *Entry) {
+	if entry.Logger != nil {
+		f.isTerminal = checkIfTerminal(entry.Logger.Out)
+	}
 }
 
 // Format renders a single log entry
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	prefixFieldClashes(entry.Data, f.FieldMap)
+	f.Do(func() { f.init(entry) })
 
 	data := getData(entry, f.FieldMap)
 	jsonData := map[string]interface{}{}
@@ -75,8 +89,22 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 
 	//
 	jsonData[f.FieldMap.resolve(LabelData)] = data.Data
+	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
+	var serialized []byte
+	var err error
+	if isTTY {
+		serialized, err = json.MarshalIndent(jsonData, data.Color+"⇢  \033[0m", "    ")
+		serialized = append([]byte(data.Color+"⇢  \033[0m"), serialized...)
+		serialized = []byte(strings.Replace(string(serialized), `"level": "debug",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`debug`+"\033[0m"+`",`, -1))
+		serialized = []byte(strings.Replace(string(serialized), `"level": "info",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`info`+"\033[0m"+`",`, -1))
+		serialized = []byte(strings.Replace(string(serialized), `"level": "warn",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`warn`+"\033[0m"+`",`, -1))
+		serialized = []byte(strings.Replace(string(serialized), `"level": "error",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`error`+"\033[0m"+`",`, -1))
+		serialized = []byte(strings.Replace(string(serialized), `"level": "panic",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`panic`+"\033[0m"+`",`, -1))
+		serialized = []byte(strings.Replace(string(serialized), `"level": "fatal",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`fatal`+"\033[0m"+`",`, -1))
+	} else {
+		serialized, err = json.Marshal(jsonData)
+	}
 
-	serialized, err := json.Marshal(jsonData)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
 	}

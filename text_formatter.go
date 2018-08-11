@@ -72,6 +72,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	} else {
 		logLine = &bytes.Buffer{}
 	}
+
 	f.Do(func() { f.init(entry) })
 
 	data := getData(entry, f.FieldMap)
@@ -96,8 +97,8 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		data.Caller = ""
 	}
 
-	isColorTerm := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
-	if isColorTerm {
+	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
+	if isTTY {
 		err = termTemplate.Execute(logLine, data)
 	} else {
 		err = textTemplate.Execute(logLine, data)
