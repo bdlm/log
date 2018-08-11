@@ -21,12 +21,12 @@
 
 By default, `bdlm/log` uses a basic text format:
 ```javascript
-time="2018-08-10T18:19:09.424-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:19 main.main"
-time="2018-08-10T18:19:09.424-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:23 main.main"
-time="2018-08-10T18:19:09.424-06:00" level="warning" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:27 main.main"
-time="2018-08-10T18:19:09.424-06:00" level="warning" msg="A giant walrus monster appears!" data.animal="walrus" data.run="true" caller="main.go:31 main.main"
-time="2018-08-10T18:19:09.424-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:35 main.main"
-time="2018-08-10T18:19:09.424-06:00" level="fatal" msg="The walrus are attacking!" data.animal="walrus" data.panic="true" caller="main.go:39 main.main"
+time="2018-08-10T18:28:25.190-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:21 main.main" host="myhost"
+time="2018-08-10T18:28:25.191-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:25 main.main" host="myhost"
+time="2018-08-10T18:28:25.191-06:00" level="warning" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:29 main.main" host="myhost"
+time="2018-08-10T18:28:25.191-06:00" level="warning" msg="A giant walrus monster appears!" data.animal="walrus" data.run="true" caller="main.go:33 main.main" host="myhost"
+time="2018-08-10T18:28:25.191-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:37 main.main" host="myhost"
+time="2018-08-10T18:28:25.191-06:00" level="fatal" msg="The walrus are attacking!" data.animal="walrus" data.panic="true" caller="main.go:41 main.main" host="myhost"
 ```
 
 For development, color-coded output is enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
