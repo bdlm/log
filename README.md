@@ -17,7 +17,7 @@
 * additional default fields `host` and `caller`
 * support for supporessing any default field
 
-# log
+#
 
 `bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
