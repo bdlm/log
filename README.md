@@ -42,6 +42,40 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 {"caller":"main.go:26 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T19:40:46.247-06:00"}
 ```
 
+The full set of formatting properties that you can set are:
+```go
+// Set to true to bypass checking for a TTY before outputting colors.
+ForceColors bool
+
+// Disable caller data.
+DisableCaller bool
+
+// Force disabling colors.
+DisableColors bool
+
+// Disable timestamp logging. useful when output is redirected to logging
+// system that already adds timestamps.
+DisableTimestamp bool
+
+// Disable hostname logging.
+DisableHostname bool
+
+// TimestampFormat to use for display when a full timestamp is printed
+TimestampFormat string
+
+// Whether the logger's out is to a terminal
+isTerminal bool
+
+// FieldMap allows users to customize the names of keys for default fields.
+// As an example:
+// 	formatter := &TextFormatter{FieldMap: FieldMap{
+// 		LabelTime:  "@timestamp",
+// 		LabelLevel: "@level",
+// 		LabelMsg:   "@message",
+// 	}}
+FieldMap FieldMap
+```
+
 ## Examples
 
 #### Simple usage
