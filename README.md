@@ -299,6 +299,7 @@ Besides the fields added with `WithField` or `WithFields` some fields are automa
 1. `time`. The timestamp when the entry was created.
 1. `msg`. The logging message passed to `{Info,Warn,Error,Fatal,Panic}` after the `AddFields` call. E.g. `Failed to send event.`
 1. `level`. The logging level. E.g. `info`.
+1. `caller`. The filename and line number where the event occurred.
 
 ## Environments
 
