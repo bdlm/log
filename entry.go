@@ -99,7 +99,13 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 		data[k] = v
 	}
 
-	return &Entry{Logger: entry.Logger, Data: data, Time: entry.Time}
+	return &Entry{
+		Data:    data,
+		Level:   entry.Level,
+		Logger:  entry.Logger,
+		Message: entry.Message,
+		Time:    entry.Time,
+	}
 }
 
 // WithTime overrides the time of the Entry.
