@@ -67,9 +67,6 @@ DisableHostname bool
 // TimestampFormat to use for display when a full timestamp is printed
 TimestampFormat string
 
-// Whether the logger's out is to a terminal
-isTerminal bool
-
 // FieldMap allows users to customize the names of keys for default fields.
 // For example:
 //  formatter := &TextFormatter{FieldMap: FieldMap{
