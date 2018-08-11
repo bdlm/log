@@ -76,7 +76,11 @@ const (
 	// DEFAULTColor is the default TTY 'level' color.
 	DEFAULTColor = "\033[38;5;46m"
 	// ERRColor is the TTY 'level' color for error messages.
-	ERRColor = "\033[38;5;196m"
+	ERRColor = "\033[38;5;208m"
+	// FATALColor is the TTY 'level' color for fatal messages.
+	FATALColor = "\033[38;5;124m"
+	// PANICColor is the TTY 'level' color for panic messages.
+	PANICColor = "\033[38;5;196m"
 	// WARNColor is the TTY 'level' color for warning messages.
 	WARNColor = "\033[38;5;226m"
 	// DEBUGColor is the TTY 'level' color for debug messages.
@@ -91,8 +95,12 @@ func getData(entry *Entry, fieldMap FieldMap) *logData {
 		levelColor = DEBUGColor
 	case WarnLevel:
 		levelColor = WARNColor
-	case ErrorLevel, FatalLevel, PanicLevel:
+	case ErrorLevel:
 		levelColor = ERRColor
+	case FatalLevel:
+		levelColor = FATALColor
+	case PanicLevel:
+		levelColor = PANICColor
 	default:
 		levelColor = DEFAULTColor
 	}

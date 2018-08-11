@@ -21,45 +21,38 @@ func Example_basic() {
 		if err != nil {
 			entry := err.(*log.Entry)
 			logger.WithFields(log.Fields{
-				"omg":         true,
-				"err_animal":  entry.Data["animal"],
-				"err_size":    entry.Data["size"],
-				"err_level":   entry.Level,
-				"err_message": entry.Message,
-				"number":      100,
-			}).Error("The ice breaks!") // or use Fatal() to force the process to exit with a nonzero code
+				"winner": entry.Data["animal"],
+				"dead":   true,
+			}).Error("That could have gone better...")
 		}
 	}()
 
 	logger.WithFields(log.Fields{
-		"animal": "walrus",
-		"number": 8,
-	}).Debug("Started observing beach")
-
+		"animal": "bird",
+		"count":  1,
+	}).Debug("Oh, look, a bird...")
 	logger.WithFields(log.Fields{
 		"animal": "walrus",
-		"size":   10,
+		"count":  20,
 	}).Info("A group of walrus emerges from the ocean")
-
 	logger.WithFields(log.Fields{
-		"omg":    true,
-		"number": 122,
+		"animal": "walrus",
+		"count":  100,
 	}).Warn("The group's number increased tremendously!")
-
 	logger.WithFields(log.Fields{
-		"temperature": -4,
-	}).Debug("Temperature changes")
-
+		"animal": "cow",
+		"run":    "wait, what?",
+	}).Error("Tremendously sized cow enters the ocean.")
 	logger.WithFields(log.Fields{
-		"animal": "orca",
-		"size":   9009,
-	}).Panic("It's over 9000!")
+		"animal": "walrus",
+		"run":    true,
+	}).Panic("The walrus are attacking!")
 
 	// Output:
-	// level="debug" msg="Started observing beach" data.animal="walrus" data.number="8"
-	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.size="10"
-	// level="warning" msg="The group's number increased tremendously!" data.number="122" data.omg="true"
-	// level="debug" msg="Temperature changes" data.temperature="-4"
-	// level="panic" msg="It's over 9000!" data.animal="orca" data.size="9009"
-	// level="error" msg="The ice breaks!" data.err_animal="orca" data.err_level="panic" data.err_message="It's over 9000!" data.err_size="9009" data.number="100" data.omg="true"
+	// level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1"
+	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20"
+	// level="warning" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100"
+	// level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?"
+	// level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true"
+	// level="error" msg="That could have gone better..." data.dead="true" data.winner="walrus"
 }

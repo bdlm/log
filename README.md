@@ -21,27 +21,25 @@
 
 By default, `bdlm/log` uses a basic text format:
 ```javascript
-time="2018-08-10T18:28:25.190-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:21 main.main" host="myhost"
-time="2018-08-10T18:28:25.191-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:25 main.main" host="myhost"
-time="2018-08-10T18:28:25.191-06:00" level="warning" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:29 main.main" host="myhost"
-time="2018-08-10T18:28:25.191-06:00" level="warning" msg="A giant walrus monster appears!" data.animal="walrus" data.run="true" caller="main.go:33 main.main" host="myhost"
-time="2018-08-10T18:28:25.191-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:37 main.main" host="myhost"
-time="2018-08-10T18:28:25.191-06:00" level="fatal" msg="The walrus are attacking!" data.animal="walrus" data.panic="true" caller="main.go:41 main.main" host="myhost"
+time="2018-08-10T19:40:07.185-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:38 main.main" host="myhost"
+time="2018-08-10T19:40:07.186-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:42 main.main" host="myhost"
+time="2018-08-10T19:40:07.186-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:46 main.main" host="myhost"
+time="2018-08-10T19:40:07.186-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true" caller="main.go:50 main.main" host="myhost"
+time="2018-08-10T19:40:07.186-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:26 main.main.func1" host="myhost"
 ```
 
-For development, color-coded output is enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
+For development, color-coded output is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
 
 <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="600px">
 
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
 
 ```json
-{"caller":"main.go:17 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:21 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:25 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warning","msg":"The group's number increased tremendously!","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:29 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"warning","msg":"A giant walrus monster appears!","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:33 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:37 main.main","data":{"animal":"walrus","panic":true},"host":"myhost","level":"fatal","msg":"The walrus are attacking!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:38 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T19:40:46.247-06:00"}
+{"caller":"main.go:42 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-10T19:40:46.247-06:00"}
+{"caller":"main.go:46 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T19:40:46.247-06:00"}
+{"caller":"main.go:50 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-10T19:40:46.247-06:00"}
+{"caller":"main.go:26 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T19:40:46.247-06:00"}
 ```
 
 ## Examples
