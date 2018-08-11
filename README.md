@@ -53,7 +53,7 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 The JSON formatter also makes adjustments by default when a `tty` terminal is detected:
 
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="400px">
 </p>
 
 
