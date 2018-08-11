@@ -97,7 +97,7 @@ FieldMap FieldMap
 
 #### Simple usage
 
-The simplest way to use `bdlm/log` is simply the exported package logger:
+The simplest way to use `bdlm/log` is with the exported package logger:
 
 ```go
 package main
