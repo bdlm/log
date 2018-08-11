@@ -25,12 +25,12 @@
 
 By default, `bdlm/log` uses a basic text format:
 ```javascript
-time="2018-08-10T20:16:15.897-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:31 main.main" host="myhost"
-time="2018-08-10T20:16:15.898-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:35 main.main" host="myhost"
-time="2018-08-10T20:16:15.898-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:39 main.main" host="myhost"
-time="2018-08-10T20:16:15.898-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:43 main.main" host="myhost"
-time="2018-08-10T20:16:15.898-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true" caller="main.go:47 main.main" host="myhost"
-time="2018-08-10T20:16:15.898-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:23 main.main.func1" host="myhost"
+time="2018-08-10T20:44:08.707-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:32 main.main" host="myhost"
+time="2018-08-10T20:44:08.707-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:36 main.main" host="myhost"
+time="2018-08-10T20:44:08.708-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:40 main.main" host="myhost"
+time="2018-08-10T20:44:08.708-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" caller="main.go:44 main.main" host="myhost"
+time="2018-08-10T20:44:08.708-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true" caller="main.go:48 main.main" host="myhost"
+time="2018-08-10T20:44:08.708-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:24 main.main.func1" host="myhost"
 ```
 
 For development, color-coded output formated for humans is automatically enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableColors: true})`):
@@ -42,12 +42,12 @@ For development, color-coded output formated for humans is automatically enabled
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
 
 ```json
-{"caller":"main.go:31 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T20:16:38.937-06:00"}
-{"caller":"main.go:35 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T20:16:38.937-06:00"}
-{"caller":"main.go:39 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-10T20:16:38.937-06:00"}
-{"caller":"main.go:43 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T20:16:38.937-06:00"}
-{"caller":"main.go:47 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-10T20:16:38.937-06:00"}
-{"caller":"main.go:23 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T20:16:38.937-06:00"}
+{"caller":"main.go:32 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:36 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:40 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:44 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:48 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:24 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T20:44:46.177-06:00"}
 ```
 
 The full list of `Formatter` properties that can be set is:
