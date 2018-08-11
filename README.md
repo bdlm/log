@@ -29,7 +29,7 @@ time="2018-08-10T18:19:09.424-06:00" level="error" msg="Tremendously sized cow e
 time="2018-08-10T18:19:09.424-06:00" level="fatal" msg="The walrus are attacking!" data.animal="walrus" data.panic="true" caller="main.go:39 main.main"
 ```
 
-Color-coded output is used when a TTY terminal is detected for development:
+For development, color-coded output is enabled when a TTY terminal is detected (this can be disabled with `log.SetFormatter(&log.JSONFormatter{DisableColors: true})`):
 
 <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="600px">
 
