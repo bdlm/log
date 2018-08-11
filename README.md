@@ -36,12 +36,12 @@ For development, color-coded output is enabled when a TTY terminal is detected (
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
 
 ```json
-{"caller":"main.go:17 main.main","data":{"animal":"bird","count":1},"host":"","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:21 main.main","data":{"animal":"walrus","count":20},"host":"","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:25 main.main","data":{"animal":"walrus","count":100},"host":"","level":"warning","msg":"The group's number increased tremendously!","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:29 main.main","data":{"animal":"walrus","run":true},"host":"","level":"warning","msg":"A giant walrus monster appears!","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:33 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T18:17:13.723-06:00"}
-{"caller":"main.go:37 main.main","data":{"animal":"walrus","panic":true},"host":"","level":"fatal","msg":"The walrus are attacking!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:17 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:21 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:25 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warning","msg":"The group's number increased tremendously!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:29 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"warning","msg":"A giant walrus monster appears!","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:33 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T18:17:13.723-06:00"}
+{"caller":"main.go:37 main.main","data":{"animal":"walrus","panic":true},"host":"myhost","level":"fatal","msg":"The walrus are attacking!","time":"2018-08-10T18:17:13.723-06:00"}
 ```
 
 ## Examples
