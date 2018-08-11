@@ -3,7 +3,6 @@ package log
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"sync"
 )
 
@@ -93,14 +92,15 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	var serialized []byte
 	var err error
 	if isTTY {
-		serialized, err = json.MarshalIndent(jsonData, data.Color+"⇢  \033[0m", "    ")
-		serialized = append([]byte(data.Color+"⇢  \033[0m"), serialized...)
-		serialized = []byte(strings.Replace(string(serialized), `"level": "debug",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`debug`+"\033[0m"+`",`, -1))
-		serialized = []byte(strings.Replace(string(serialized), `"level": "info",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`info`+"\033[0m"+`",`, -1))
-		serialized = []byte(strings.Replace(string(serialized), `"level": "warn",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`warn`+"\033[0m"+`",`, -1))
-		serialized = []byte(strings.Replace(string(serialized), `"level": "error",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`error`+"\033[0m"+`",`, -1))
-		serialized = []byte(strings.Replace(string(serialized), `"level": "panic",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`panic`+"\033[0m"+`",`, -1))
-		serialized = []byte(strings.Replace(string(serialized), `"level": "fatal",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`fatal`+"\033[0m"+`",`, -1))
+		serialized, err = json.MarshalIndent(jsonData, "", "    ")
+		serialized = append([]byte(data.Color), serialized...)
+		serialized = append(serialized, []byte("\033[0m")...)
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "debug",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`debug`+"\033[0m"+`",`, -1))
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "info",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`info`+"\033[0m"+`",`, -1))
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "warn",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`warn`+"\033[0m"+`",`, -1))
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "error",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`error`+"\033[0m"+`",`, -1))
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "panic",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`panic`+"\033[0m"+`",`, -1))
+		//serialized = []byte(strings.Replace(string(serialized), `"level": "fatal",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`fatal`+"\033[0m"+`",`, -1))
 	} else {
 		serialized, err = json.Marshal(jsonData)
 	}
