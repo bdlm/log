@@ -14,10 +14,10 @@ type JSONFormatter struct {
 	// nested dictionary at a given key.
 	DataKey string
 
-	// Disable caller data.
+	// DisableCaller disables caller data.
 	DisableCaller bool
 
-	// Disable hostname logging.
+	// DisableHostname disables hostname logging.
 	DisableHostname bool
 
 	// DisableLevel controls level logging.
@@ -29,13 +29,13 @@ type JSONFormatter struct {
 	// DisableTimestamp controls timestamp logging.
 	DisableTimestamp bool
 
-	// Force disabling colors.
+	// DisableTTY disables TTY formatted output.
 	DisableTTY bool
 
-	// Escape HTML characters
+	// EscapeHTML escapes HTML characters.
 	EscapeHTML bool
 
-	// Set to true to bypass checking for a TTY before outputting colors.
+	// ForceTTY forces TTY output.
 	ForceTTY bool
 
 	// FieldMap allows users to customize the names of keys for default fields.
@@ -53,7 +53,7 @@ type JSONFormatter struct {
 	// TimestampFormat to use for display when a full timestamp is printed
 	TimestampFormat string
 
-	// Whether the logger's out is to a terminal
+	// Flag noting whether the logger's out is to a terminal
 	isTerminal bool
 
 	sync.Once
