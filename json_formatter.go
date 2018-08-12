@@ -1,27 +1,23 @@
 package log
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 )
 
 // JSONFormatter formats logs into parsable json
 type JSONFormatter struct {
-	// Force disabling colors.
-	DisableTTY bool
-
-	// Set to true to bypass checking for a TTY before outputting colors.
-	ForceTTY bool
-
 	// DataKey allows users to put all the log entry parameters into a
 	// nested dictionary at a given key.
 	DataKey string
 
-	// DisableCaller controls caller logging.
+	// Disable caller data.
 	DisableCaller bool
 
-	// DisableHostname controls hostname logging.
+	// Disable hostname logging.
 	DisableHostname bool
 
 	// DisableLevel controls level logging.
@@ -33,16 +29,28 @@ type JSONFormatter struct {
 	// DisableTimestamp controls timestamp logging.
 	DisableTimestamp bool
 
+	// Force disabling colors.
+	DisableTTY bool
+
+	// Escape HTML characters
+	EscapeHTML bool
+
+	// Set to true to bypass checking for a TTY before outputting colors.
+	ForceTTY bool
+
 	// FieldMap allows users to customize the names of keys for default fields.
-	// As an example:
-	//  formatter := &JSONFormatter{FieldMap: FieldMap{
-	//      LabelTime:  "@timestamp",
-	//      LabelLevel: "@level",
-	//      LabelMsg:   "@message",
-	//  }}
+	// For example:
+	// 	formatter := &TextFormatter{FieldMap: FieldMap{
+	//      LabelCaller: "@caller",
+	//      LabelData:   "@data",
+	//      LabelHost:   "@hostname",
+	//      LabelLevel:  "@loglevel",
+	//      LabelMsg:    "@message",
+	//      LabelTime:   "@timestamp",
+	// 	}}
 	FieldMap FieldMap
 
-	// TimestampFormat sets the format used for marshaling timestamps.
+	// TimestampFormat to use for display when a full timestamp is printed
 	TimestampFormat string
 
 	// Whether the logger's out is to a terminal
@@ -62,7 +70,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	prefixFieldClashes(entry.Data, f.FieldMap)
 	f.Do(func() { f.init(entry) })
 
-	data := getData(entry, f.FieldMap)
+	data := getData(entry, f.FieldMap, f.EscapeHTML)
 	jsonData := map[string]interface{}{}
 
 	//
@@ -91,18 +99,20 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
 	var serialized []byte
 	var err error
+
+	buf := new(bytes.Buffer)
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(f.EscapeHTML)
+
 	if isTTY {
-		serialized, err = json.MarshalIndent(jsonData, "", "    ")
+		encoder.SetIndent("", "    ")
+		err = encoder.Encode(jsonData)
+		serialized = []byte(strings.Trim(buf.String(), "\n"))
 		serialized = append([]byte(data.Color), serialized...)
 		serialized = append(serialized, []byte("\033[0m")...)
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "debug",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`debug`+"\033[0m"+`",`, -1))
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "info",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`info`+"\033[0m"+`",`, -1))
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "warn",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`warn`+"\033[0m"+`",`, -1))
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "error",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`error`+"\033[0m"+`",`, -1))
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "panic",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`panic`+"\033[0m"+`",`, -1))
-		//serialized = []byte(strings.Replace(string(serialized), `"level": "fatal",`, `"`+data.Color+`level`+"\033[0m"+`": "`+data.Color+`fatal`+"\033[0m"+`",`, -1))
 	} else {
-		serialized, err = json.Marshal(jsonData)
+		err = encoder.Encode(jsonData)
+		serialized = []byte(strings.Trim(buf.String(), "\n"))
 	}
 
 	if err != nil {

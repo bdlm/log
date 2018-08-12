@@ -42,7 +42,7 @@ func TestEscaping(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`ba"r`, `ba\"r`},
+		{`ba"r`, `ba\\\"r`},
 		{`ba'r`, `ba'r`},
 	}
 
@@ -63,7 +63,7 @@ func TestEscaping_Interface(t *testing.T) {
 		value    interface{}
 		expected string
 	}{
-		{ts, fmt.Sprintf("\"%s\"", ts.String())},
+		{ts.Format(defaultTimestampFormat), fmt.Sprintf("%s", ts.Format(defaultTimestampFormat))},
 		{errors.New("error: something went wrong"), "\"error: something went wrong\""},
 	}
 

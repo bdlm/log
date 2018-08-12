@@ -49,10 +49,10 @@ func Example_basic() {
 	}).Panic("The walrus are attacking!")
 
 	// Output:
-	// level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1"
-	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20"
-	// level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100"
+	// level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1
+	// level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20
+	// level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100
 	// level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?"
-	// level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true"
-	// level="error" msg="That could have gone better..." data.dead="true" data.winner="walrus"
+	// level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true
+	// level="error" msg="That could have gone better..." data.dead=true data.winner="walrus"
 }
