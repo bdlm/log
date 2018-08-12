@@ -113,19 +113,23 @@ func TestFieldClashWithLevel(t *testing.T) {
 
 func TestFieldClashWithRemappedFields(t *testing.T) {
 	formatter := &JSONFormatter{FieldMap: FieldMap{
-		LabelTime:   "@timestamp",
+		LabelTime:   "@time",
 		LabelLevel:  "@level",
 		LabelMsg:    "@message",
 		LabelData:   "@data",
 		LabelCaller: "@caller",
 	}}
 	entry := WithFields(Fields{
-		"@timestamp": "@timestamp",
-		"@level":     "@level",
-		"@message":   "@message",
-		"time":       "time",
-		"level":      "level",
-		"msg":        "msg",
+		"@time":    "@time",
+		"@level":   "@level",
+		"@message": "@message",
+		"@data":    "@data",
+		"@caller":  "@caller",
+		"time":     "time",
+		"level":    "level",
+		"msg":      "msg",
+		"data":     "data",
+		"caller":   "caller",
 	})
 
 	b, err := formatter.Format(entry)
@@ -139,9 +143,9 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
 
-	for _, field := range []string{"timestamp", "level", "msg"} {
+	for _, field := range []string{"time", "level", "msg", "data", "caller"} {
 		if result.Data[field] == field {
-			t.Errorf("Expected field %v to be untouched; got %v", field, result.Data[field])
+			t.Errorf("Expected field %v to be untouched; got %v for field %v", field, result.Data[field], field)
 		}
 
 		remappedKey := fmt.Sprintf(formatter.FieldMap.resolve(LabelData)+".%s", field)
@@ -150,12 +154,13 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 		}
 	}
 
-	for _, field := range []string{"@timestamp", "@level", "@message"} {
+	for _, field := range []string{"@time", "@level", "@message", "@data", "@caller"} {
 		if result.Data[field] == field {
 			t.Errorf(
-				"Expected field %v to be mapped to an Entry value: %v\n%s\n\n",
+				"Expected field %v to be mapped to an Entry value %v, got %v\n%s\n\n",
 				field,
-				result.Data,
+				result.Data[field],
+				field,
 				string(b),
 			)
 		}
@@ -262,6 +267,7 @@ func TestJSONTimeKey(t *testing.T) {
 func TestJSONDisableTimestamp(t *testing.T) {
 	formatter := &JSONFormatter{
 		DisableTimestamp: true,
+		ForceTTY:         true,
 	}
 
 	b, err := formatter.Format(WithField("level", "something"))

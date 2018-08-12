@@ -9,27 +9,42 @@ import (
 
 var (
 	termTemplate = template.Must(template.New("tty").Parse(
-		"{{.Color}}{{printf \"%5s\" .Level}}\033[0m{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}} \033[1;97m\"{{printf \"%.125s\" .Message}}\"\033[0m\n   {{.Color}}⇢\033[0m {{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\"\033[38;5;180m{{$v}}\033[0m\"{{end}}{{if .Caller}}{{$length := len .Data }}{{if ne $length  0}}\n   {{.Color}}⇢\033[0m {{end}} \033[38;5;28m{{.Caller}}\033[0m{{end}}\n",
+		"{{.Color}}{{printf \"%5s\" .Level}}\033[0m{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}} \033[1;97m{{printf \"%.125s\" .Message}}\033[0m\n   {{.Color}}⇢\033[0m {{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\033[38;5;180m{{$v}}\033[0m{{end}}{{if .Caller}}{{$length := len .Data }}{{if ne $length  0}}\n   {{.Color}}⇢\033[0m {{end}} \033[38;5;28m{{.Caller}}\033[0m{{end}}\n",
 	))
 	textTemplate = template.Must(template.New("log").Parse(
-		`{{if .Timestamp}} {{.LabelTime}}="{{.Timestamp}}"{{end}} {{.LabelLevel}}="{{.Level}}"{{if .Message}} {{.LabelMsg}}="{{.Message}}"{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}="{{$v}}"{{end}}{{if .Caller}} {{.LabelCaller}}="{{.Caller}}"{{end}}{{if .Hostname}} {{.LabelHost}}="{{.Hostname}}"{{end}}`,
+		"{{if .Timestamp}} {{.LabelTime}}=\"{{.Timestamp}}\"{{end}} {{.LabelLevel}}=\"{{.Level}}\"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}",
 	))
 )
 
 // TextFormatter formats logs into text.
 type TextFormatter struct {
-	// Disable caller data.
+	// DataKey allows users to put all the log entry parameters into a
+	// nested dictionary at a given key.
+	DataKey string
+
+	// DisableCaller disables caller data.
 	DisableCaller bool
 
-	// Disable hostname logging.
+	// DisableHostname disables hostname logging.
 	DisableHostname bool
 
-	// Disable timestamp logging. useful when output is redirected to logging
-	// system that already adds timestamps.
+	// DisableLevel controls level logging.
+	DisableLevel bool
+
+	// DisableMessage controls message logging.
+	DisableMessage bool
+
+	// DisableTimestamp controls timestamp logging.
 	DisableTimestamp bool
 
-	// Force disabling colors.
+	// DisableTTY disables TTY formatted output.
 	DisableTTY bool
+
+	// EscapeHTML escapes HTML characters.
+	EscapeHTML bool
+
+	// ForceTTY forces TTY output.
+	ForceTTY bool
 
 	// FieldMap allows users to customize the names of keys for default fields.
 	// For example:
@@ -43,13 +58,10 @@ type TextFormatter struct {
 	// 	}}
 	FieldMap FieldMap
 
-	// Set to true to bypass checking for a TTY before outputting colors.
-	ForceTTY bool
-
 	// TimestampFormat to use for display when a full timestamp is printed
 	TimestampFormat string
 
-	// Whether the logger's out is to a terminal
+	// Flag noting whether the logger's out is to a terminal
 	isTerminal bool
 
 	sync.Once
@@ -75,7 +87,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	f.Do(func() { f.init(entry) })
 
-	data := getData(entry, f.FieldMap)
+	data := getData(entry, f.FieldMap, f.EscapeHTML)
 	data.LabelCaller = f.FieldMap.resolve(LabelCaller)
 	data.LabelHost = f.FieldMap.resolve(LabelHost)
 	data.LabelLevel = f.FieldMap.resolve(LabelLevel)
@@ -95,6 +107,11 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 	if f.DisableCaller {
 		data.Caller = ""
+	}
+
+	data.Message = escape(data.Message, f.EscapeHTML)
+	for k, v := range data.Data {
+		data.Data[k] = escape(v, f.EscapeHTML)
 	}
 
 	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY

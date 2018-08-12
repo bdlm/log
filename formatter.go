@@ -1,6 +1,8 @@
 package log
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -38,12 +40,12 @@ func (f FieldMap) resolve(fieldLabel FieldLabel) string {
 }
 
 type logData struct {
-	LabelCaller string
-	LabelData   string
-	LabelHost   string
-	LabelLevel  string
-	LabelMsg    string
-	LabelTime   string
+	LabelCaller string `json:"-"`
+	LabelData   string `json:"-"`
+	LabelHost   string `json:"-"`
+	LabelLevel  string `json:"-"`
+	LabelMsg    string `json:"-"`
+	LabelTime   string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
 	Color     string                 `json:"-"`
@@ -87,8 +89,23 @@ const (
 	DEBUGColor = "\033[38;5;245m"
 )
 
+func escape(data interface{}, escapeHTML bool) string {
+	var result string
+	buf := new(bytes.Buffer)
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(escapeHTML)
+	err := encoder.Encode(data)
+	if nil == err {
+		result = strings.Trim(buf.String(), "\n")
+	}
+	if result == `""` {
+		result = ""
+	}
+	return result
+}
+
 // getData is a helper function that extracts log data from the Entry.
-func getData(entry *Entry, fieldMap FieldMap) *logData {
+func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
 	var levelColor string
 	switch entry.Level {
 	case DebugLevel:
@@ -106,10 +123,10 @@ func getData(entry *Entry, fieldMap FieldMap) *logData {
 	}
 
 	data := &logData{
-		Caller:    strings.Trim(strconv.QuoteToASCII(getCaller()), `"`),
+		Caller:    getCaller(),
 		Data:      make(map[string]interface{}),
-		Hostname:  strings.Trim(strconv.QuoteToASCII(os.Getenv("HOSTNAME")), `"`),
-		Level:     strings.Trim(strconv.QuoteToASCII(entry.Level.String()), `"`),
+		Hostname:  os.Getenv("HOSTNAME"),
+		Level:     entry.Level.String(),
 		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Color:     levelColor,

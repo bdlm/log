@@ -3,7 +3,6 @@ package log
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -12,13 +11,16 @@ import (
 )
 
 func TestFormatting(t *testing.T) {
-	tf := &TextFormatter{DisableTTY: true, DisableHostname: true}
+	tf := &TextFormatter{
+		DisableHostname: true,
+		DisableTTY:      true,
+	}
 
 	testCases := []struct {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" data.test=\"foo\" caller=\"text_formatter_test.go:25 github.com/bdlm/log.TestFormatting\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"panic\" data.test=\"foo\" caller=\"text_formatter_test.go:27 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -42,7 +44,7 @@ func TestEscaping(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`ba"r`, `ba\"r`},
+		{`ba"r`, `ba\\\"r`},
 		{`ba'r`, `ba'r`},
 	}
 
@@ -63,7 +65,7 @@ func TestEscaping_Interface(t *testing.T) {
 		value    interface{}
 		expected string
 	}{
-		{ts, fmt.Sprintf("\"%s\"", ts.String())},
+		{ts.Format(defaultTimestampFormat), ts.Format(defaultTimestampFormat)},
 		{errors.New("error: something went wrong"), "\"error: something went wrong\""},
 	}
 
