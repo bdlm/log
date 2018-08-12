@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"io"
 	"runtime"
+
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 // Writer returns an info-level log writer.
@@ -12,7 +14,7 @@ func (logger *Logger) Writer() *io.PipeWriter {
 }
 
 // WriterLevel returns a log writer with a specified leve.
-func (logger *Logger) WriterLevel(level Level) *io.PipeWriter {
+func (logger *Logger) WriterLevel(level stdLogger.Level) *io.PipeWriter {
 	return NewEntry(logger).WriterLevel(level)
 }
 
@@ -22,7 +24,7 @@ func (entry *Entry) Writer() *io.PipeWriter {
 }
 
 // WriterLevel returns a log writer with a specified leve.
-func (entry *Entry) WriterLevel(level Level) *io.PipeWriter {
+func (entry *Entry) WriterLevel(level stdLogger.Level) *io.PipeWriter {
 	reader, writer := io.Pipe()
 
 	var printFunc func(args ...interface{})

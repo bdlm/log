@@ -6,6 +6,8 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 // Logger defines properties for managing logs and implements the std.Logger
@@ -29,7 +31,7 @@ type Logger struct {
 	// The logging level the logger should log at. This is typically (and defaults
 	// to) `log.Info`, which allows Info(), Warn(), Error() and Fatal() to be
 	// logged.
-	Level Level
+	Level stdLogger.Level
 	// Used to sync writing to the log. Locking is enabled by Default
 	mu MutexWrap
 	// Reusable empty entry
@@ -346,12 +348,12 @@ func (logger *Logger) SetNoLock() {
 	logger.mu.Disable()
 }
 
-func (logger *Logger) level() Level {
-	return Level(atomic.LoadUint32((*uint32)(&logger.Level)))
+func (logger *Logger) level() stdLogger.Level {
+	return stdLogger.Level(atomic.LoadUint32((*uint32)(&logger.Level)))
 }
 
 // SetLevel sets the minimum logging level.
-func (logger *Logger) SetLevel(level Level) {
+func (logger *Logger) SetLevel(level stdLogger.Level) {
 	atomic.StoreUint32((*uint32)(&logger.Level), uint32(level))
 }
 

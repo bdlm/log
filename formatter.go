@@ -110,6 +110,8 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
 	switch entry.Level {
 	case DebugLevel:
 		levelColor = DEBUGColor
+	case InfoLevel:
+		levelColor = DEFAULTColor
 	case WarnLevel:
 		levelColor = WARNColor
 	case ErrorLevel:
@@ -126,7 +128,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
 		Caller:    getCaller(),
 		Data:      make(map[string]interface{}),
 		Hostname:  os.Getenv("HOSTNAME"),
-		Level:     entry.Level.String(),
+		Level:     levelString(entry.Level),
 		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Color:     levelColor,

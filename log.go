@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"log"
 	"strings"
+
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 // Fields type, used to pass to `WithFields`.
 type Fields map[string]interface{}
 
-// Level type
-type Level uint32
-
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
-func (level Level) String() string {
+func levelString(level stdLogger.Level) string {
 	switch level {
 	case DebugLevel:
 		return "debug"
@@ -33,7 +32,7 @@ func (level Level) String() string {
 }
 
 // ParseLevel takes a string level and returns the log level constant.
-func ParseLevel(lvl string) (Level, error) {
+func ParseLevel(lvl string) (stdLogger.Level, error) {
 	switch strings.ToLower(lvl) {
 	case "panic":
 		return PanicLevel, nil
@@ -49,39 +48,38 @@ func ParseLevel(lvl string) (Level, error) {
 		return DebugLevel, nil
 	}
 
-	var l Level
+	var l stdLogger.Level
 	return l, fmt.Errorf("not a valid log Level: %q", lvl)
 }
 
 // AllLevels is a constant exposing all logging levels.
-var AllLevels = []Level{
-	PanicLevel,
-	FatalLevel,
-	ErrorLevel,
-	WarnLevel,
-	InfoLevel,
-	DebugLevel,
+var AllLevels = []stdLogger.Level{
+	stdLogger.Panic,
+	stdLogger.Fatal,
+	stdLogger.Error,
+	stdLogger.Warn,
+	stdLogger.Info,
 }
 
-// These are the different logging levels. You can set the logging level to log
+// These are the standard logging levels. You can set the logging level to log
 // on your instance of logger, obtained with `New()`.
 const (
 	// PanicLevel level, highest level of severity. Logs and then calls panic with the
 	// message passed to Debug, Info, ...
-	PanicLevel Level = iota
+	PanicLevel = stdLogger.Panic
 	// FatalLevel level. Logs and then calls `os.Exit(1)`. It will exit even if the
 	// logging level is set to Panic.
-	FatalLevel
+	FatalLevel = stdLogger.Fatal
 	// ErrorLevel level. Logs. Used for errors that should definitely be noted.
 	// Commonly used for hooks to send errors to an error tracking service.
-	ErrorLevel
+	ErrorLevel = stdLogger.Error
 	// WarnLevel level. Non-critical entries that deserve eyes.
-	WarnLevel
+	WarnLevel = stdLogger.Warn
 	// InfoLevel level. General operational entries about what's going on inside the
 	// application.
-	InfoLevel
+	InfoLevel = stdLogger.Info
 	// DebugLevel level. Usually only enabled when debugging. Very verbose logging.
-	DebugLevel
+	DebugLevel = stdLogger.Debug
 )
 
 // Won't compile if StdLogger can't be realized by a log.Logger

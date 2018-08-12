@@ -3,6 +3,8 @@ package log
 import (
 	"io"
 	"time"
+
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 var (
@@ -28,14 +30,14 @@ func SetFormatter(formatter Formatter) {
 }
 
 // SetLevel sets the standard logger level.
-func SetLevel(level Level) {
+func SetLevel(level stdLogger.Level) {
 	std.mu.Lock()
 	std.SetLevel(level)
 	std.mu.Unlock()
 }
 
 // GetLevel returns the standard logger level.
-func GetLevel() Level {
+func GetLevel() stdLogger.Level {
 	std.mu.Lock()
 	defer std.mu.Unlock()
 	return std.level()

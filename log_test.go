@@ -313,12 +313,12 @@ func TestDoubleLoggingDoesntPrefixPreviousFields(t *testing.T) {
 }
 
 func TestConvertLevelToString(t *testing.T) {
-	assert.Equal(t, "debug", DebugLevel.String())
-	assert.Equal(t, "info", InfoLevel.String())
-	assert.Equal(t, "warn", WarnLevel.String())
-	assert.Equal(t, "error", ErrorLevel.String())
-	assert.Equal(t, "fatal", FatalLevel.String())
-	assert.Equal(t, "panic", PanicLevel.String())
+	assert.Equal(t, "debug", levelString(DebugLevel))
+	assert.Equal(t, "info", levelString(InfoLevel))
+	assert.Equal(t, "warn", levelString(WarnLevel))
+	assert.Equal(t, "error", levelString(ErrorLevel))
+	assert.Equal(t, "fatal", levelString(FatalLevel))
+	assert.Equal(t, "panic", levelString(PanicLevel))
 }
 
 func TestParseLevel(t *testing.T) {
