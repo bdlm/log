@@ -28,12 +28,12 @@
 
 By default, `bdlm/log` uses a basic text format:
 ```javascript
-time="2018-08-10T20:44:08.707-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count="1" caller="main.go:32 main.main" host="myhost"
-time="2018-08-10T20:44:08.707-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count="20" caller="main.go:36 main.main" host="myhost"
-time="2018-08-10T20:44:08.708-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count="100" caller="main.go:40 main.main" host="myhost"
-time="2018-08-10T20:44:08.708-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" caller="main.go:44 main.main" host="myhost"
-time="2018-08-10T20:44:08.708-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run="true" caller="main.go:48 main.main" host="myhost"
-time="2018-08-10T20:44:08.708-06:00" level="fatal" msg="That could have gone better..." data.dead="true" data.winner="walrus" caller="main.go:24 main.main.func1" host="myhost"
+time="2018-08-11T18:07:02.366-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:38 main.main" host="myhost"
+time="2018-08-11T18:07:02.366-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:42 main.main" host="myhost"
+time="2018-08-11T18:07:02.366-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 caller="main.go:46 main.main" host="myhost"
+time="2018-08-11T18:07:02.366-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?" caller="main.go:50 main.main" host="myhost"
+time="2018-08-11T18:07:02.366-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true caller="main.go:54 main.main" host="myhost"
+time="2018-08-11T18:07:02.367-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" caller="main.go:29 main.main.func1" host="myhost"
 ```
 
 For development, color-coded output formated for humans is automatically enabled when a `tty` terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
@@ -45,12 +45,12 @@ For development, color-coded output formated for humans is automatically enabled
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
 
 ```json
-{"caller":"main.go:32 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-10T20:44:46.177-06:00"}
-{"caller":"main.go:36 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-10T20:44:46.177-06:00"}
-{"caller":"main.go:40 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-10T20:44:46.177-06:00"}
-{"caller":"main.go:44 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-10T20:44:46.177-06:00"}
-{"caller":"main.go:48 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-10T20:44:46.177-06:00"}
-{"caller":"main.go:24 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-10T20:44:46.177-06:00"}
+{"caller":"main.go:40 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-11T18:13:15.754-06:00"}
+{"caller":"main.go:44 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-11T18:13:15.755-06:00"}
+{"caller":"main.go:48 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-11T18:13:15.755-06:00"}
+{"caller":"main.go:52 main.main","data":{"animal":"cow","run":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-11T18:13:15.755-06:00"}
+{"caller":"main.go:56 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-11T18:13:15.755-06:00"}
+{"caller":"main.go:31 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-11T18:13:15.755-06:00"}
 ```
 
 The JSON formatter also makes adjustments by default when a `tty` terminal is detected and can be disabled similarly with `log.SetFormatter(&log.JSONFormatter{DisableTTY: true})`:
