@@ -90,11 +90,14 @@ const (
 )
 
 func escape(data interface{}, escapeHTML bool) string {
+	var result string
 	buf := new(bytes.Buffer)
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(escapeHTML)
-	encoder.Encode(data)
-	result := strings.Trim(buf.String(), "\n")
+	err := encoder.Encode(data)
+	if nil == err {
+		result = strings.Trim(buf.String(), "\n")
+	}
 	if result == `""` {
 		result = ""
 	}
