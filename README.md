@@ -90,18 +90,19 @@ The JSON formatter also makes adjustments by default when a `tty` terminal is de
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="400px">
 </p>
 
-## Trace-level logging
+## Backtrace data
 
 The default formatters also have a `trace` mode that is disabled by default. Rather than acting as an additional log level, it is instead a verbose mode that includes the full backtrace of the call that triggered the log write. Here are the above examples with trace enabled:
 
+To enable trace output in the standard Formatters, set `EnableTrace` to `true`.
+
 ### TextFormat
 
-To enable trace output:
+Non-TTY trace output:
 ```go
-log.SetFormatter(&log.TextFormatter{EnableTrace: true})
+log.SetFormatter(&log.TextFormatter{EnableTrace: true, DisableTTY: true})
 ```
 
-Non-TTY trace output:
 ```sh
 time="2018-08-12T20:40:59.258-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:42 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:196 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Debug" trace.6="main.go:42 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
 time="2018-08-12T20:40:59.258-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:46 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:203 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Info" trace.6="main.go:46 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
@@ -112,6 +113,9 @@ time="2018-08-12T20:40:59.259-06:00" level="fatal" msg="That could have gone bet
 ```
 
 TTY trace output:
+```go
+log.SetFormatter(&log.TextFormatter{EnableTrace: true, ForceTTY: true})
+```
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png">
 </p>
@@ -120,7 +124,7 @@ TTY trace output:
 
 To enable trace output:
 ```go
-log.SetFormatter(&log.JSONFormatter{EnableTrace: true})
+log.SetFormatter(&log.JSONFormatter{EnableTrace: true, DisableTTY: true})
 ```
 
 Non-TTY trace output:
@@ -134,6 +138,9 @@ Non-TTY trace output:
 ```
 
 TTY trace output:
+```go
+log.SetFormatter(&log.JSONFormatter{EnableTrace: true, ForceTTY: true})
+```
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png">
 </p>
