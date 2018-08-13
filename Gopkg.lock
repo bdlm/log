@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  branch = "logger"
+  branch = "master"
   digest = "1:214b2f1af454ab36b1ffc019bce6a74542c8d799462282eb009a9ea056d54297"
   name = "github.com/bdlm/std"
   packages = ["logger"]
   pruneopts = ""
-  revision = "5c9aa4b4a607417e45691e1a3de5c8720446211f"
+  revision = "115aeb0aea4476d378bdd53089a4948dc264fef8"
 
 [[projects]]
   digest = "1:56c130d885a4aacae1dd9c7b71cfe39912c7ebc1ff7d2b46083c8812996dc43b"
