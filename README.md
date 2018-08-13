@@ -65,6 +65,11 @@ The default formatters also have a `trace` mode that is disabled by default. Rat
 
 #### TextFormat
 
+To enable trace output:
+```go
+log.SetFormatter(&log.TextFormatter{EnableTrace: true})
+```
+
 Non-TTY trace output:
 ```sh
 time="2018-08-12T20:09:24.981-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:42 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:196 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Debug" trace.6="main.go:42 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
@@ -81,6 +86,11 @@ TTY trace output:
 </p>
 
 #### JSONFormat
+
+To enable trace output:
+```go
+log.SetFormatter(&log.JSONFormatter{EnableTrace: true})
+```
 
 Non-TTY trace output:
 ```json
