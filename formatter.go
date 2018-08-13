@@ -29,6 +29,7 @@ const (
 	LabelHost   = "host"
 	LabelLevel  = "level"
 	LabelMsg    = "msg"
+	LabelTrace  = "trace"
 	LabelTime   = "time"
 )
 
@@ -54,6 +55,7 @@ type logData struct {
 	Level     string                 `json:"level,omitempty"`
 	Message   string                 `json:"msg,omitempty"`
 	Timestamp string                 `json:"time,omitempty"`
+	Trace     []string               `json:"trace,omitempty"`
 }
 
 func getCaller() string {
@@ -72,6 +74,25 @@ func getCaller() string {
 		a++
 	}
 	return caller
+}
+
+func getTrace() []string {
+	trace := []string{}
+	a := 0
+	for {
+		if pc, file, line, ok := runtime.Caller(a); ok {
+			trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
+			//if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
+			//	strings.HasSuffix(strings.ToLower(file), "_test.go") {
+			//	caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+			//	break
+			//}
+		} else {
+			break
+		}
+		a++
+	}
+	return trace
 }
 
 const (
@@ -126,12 +147,13 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
 
 	data := &logData{
 		Caller:    getCaller(),
+		Color:     levelColor,
 		Data:      make(map[string]interface{}),
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     levelString(entry.Level),
 		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
-		Color:     levelColor,
+		Trace:     getTrace(),
 	}
 	remapData(entry, fieldMap, data)
 

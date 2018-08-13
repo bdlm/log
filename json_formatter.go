@@ -32,6 +32,9 @@ type JSONFormatter struct {
 	// DisableTTY disables TTY formatted output.
 	DisableTTY bool
 
+	// Enable the full backtrace.
+	EnableTrace bool
+
 	// EscapeHTML escapes HTML characters.
 	EscapeHTML bool
 
@@ -74,9 +77,13 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	jsonData := map[string]interface{}{}
 
 	//
-	if !f.DisableCaller {
+	if !f.DisableCaller || f.EnableTrace {
 		jsonData[f.FieldMap.resolve(LabelCaller)] = data.Caller
 	}
+	if f.EnableTrace {
+		jsonData[f.FieldMap.resolve(LabelTrace)] = data.Trace
+	}
+
 	if !f.DisableHostname {
 		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
 	}
