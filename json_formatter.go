@@ -83,7 +83,6 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	if f.EnableTrace {
 		jsonData[f.FieldMap.resolve(LabelTrace)] = data.Trace
 	}
-
 	if !f.DisableHostname {
 		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
 	}
