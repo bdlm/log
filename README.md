@@ -19,9 +19,10 @@
 
 * support for sanitizing strings from log output to aid in preventing leaking sensitive data.
 * additional default fields `host` and `caller`.
+* verbose output including the full backtrace of logger calls.
 * support for suppressing any default field.
 * TTY formatting and coloring of JSON output.
-* updated text formatting for TTY output.
+* updated formatting for TTY text output.
 * updated TTY color scheme.
 
 #
