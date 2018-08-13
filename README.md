@@ -92,9 +92,9 @@ The JSON formatter also makes adjustments by default when a `tty` terminal is de
 
 ## Backtrace data
 
-The default formatters also have a `trace` mode that is disabled by default. Rather than acting as an additional log level, it is instead a verbose mode that includes the full backtrace of the call that triggered the log write. Here are the above examples with trace enabled:
+The standard formatters also have a `trace` mode that is disabled by default. Rather than acting as an additional log level, it is instead a verbose mode that includes the full backtrace of the call that triggered the log write. To enable trace output, set `EnableTrace` to `true`.
 
-To enable trace output in the standard Formatters, set `EnableTrace` to `true`.
+Here are the above examples with trace enabled:
 
 ### TextFormat
 
