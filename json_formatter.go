@@ -14,34 +14,37 @@ type JSONFormatter struct {
 	// nested dictionary at a given key.
 	DataKey string
 
-	// DisableCaller disables caller data.
+	// DisableCaller disables caller data output.
 	DisableCaller bool
 
-	// DisableHostname disables hostname logging.
+	// DisableHostname disables hostname output.
 	DisableHostname bool
 
-	// DisableLevel controls level logging.
+	// DisableLevel disables level output.
 	DisableLevel bool
 
-	// DisableMessage controls message logging.
+	// DisableMessage disables message output.
 	DisableMessage bool
 
-	// DisableTimestamp controls timestamp logging.
+	// DisableTimestamp disables timestamp output.
 	DisableTimestamp bool
 
 	// DisableTTY disables TTY formatted output.
 	DisableTTY bool
 
-	// Enable the full backtrace.
+	// Enable full backtrace output.
 	EnableTrace bool
 
-	// EscapeHTML escapes HTML characters.
+	// EscapeHTML is a flag that notes whether HTML characters should be
+	// escaped.
 	EscapeHTML bool
 
-	// ForceTTY forces TTY output.
+	// ForceTTY forces TTY formatted output.
 	ForceTTY bool
 
-	// FieldMap allows users to customize the names of keys for default fields.
+	// FieldMap allows users to customize the names of keys for default
+	// fields.
+	//
 	// For example:
 	// 	formatter := &TextFormatter{FieldMap: FieldMap{
 	//      LabelCaller: "@caller",
@@ -53,7 +56,7 @@ type JSONFormatter struct {
 	// 	}}
 	FieldMap FieldMap
 
-	// TimestampFormat to use for display when a full timestamp is printed
+	// TimestampFormat allows a custom timestamp format to be used.
 	TimestampFormat string
 
 	// Flag noting whether the logger's out is to a terminal
