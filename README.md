@@ -209,13 +209,17 @@ func init() {
     // Log as JSON instead of the default ASCII formatter.
     log.SetFormatter(&log.TextFormatter{
         // Set various formatter options:
-        //   DisableCaller:    true
-        //   DisableTTY:       true
-        //   DisableTimestamp: true
-        //   DisableHostname:  true
-        //   ForceTTY:         true
-        //   TimestampFormat:  "2006"
-        //   FieldMap:         FieldMap{LabelMsg: "message"}
+        //   DisableCaller:    true,
+        //   DisableHostname:  true,
+        //   DisableLevel:     true,
+        //   DisableMessage:   true,
+        //   DisableTimestamp: true,
+        //   DisableTTY:       true,
+        //   EnableTrace:      true,
+        //   EscapeHTML:       true,
+        //   ForceTTY:         true,
+        //   FieldMap:         FieldMap{LabelMsg: "message"},
+        //   TimestampFormat:  2006",
     })
 
     // Output to stdout instead of the default stderr. Can be any io.Writer, see
