@@ -27,7 +27,7 @@
 ## Formats
 
 By default, `bdlm/log` uses a basic text format:
-```coffee
+```sh
 time="2018-08-11T18:07:02.366-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:38 main.main" host="myhost"
 time="2018-08-11T18:07:02.366-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:42 main.main" host="myhost"
 time="2018-08-11T18:07:02.366-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 caller="main.go:46 main.main" host="myhost"
@@ -66,7 +66,7 @@ The default formatters also have a `trace` mode that is disabled by default. Rat
 #### TextFormat
 
 Non-TTY trace output:
-```javascript
+```sh
 time="2018-08-12T20:09:24.981-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:42 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:196 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Debug" trace.6="main.go:42 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
 time="2018-08-12T20:09:24.982-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:46 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:203 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Info" trace.6="main.go:46 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
 time="2018-08-12T20:09:24.982-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 caller="main.go:50 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/test/vendor/github.com/bdlm/log.getTrace" trace.1="formatter.go:156 github.com/bdlm/test/vendor/github.com/bdlm/log.getData" trace.2="text_formatter.go:93 github.com/bdlm/test/vendor/github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/test/vendor/github.com/bdlm/log.Entry.log" trace.5="entry.go:215 github.com/bdlm/test/vendor/github.com/bdlm/log.(*Entry).Warn" trace.6="main.go:50 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
