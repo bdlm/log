@@ -26,6 +26,30 @@ Please see the **[user documentation](https://github.com/bdlm/log/wiki)** for fu
 
 `bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
+## Examples
+
+### Simple usage
+
+The simplest way to use `bdlm/log` is with the exported package logger:
+
+```go
+package main
+
+import (
+    log "github.com/bdlm/log"
+)
+
+func main() {
+    log.WithFields(log.Fields{
+        "animal": "walrus",
+    }).Info("A walrus appears")
+}
+```
+
+## Compatibility
+
+Note that it is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
+
 ## Formats
 
 By default, `bdlm/log` uses a basic text format:
@@ -108,27 +132,3 @@ TTY trace output:
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png" width="750px">
 </p>
-
-## Examples
-
-### Simple usage
-
-The simplest way to use `bdlm/log` is with the exported package logger:
-
-```go
-package main
-
-import (
-    log "github.com/bdlm/log"
-)
-
-func main() {
-    log.WithFields(log.Fields{
-        "animal": "walrus",
-    }).Info("A walrus appears")
-}
-```
-
-## Compatibility
-
-Note that it is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
