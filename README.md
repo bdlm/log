@@ -35,7 +35,7 @@ Please see the [user documentation](https://github.com/bdlm/log/wiki) for full d
 
 ### Simple usage
 
-The simplest way to use `bdlm/log` is with the exported package logger:
+The simplest way to use `bdlm/log` is with the exported package-level logger:
 
 ```go
 package main
