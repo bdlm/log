@@ -26,7 +26,7 @@
 
 ## Examples
 
-Please see the **[user documentation](https://github.com/bdlm/log/wiki)** for full details.
+Please see the [user documentation](https://github.com/bdlm/log/wiki) for full details.
 
 ### Simple usage
 
