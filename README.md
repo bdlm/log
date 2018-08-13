@@ -111,36 +111,51 @@ TTY trace output:
 
 The full list of `Formatter` properties that can be set is:
 ```go
-// Set to true to bypass checking for a TTY before outputting colors.
-ForceTTY bool
+// DataKey allows users to put all the log entry parameters into a
+// nested dictionary at a given key.
+DataKey string
 
-// Disable caller data.
+// DisableCaller disables caller data.
 DisableCaller bool
 
-// Force disabling colors.
-DisableTTY bool
-
-// Disable timestamp logging. useful when output is redirected to logging
-// system that already adds timestamps.
-DisableTimestamp bool
-
-// Disable hostname logging.
+// DisableHostname disables hostname logging.
 DisableHostname bool
 
-// TimestampFormat to use for display when a full timestamp is printed
-TimestampFormat string
+// DisableLevel controls level logging.
+DisableLevel bool
+
+// DisableMessage controls message logging.
+DisableMessage bool
+
+// DisableTimestamp controls timestamp logging.
+DisableTimestamp bool
+
+// DisableTTY disables TTY formatted output.
+DisableTTY bool
+
+// Enable the full backtrace.
+EnableTrace bool
+
+// EscapeHTML escapes HTML characters.
+EscapeHTML bool
+
+// ForceTTY forces TTY output.
+ForceTTY bool
 
 // FieldMap allows users to customize the names of keys for default fields.
 // For example:
-//  formatter := &TextFormatter{FieldMap: FieldMap{
-//    LabelCaller: "@caller",
-//    LabelData:   "@data",
-//    LabelHost:   "@hostname",
-//    LabelLevel:  "@loglevel",
-//    LabelMsg:    "@message",
-//    LabelTime:   "@timestamp",
-//  }}
+// 	formatter := &TextFormatter{FieldMap: FieldMap{
+//      LabelCaller: "@caller",
+//      LabelData:   "@data",
+//      LabelHost:   "@hostname",
+//      LabelLevel:  "@loglevel",
+//      LabelMsg:    "@message",
+//      LabelTime:   "@timestamp",
+// 	}}
 FieldMap FieldMap
+
+// TimestampFormat to use for display when a full timestamp is printed
+TimestampFormat string
 ```
 
 ## Examples
