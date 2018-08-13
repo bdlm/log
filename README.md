@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
+</p>
+
 # log
 
 <p align="center">
