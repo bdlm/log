@@ -32,14 +32,14 @@ func TestHandler(t *testing.T) {
 
 	outfile := filepath.Join(tempDir, "outfile.out")
 	arg := time.Now().UTC().String()
-	err = exec.Command("go", "run", gofile, outfile, arg).Run()
+	out, err := exec.Command("go", "run", gofile, outfile, arg).CombinedOutput()
 	if err == nil {
 		t.Fatalf("completed normally, should have failed")
 	}
 
 	data, err := ioutil.ReadFile(outfile)
 	if err != nil {
-		t.Fatalf("can't read output file %s. %q", outfile, err)
+		t.Fatalf("can't read output file '%s', err: '%v', cmd-out: %s", outfile, err, string(out))
 	}
 
 	if string(data) != arg {

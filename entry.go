@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/bdlm/std/logger"
 )
 
 var bufferPool *sync.Pool
@@ -38,7 +40,7 @@ type Entry struct {
 
 	// Level the log entry was logged at: Debug, Info, Warn, Error, Fatal or Panic
 	// This field will be set on entry firing and the value will be equal to the one in Logger struct field.
-	Level Level
+	Level logger.Level
 
 	// Message passed to Debug, Info, Warn, Error, Fatal or Panic
 	Message string
@@ -116,7 +118,7 @@ func (entry *Entry) WithTime(t time.Time) *Entry {
 
 // This function is not declared with a pointer value because otherwise
 // race conditions will occur when using multiple goroutines
-func (entry Entry) log(level Level, msg string) {
+func (entry Entry) log(level logger.Level, msg string) {
 	if nil == entry.Logger.Out || entry.Logger.Out == ioutil.Discard {
 		return
 	}
@@ -149,7 +151,7 @@ func (entry Entry) log(level Level, msg string) {
 	// To avoid Entry#log() returning a value that only would make sense for
 	// panic() to use in Entry#Panic(), we avoid the allocation by checking
 	// directly here.
-	if level <= PanicLevel {
+	if level <= PanicLevel && level != FatalLevel {
 		panic(&entry)
 	}
 }

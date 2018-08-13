@@ -9,10 +9,10 @@ import (
 
 var (
 	termTemplate = template.Must(template.New("tty").Parse(
-		"{{.Color}}{{printf \"%5s\" .Level}}\033[0m{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}} \033[1;97m{{printf \"%.125s\" .Message}}\033[0m\n   {{.Color}}⇢\033[0m {{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\033[38;5;180m{{$v}}\033[0m{{end}}{{if .Caller}}{{$length := len .Data }}{{if ne $length  0}}\n   {{.Color}}⇢\033[0m {{end}} \033[38;5;28m{{.Caller}}\033[0m{{end}}\n",
+		"{{.Color}}{{printf \"%5s\" .Level}}\033[0m{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}} \033[1;97m{{printf \"%.125s\" .Message}}\033[0m\n   {{.Color}}⇢\033[0m {{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\033[38;5;180m{{$v}}\033[0m{{end}}{{if .Caller}}{{$length := len .Data }}{{if ne $length  0}}\n   {{.Color}}⇢\033[0m {{end}} \033[38;5;28m{{.Caller}}\033[0m{{end}}\033[0m{{$color := .Color}}{{$caller := .Caller}}{{range $k, $v := .Trace}}\n   {{$color}}⇢\033[0m {{if eq $v $caller}}{{$color}}{{end}}[{{$k}}] {{$v}}\033[0m{{end}}\n",
 	))
 	textTemplate = template.Must(template.New("log").Parse(
-		"{{if .Timestamp}} {{.LabelTime}}=\"{{.Timestamp}}\"{{end}} {{.LabelLevel}}=\"{{.Level}}\"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}",
+		"{{if .Timestamp}} {{.LabelTime}}=\"{{.Timestamp}}\"{{end}} {{.LabelLevel}}=\"{{.Level}}\"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
 	))
 )
 
@@ -39,6 +39,9 @@ type TextFormatter struct {
 
 	// DisableTTY disables TTY formatted output.
 	DisableTTY bool
+
+	// Enable the full backtrace.
+	EnableTrace bool
 
 	// EscapeHTML escapes HTML characters.
 	EscapeHTML bool
@@ -105,8 +108,11 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	if f.DisableHostname {
 		data.Hostname = ""
 	}
-	if f.DisableCaller {
+	if f.DisableCaller && !f.EnableTrace {
 		data.Caller = ""
+	}
+	if !f.EnableTrace {
+		data.Trace = []string{}
 	}
 
 	data.Message = escape(data.Message, f.EscapeHTML)

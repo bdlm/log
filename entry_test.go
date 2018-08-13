@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	stdLogger "github.com/bdlm/std/logger"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -83,8 +84,8 @@ const (
 
 type panickyHook struct{}
 
-func (p *panickyHook) Levels() []Level {
-	return []Level{InfoLevel}
+func (p *panickyHook) Levels() []stdLogger.Level {
+	return []stdLogger.Level{InfoLevel}
 }
 
 func (p *panickyHook) Fire(entry *Entry) error {

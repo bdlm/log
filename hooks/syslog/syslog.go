@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/bdlm/log"
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 // Hook to send logs via syslog.
@@ -52,6 +53,6 @@ func (hook *Hook) Fire(entry *log.Entry) error {
 }
 
 // Levels returns all available log levels.
-func (hook *Hook) Levels() []log.Level {
+func (hook *Hook) Levels() []stdLogger.Level {
 	return log.AllLevels
 }

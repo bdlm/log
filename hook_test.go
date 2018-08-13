@@ -4,6 +4,7 @@ import (
 	"sync"
 	"testing"
 
+	stdLogger "github.com/bdlm/std/logger"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,8 +17,8 @@ func (hook *TestHook) Fire(entry *Entry) error {
 	return nil
 }
 
-func (hook *TestHook) Levels() []Level {
-	return []Level{
+func (hook *TestHook) Levels() []stdLogger.Level {
+	return []stdLogger.Level{
 		DebugLevel,
 		InfoLevel,
 		WarnLevel,
@@ -48,8 +49,8 @@ func (hook *ModifyHook) Fire(entry *Entry) error {
 	return nil
 }
 
-func (hook *ModifyHook) Levels() []Level {
-	return []Level{
+func (hook *ModifyHook) Levels() []stdLogger.Level {
+	return []stdLogger.Level{
 		DebugLevel,
 		InfoLevel,
 		WarnLevel,
@@ -94,8 +95,8 @@ func (hook *ErrorHook) Fire(entry *Entry) error {
 	return nil
 }
 
-func (hook *ErrorHook) Levels() []Level {
-	return []Level{
+func (hook *ErrorHook) Levels() []stdLogger.Level {
+	return []stdLogger.Level{
 		ErrorLevel,
 	}
 }
