@@ -20,7 +20,7 @@
 * updated text formatting for TTY output.
 * updated TTY color scheme.
 
-Please see the [Documentation](https://github.com/bdlm/log/wiki) for full details.
+Please see the **[user documentation](https://github.com/bdlm/log/wiki)** for full details.
 
 #
 
