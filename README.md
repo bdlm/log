@@ -20,13 +20,13 @@
 * updated text formatting for TTY output.
 * updated TTY color scheme.
 
-Please see the **[user documentation](https://github.com/bdlm/log/wiki)** for full details.
-
 #
 
 `bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
 
 ## Examples
+
+Please see the **[user documentation](https://github.com/bdlm/log/wiki)** for full details.
 
 ### Simple usage
 
