@@ -100,7 +100,10 @@ Here are the above examples with trace enabled:
 
 Non-TTY trace output:
 ```go
-log.SetFormatter(&log.TextFormatter{EnableTrace: true, DisableTTY: true})
+log.SetFormatter(&log.TextFormatter{
+    DisableTTY: true,
+    EnableTrace: true,
+})
 ```
 
 ```sh
@@ -114,7 +117,10 @@ time="2018-08-12T20:40:59.259-06:00" level="fatal" msg="That could have gone bet
 
 TTY trace output:
 ```go
-log.SetFormatter(&log.TextFormatter{EnableTrace: true, ForceTTY: true})
+log.SetFormatter(&log.TextFormatter{
+    EnableTrace: true,
+    ForceTTY: true,
+})
 ```
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png">
@@ -124,7 +130,10 @@ log.SetFormatter(&log.TextFormatter{EnableTrace: true, ForceTTY: true})
 
 To enable trace output:
 ```go
-log.SetFormatter(&log.JSONFormatter{EnableTrace: true, DisableTTY: true})
+log.SetFormatter(&log.JSONFormatter{
+    DisableTTY: true,
+    EnableTrace: true,
+})
 ```
 
 Non-TTY trace output:
@@ -139,7 +148,10 @@ Non-TTY trace output:
 
 TTY trace output:
 ```go
-log.SetFormatter(&log.JSONFormatter{EnableTrace: true, ForceTTY: true})
+log.SetFormatter(&log.JSONFormatter{
+    EnableTrace: true,
+    ForceTTY: true,
+})
 ```
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png">
