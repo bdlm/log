@@ -27,7 +27,7 @@
 ## Formats
 
 By default, `bdlm/log` uses a basic text format:
-```javascript
+```coffee
 time="2018-08-11T18:07:02.366-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:38 main.main" host="myhost"
 time="2018-08-11T18:07:02.366-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:42 main.main" host="myhost"
 time="2018-08-11T18:07:02.366-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 caller="main.go:46 main.main" host="myhost"
