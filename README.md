@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png">
 </p>
 
 # log
@@ -69,7 +69,7 @@ time="2018-08-12T20:36:34.579-06:00" level="fatal" msg="That could have gone bet
 For development, color-coded output formated for humans is automatically enabled when a `tty` terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
 
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png">
 </p>
 
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
@@ -112,7 +112,7 @@ time="2018-08-12T20:40:59.259-06:00" level="fatal" msg="That could have gone bet
 
 TTY trace output:
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png">
 </p>
 
 ### JSONFormat
@@ -134,5 +134,5 @@ Non-TTY trace output:
 
 TTY trace output:
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png" width="750px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png">
 </p>
