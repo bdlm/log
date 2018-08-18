@@ -123,12 +123,12 @@ log.SetFormatter(&log.TextFormatter{
 ```
 
 ```sh
-time="2018-08-17T23:45:15.919-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 host="myhost" trace.0="main.go:39 main.main" trace.1="proc.go:198 runtime.main" trace.2="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T23:45:15.920-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 host="myhost" trace.0="main.go:43 main.main" trace.1="proc.go:198 runtime.main" trace.2="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T23:45:15.920-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 host="myhost" trace.0="main.go:47 main.main" trace.1="proc.go:198 runtime.main" trace.2="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T23:45:15.920-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" host="myhost" trace.0="main.go:51 main.main" trace.1="proc.go:198 runtime.main" trace.2="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T23:45:15.920-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true host="myhost" trace.0="main.go:55 main.main" trace.1="proc.go:198 runtime.main" trace.2="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T23:45:15.920-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" host="myhost" trace.0="main.go:30 main.main.func1" trace.1="asm_amd64.s:573 runtime.call32" trace.2="panic.go:502 runtime.gopanic" trace.3="main.go:55 main.main" trace.4="proc.go:198 runtime.main" trace.5="asm_amd64.s:2361 runtime.goexit"
+time="2018-08-18T00:20:36.468-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 host="myhost" trace.0="main.go:38 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 host="myhost" trace.0="main.go:42 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 host="myhost" trace.0="main.go:46 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" host="myhost" trace.0="main.go:50 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true host="myhost" trace.0="main.go:54 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" host="myhost" trace.0="main.go:30 main.main.func1" trace.1="asm_amd64.s:573 runtime.call32" trace.2="panic.go:502 runtime.gopanic" trace.3="main.go:54 main.main"
 ```
 
 TTY trace output:
@@ -154,12 +154,12 @@ log.SetFormatter(&log.JSONFormatter{
 
 Non-TTY trace output:
 ```json
-{"caller":"main.go:39 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:39 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:43 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:43 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:47 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:47 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:51 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:51 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:55 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:55 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:30 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-17T23:45:55.279-06:00","trace":["main.go:30 main.main.func1","asm_amd64.s:573 runtime.call32","panic.go:502 runtime.gopanic","main.go:55 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
+{"caller":"main.go:38 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-18T00:22:16.057-06:00","trace":["main.go:38 main.main"]}
+{"caller":"main.go:42 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:42 main.main"]}
+{"caller":"main.go:46 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:46 main.main"]}
+{"caller":"main.go:50 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:50 main.main"]}
+{"caller":"main.go:54 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:54 main.main"]}
+{"caller":"main.go:30 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:30 main.main.func1","asm_amd64.s:573 runtime.call32","panic.go:502 runtime.gopanic","main.go:54 main.main"]}
 ```
 
 TTY trace output:
