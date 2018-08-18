@@ -189,6 +189,3 @@ func TestTextFormatterFieldMap(t *testing.T) {
 		string(b),
 		"Formatted output doesn't respect FieldMap")
 }
-
-// TODO add tests for sorting etc., this requires a parser for the text
-// formatter output.
