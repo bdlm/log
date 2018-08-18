@@ -55,14 +55,10 @@ func main() {
 
 Note that `bdlm/log` is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
 
-The default log format of this package does not match the stdlib logger's default output so a compatible formatter, `STDFormatter`, is provided:
+The default log format of this package does not match the stdlib logger's default output so a compatible formatter, `STDFormatter`, is provided which includes the additional information inline:
 
 ```go
-log.SetFormatter(&log.STDFormatter{
-    // DisableMessage:   true,   // DisableMessage disables message output.
-    // DisableTimestamp: true,   // DisableTimestamp disables timestamp output.
-    // TimestampFormat:  "2006", // TimestampFormat allows a custom timestamp format to be used.
-})
+log.SetFormatter(&log.STDFormatter{})
 ```
 
 Which results in a standard log output. `STDFormatter` does not have a separate TTY format:
