@@ -31,7 +31,7 @@
 
 ## Examples
 
-Please see the [user documentation](https://github.com/bdlm/log/wiki) for full details.
+#### [User documentation](https://github.com/bdlm/log/wiki)
 
 ### Simple usage
 
