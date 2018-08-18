@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="75%">
 </p>
 
 # log
