@@ -63,12 +63,12 @@ log.SetFormatter(&log.StdFormatter{})
 
 Which results in the following log output. `StdFormatter` does not have a TTY feature:
 ```
-2018/08/17 20:10:59 Oh, look, a bird... data.animal="bird" data.count=1 caller="main.go:39 main.main" host="myhost"
-2018/08/17 20:10:59 A group of walrus emerges from the ocean data.animal="walrus" data.count=20 caller="main.go:43 main.main" host="myhost"
-2018/08/17 20:10:59 The group's number increased tremendously! data.animal="walrus" data.count=100 caller="main.go:47 main.main" host="myhost"
-2018/08/17 20:10:59 Tremendously sized cow enters the ocean. data.animal="cow" data.count="wait, what?" caller="main.go:51 main.main" host="myhost"
-2018/08/17 20:10:59 The walrus are attacking! data.animal="walrus" data.run=true caller="main.go:55 main.main" host="myhost"
-2018/08/17 20:10:59 That could have gone better... data.dead=true data.winner="walrus" caller="main.go:30 main.main.func1" host="myhost"
+2018/08/17 20:17:45 Oh, look, a bird... level="debug" data.animal="bird" data.count=1 caller="main.go:39 main.main" host="myhost"
+2018/08/17 20:17:45 A group of walrus emerges from the ocean level="info" data.animal="walrus" data.count=20 caller="main.go:43 main.main" host="myhost"
+2018/08/17 20:17:45 The group's number increased tremendously! level="warn" data.animal="walrus" data.count=100 caller="main.go:47 main.main" host="myhost"
+2018/08/17 20:17:45 Tremendously sized cow enters the ocean. level="error" data.animal="cow" data.count="wait, what?" caller="main.go:51 main.main" host="myhost"
+2018/08/17 20:17:45 The walrus are attacking! level="panic" data.animal="walrus" data.run=true caller="main.go:55 main.main" host="myhost"
+2018/08/17 20:17:45 That could have gone better... level="fatal" data.dead=true data.winner="walrus" caller="main.go:30 main.main.func1" host="myhost"
 ```
 
 ## Log Formatters

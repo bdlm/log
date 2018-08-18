@@ -8,7 +8,7 @@ import (
 
 var (
 	stdTemplate = template.Must(template.New("log").Parse(
-		"{{if .Timestamp}}{{.Timestamp}}{{end}}{{if .Message}} {{.Message}}{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
+		"{{if .Timestamp}}{{.Timestamp}}{{end}}{{if .Message}} {{.Message}}{{end}}{{if .Level}} {{.LabelLevel}}=\"{{.Level}}\"{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
 	))
 )
 
