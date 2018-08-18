@@ -60,7 +60,7 @@ type logData struct {
 
 func getCaller() string {
 	caller := ""
-	a := 0
+	a := 2
 	for {
 		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
@@ -78,7 +78,7 @@ func getCaller() string {
 
 func getTrace() []string {
 	trace := []string{}
-	a := 0
+	a := 2
 	for {
 		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
@@ -90,7 +90,7 @@ func getTrace() []string {
 		}
 		a++
 	}
-	return trace
+	return trace[:len(trace)-2]
 }
 
 const (
