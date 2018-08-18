@@ -81,7 +81,6 @@ time="2018-08-17T18:28:07.385-06:00" level="warn" msg="The group's number increa
 time="2018-08-17T18:28:07.385-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" caller="main.go:46 main.main" host="myhost"
 time="2018-08-17T18:28:07.385-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true caller="main.go:50 main.main" host="myhost"
 time="2018-08-17T18:28:07.385-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" caller="main.go:25 main.main.func1" host="myhost"
-exit status 1
 ```
 
 For development, color-coded output formated for humans is automatically enabled when a `tty` terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
