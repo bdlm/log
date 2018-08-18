@@ -20,5 +20,19 @@ type STDFormatter struct {
 
 // Format renders a single log entry
 func (f *STDFormatter) Format(entry *Entry) ([]byte, error) {
-	return []byte(fmt.Sprintf("%s %s\n", entry.Time.Format("2006/01/02 15:04:05"), entry.Message)), nil
+	var msg string
+	var ts string
+	format := "2006/01/02 15:04:05"
+
+	if !f.DisableMessage {
+		msg = entry.Message
+	}
+	if "" != f.TimestampFormat {
+		format = f.TimestampFormat
+	}
+	if !f.DisableTimestamp {
+		ts = entry.Time.Format(format) + " "
+	}
+
+	return []byte(fmt.Sprintf("%s%s\n", ts, msg)), nil
 }
