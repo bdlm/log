@@ -90,7 +90,10 @@ func getTrace() []string {
 		}
 		a++
 	}
-	return trace[:len(trace)-2]
+	if len(trace) > 2 {
+		trace = trace[:len(trace)-2]
+	}
+	return trace
 }
 
 const (
