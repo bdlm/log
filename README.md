@@ -171,5 +171,5 @@ log.SetFormatter(&log.JSONFormatter{
 })
 ```
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png" width="75%">
 </p>
