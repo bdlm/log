@@ -63,7 +63,7 @@ log.SetFormatter(&log.STDFormatter{
 })
 ```
 
-Which results in a standard log output. There is no TTY format for the std formatter:
+Which results in a standard log output. `STDFormatter` does not have a separate TTY format:
 ```
 2018/08/17 19:50:17 Oh, look, a bird...
 2018/08/17 19:50:17 A group of walrus emerges from the ocean
