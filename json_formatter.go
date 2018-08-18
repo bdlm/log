@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-// JSONFormatter formats logs into parsable json
+// JSONFormatter formats logs into parsable json.
 type JSONFormatter struct {
 	// DataKey allows users to put all the log entry parameters into a
 	// nested dictionary at a given key.
