@@ -53,9 +53,27 @@ func main() {
 
 ## Compatibility
 
-Note that `bdlm/log` is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
+Note that `bdlm/log` is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code. The default log format does not match the stdlib logger's default output so a compatible formatter, `STDFormatter`, is provided:
 
-## Formats
+```go
+log.SetFormatter(&log.STDFormatter{
+    // DisableMessage:   true,   // DisableMessage disables message output.
+    // DisableTimestamp: true,   // DisableTimestamp disables timestamp output.
+    // TimestampFormat:  "2006", // TimestampFormat allows a custom timestamp format to be used.
+})
+```
+
+Which results in a standard log output. There is no TTY format for the std formatter:
+```
+2018/08/17 19:50:17 Oh, look, a bird...
+2018/08/17 19:50:17 A group of walrus emerges from the ocean
+2018/08/17 19:50:17 The group's number increased tremendously!
+2018/08/17 19:50:17 Tremendously sized cow enters the ocean.
+2018/08/17 19:50:17 The walrus are attacking!
+2018/08/17 19:50:17 That could have gone better...
+```
+
+## Log Formatters
 
 By default, `bdlm/log` uses a basic text format:
 ```sh
