@@ -81,12 +81,10 @@ func getTrace() []string {
 	a := 0
 	for {
 		if pc, file, line, ok := runtime.Caller(a); ok {
-			trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
-			//if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
-			//	strings.HasSuffix(strings.ToLower(file), "_test.go") {
-			//	caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
-			//	break
-			//}
+			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
+				strings.HasSuffix(strings.ToLower(file), "_test.go") {
+				trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
+			}
 		} else {
 			break
 		}

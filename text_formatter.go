@@ -111,7 +111,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	if f.DisableHostname {
 		data.Hostname = ""
 	}
-	if f.DisableCaller && !f.EnableTrace {
+	if f.DisableCaller || f.EnableTrace {
 		data.Caller = ""
 	}
 	if !f.EnableTrace {
