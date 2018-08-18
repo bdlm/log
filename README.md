@@ -55,7 +55,7 @@ func main() {
 
 Note that `bdlm/log` is fully api-compatible with the stdlib logger, so you can replace your `log` imports everywhere or using a strangler pattern with `"github.com/bdlm/log"` and add the full logging flexibility to your service without impacting existing code.
 
-The default log format of this package does not match the stdlib logger's default output so a compatible formatter, `STDFormatter`, is provided if changing your log format isn't an option:
+The default log format of this package does not match the stdlib logger's default output so a compatible formatter, `STDFormatter`, is provided:
 
 ```go
 log.SetFormatter(&log.STDFormatter{
@@ -67,12 +67,12 @@ log.SetFormatter(&log.STDFormatter{
 
 Which results in a standard log output. `STDFormatter` does not have a separate TTY format:
 ```
-2018/08/17 19:50:17 Oh, look, a bird...
-2018/08/17 19:50:17 A group of walrus emerges from the ocean
-2018/08/17 19:50:17 The group's number increased tremendously!
-2018/08/17 19:50:17 Tremendously sized cow enters the ocean.
-2018/08/17 19:50:17 The walrus are attacking!
-2018/08/17 19:50:17 That could have gone better...
+2018/08/17 20:10:59 Oh, look, a bird... data.animal="bird" data.count=1 caller="main.go:39 main.main" host="myhost"
+2018/08/17 20:10:59 A group of walrus emerges from the ocean data.animal="walrus" data.count=20 caller="main.go:43 main.main" host="myhost"
+2018/08/17 20:10:59 The group's number increased tremendously! data.animal="walrus" data.count=100 caller="main.go:47 main.main" host="myhost"
+2018/08/17 20:10:59 Tremendously sized cow enters the ocean. data.animal="cow" data.count="wait, what?" caller="main.go:51 main.main" host="myhost"
+2018/08/17 20:10:59 The walrus are attacking! data.animal="walrus" data.run=true caller="main.go:55 main.main" host="myhost"
+2018/08/17 20:10:59 That could have gone better... data.dead=true data.winner="walrus" caller="main.go:30 main.main.func1" host="myhost"
 ```
 
 ## Log Formatters
