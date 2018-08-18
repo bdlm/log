@@ -61,7 +61,7 @@ The default log format of this package does not match the stdlib logger's defaul
 log.SetFormatter(&log.StdFormatter{})
 ```
 
-Which results in a standard log output. `StdFormatter` does not have a separate TTY format:
+Which results in the following log output. `StdFormatter` does not have a TTY feature:
 ```
 2018/08/17 20:10:59 Oh, look, a bird... data.animal="bird" data.count=1 caller="main.go:39 main.main" host="myhost"
 2018/08/17 20:10:59 A group of walrus emerges from the ocean data.animal="walrus" data.count=20 caller="main.go:43 main.main" host="myhost"
