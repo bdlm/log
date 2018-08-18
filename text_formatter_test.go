@@ -20,7 +20,7 @@ func TestFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" data.test=\"foo\" caller=\"text_formatter_test.go:27 github.com/bdlm/log.TestFormatting\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" data.test=\"foo\" caller=\"text_formatter_test.go:27 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
