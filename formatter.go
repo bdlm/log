@@ -119,9 +119,6 @@ func escape(data interface{}, escapeHTML bool) string {
 	if nil == err {
 		result = strings.Trim(buf.String(), "\n")
 	}
-	if result == `""` {
-		result = ""
-	}
 	return result
 }
 
