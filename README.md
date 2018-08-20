@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="75%">
 </p>
 
 # log
@@ -81,13 +81,12 @@ time="2018-08-17T18:28:07.385-06:00" level="warn" msg="The group's number increa
 time="2018-08-17T18:28:07.385-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" caller="main.go:46 main.main" host="myhost"
 time="2018-08-17T18:28:07.385-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true caller="main.go:50 main.main" host="myhost"
 time="2018-08-17T18:28:07.385-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" caller="main.go:25 main.main.func1" host="myhost"
-exit status 1
 ```
 
 For development, color-coded output formated for humans is automatically enabled when a `tty` terminal is detected (this can be disabled with `log.SetFormatter(&log.TextFormatter{DisableTTY: true})`):
 
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty.png" width="75%">
 </p>
 
 JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` for easy parsing by logstash or similar:
@@ -104,7 +103,7 @@ JSON formatting is also available with `log.SetFormatter(&log.JSONFormatter{})` 
 The JSON formatter also makes adjustments by default when a `tty` terminal is detected and can be disabled similarly with `log.SetFormatter(&log.JSONFormatter{DisableTTY: true})`:
 
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="400px">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json.png" width="50%">
 </p>
 
 ## Backtrace data
@@ -124,12 +123,12 @@ log.SetFormatter(&log.TextFormatter{
 ```
 
 ```sh
-time="2018-08-17T18:34:28.651-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 caller="main.go:37 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:196 github.com/bdlm/log.(*Entry).Debug" trace.6="main.go:37 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T18:34:28.652-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 caller="main.go:41 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:203 github.com/bdlm/log.(*Entry).Info" trace.6="main.go:41 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T18:34:28.652-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 caller="main.go:45 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:215 github.com/bdlm/log.(*Entry).Warn" trace.6="main.go:45 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T18:34:28.652-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" caller="main.go:49 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:227 github.com/bdlm/log.(*Entry).Error" trace.6="main.go:49 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T18:34:28.652-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true caller="main.go:53 main.main" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:242 github.com/bdlm/log.(*Entry).Panic" trace.6="main.go:53 main.main" trace.7="proc.go:198 runtime.main" trace.8="asm_amd64.s:2361 runtime.goexit"
-time="2018-08-17T18:34:28.652-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" caller="main.go:28 main.main.func1" host="myhost" trace.0="formatter.go:83 github.com/bdlm/log.getTrace" trace.1="formatter.go:153 github.com/bdlm/log.getData" trace.2="text_formatter.go:96 github.com/bdlm/log.(*TextFormatter).Format" trace.3="entry.go:171 github.com/bdlm/log.(*Entry).write" trace.4="entry.go:147 github.com/bdlm/log.Entry.log" trace.5="entry.go:234 github.com/bdlm/log.(*Entry).Fatal" trace.6="main.go:28 main.main.func1" trace.7="asm_amd64.s:573 runtime.call32" trace.8="panic.go:502 runtime.gopanic" trace.9="entry.go:155 github.com/bdlm/log.Entry.log" trace.10="entry.go:242 github.com/bdlm/log.(*Entry).Panic" trace.11="main.go:53 main.main" trace.12="proc.go:198 runtime.main" trace.13="asm_amd64.s:2361 runtime.goexit"
+time="2018-08-18T00:20:36.468-06:00" level="debug" msg="Oh, look, a bird..." data.animal="bird" data.count=1 host="myhost" trace.0="main.go:38 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="info" msg="A group of walrus emerges from the ocean" data.animal="walrus" data.count=20 host="myhost" trace.0="main.go:42 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100 host="myhost" trace.0="main.go:46 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.count="wait, what?" host="myhost" trace.0="main.go:50 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true host="myhost" trace.0="main.go:54 main.main"
+time="2018-08-18T00:20:36.469-06:00" level="fatal" msg="That could have gone better..." data.dead=true data.winner="walrus" host="myhost" trace.0="main.go:30 main.main.func1" trace.1="asm_amd64.s:573 runtime.call32" trace.2="panic.go:502 runtime.gopanic" trace.3="main.go:54 main.main"
 ```
 
 TTY trace output:
@@ -140,7 +139,7 @@ log.SetFormatter(&log.TextFormatter{
 })
 ```
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-trace.png" width="75%">
 </p>
 
 ### JSONFormat
@@ -155,12 +154,12 @@ log.SetFormatter(&log.JSONFormatter{
 
 Non-TTY trace output:
 ```json
-{"caller":"main.go:38 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:196 github.com/bdlm/log.(*Entry).Debug","main.go:38 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:42 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:203 github.com/bdlm/log.(*Entry).Info","main.go:42 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:46 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:215 github.com/bdlm/log.(*Entry).Warn","main.go:46 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:50 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:227 github.com/bdlm/log.(*Entry).Error","main.go:50 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:54 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:242 github.com/bdlm/log.(*Entry).Panic","main.go:54 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
-{"caller":"main.go:29 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-17T18:36:17.917-06:00","trace":["formatter.go:83 github.com/bdlm/log.getTrace","formatter.go:153 github.com/bdlm/log.getData","json_formatter.go:79 github.com/bdlm/log.(*JSONFormatter).Format","entry.go:171 github.com/bdlm/log.(*Entry).write","entry.go:147 github.com/bdlm/log.Entry.log","entry.go:234 github.com/bdlm/log.(*Entry).Fatal","main.go:29 main.main.func1","asm_amd64.s:573 runtime.call32","panic.go:502 runtime.gopanic","entry.go:155 github.com/bdlm/log.Entry.log","entry.go:242 github.com/bdlm/log.(*Entry).Panic","main.go:54 main.main","proc.go:198 runtime.main","asm_amd64.s:2361 runtime.goexit"]}
+{"caller":"main.go:38 main.main","data":{"animal":"bird","count":1},"host":"myhost","level":"debug","msg":"Oh, look, a bird...","time":"2018-08-18T00:22:16.057-06:00","trace":["main.go:38 main.main"]}
+{"caller":"main.go:42 main.main","data":{"animal":"walrus","count":20},"host":"myhost","level":"info","msg":"A group of walrus emerges from the ocean","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:42 main.main"]}
+{"caller":"main.go:46 main.main","data":{"animal":"walrus","count":100},"host":"myhost","level":"warn","msg":"The group's number increased tremendously!","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:46 main.main"]}
+{"caller":"main.go:50 main.main","data":{"animal":"cow","count":"wait, what?"},"host":"myhost","level":"error","msg":"Tremendously sized cow enters the ocean.","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:50 main.main"]}
+{"caller":"main.go:54 main.main","data":{"animal":"walrus","run":true},"host":"myhost","level":"panic","msg":"The walrus are attacking!","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:54 main.main"]}
+{"caller":"main.go:30 main.main.func1","data":{"dead":true,"winner":"walrus"},"host":"myhost","level":"fatal","msg":"That could have gone better...","time":"2018-08-18T00:22:16.058-06:00","trace":["main.go:30 main.main.func1","asm_amd64.s:573 runtime.call32","panic.go:502 runtime.gopanic","main.go:54 main.main"]}
 ```
 
 TTY trace output:
@@ -171,5 +170,5 @@ log.SetFormatter(&log.JSONFormatter{
 })
 ```
 <p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-json-trace.png" width="50%">
 </p>
