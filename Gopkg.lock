@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:214b2f1af454ab36b1ffc019bce6a74542c8d799462282eb009a9ea056d54297"
+  digest = "1:6ce94ab861673fac256913bfd79eb1ff0342b3ea5ccaccbcb8c04c6408aeae6b"
   name = "github.com/bdlm/std"
   packages = ["logger"]
   pruneopts = ""
-  revision = "115aeb0aea4476d378bdd53089a4948dc264fef8"
+  revision = "67f82f6c2a20c1c2efcd5347cc41b654c4a08317"
 
 [[projects]]
   digest = "1:56c130d885a4aacae1dd9c7b71cfe39912c7ebc1ff7d2b46083c8812996dc43b"

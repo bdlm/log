@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	stdLogger "github.com/bdlm/std/logger"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -144,7 +145,7 @@ func TestWithFieldsShouldAllowAssignments(t *testing.T) {
 	logger.Out = &buffer
 	logger.Formatter = new(JSONFormatter)
 
-	localLog := logger.WithFields(Fields{
+	localLog := logger.WithFields(stdLogger.Fields{
 		"key1": "value1",
 	})
 
@@ -257,7 +258,7 @@ func TestWithFieldShouldNotOverrideTime(t *testing.T) {
 
 func TestTimeOverrideMultipleLogs(t *testing.T) {
 	var buffer bytes.Buffer
-	var firstFields, secondFields Fields
+	var firstFields, secondFields stdLogger.Fields
 
 	logger := New()
 	logger.Out = &buffer
