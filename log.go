@@ -9,7 +9,7 @@ import (
 )
 
 // Fields type, used to pass to `WithFields`.
-type Fields map[string]interface{}
+//type Fields map[string]interface{}
 
 // Convert the Level to a string. E.g. PanicLevel becomes "panic".
 func levelString(level stdLogger.Level) string {
@@ -109,7 +109,7 @@ type StdLogger interface {
 // The FieldLogger interface generalizes the Entry and Logger types
 type FieldLogger interface {
 	WithField(key string, value interface{}) *Entry
-	WithFields(fields Fields) *Entry
+	WithFields(fields stdLogger.Fields) *Entry
 	WithError(err error) *Entry
 
 	Debugf(format string, args ...interface{})

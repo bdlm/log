@@ -3,15 +3,9 @@ package log
 import (
 	"os"
 	"testing"
-)
 
-// smallFields is a small size data set for benchmarking
-var loggerFields = Fields{
-	"foo":   "bar",
-	"baz":   "qux",
-	"one":   "two",
-	"three": "four",
-}
+	stdLogger "github.com/bdlm/std/logger"
+)
 
 func BenchmarkDummyLogger(b *testing.B) {
 	nullf, err := os.OpenFile("/dev/null", os.O_WRONLY, 0666)
@@ -31,7 +25,7 @@ func BenchmarkDummyLoggerNoLock(b *testing.B) {
 	doLoggerBenchmarkNoLock(b, nullf, &TextFormatter{DisableTTY: true}, smallFields)
 }
 
-func doLoggerBenchmark(b *testing.B, out *os.File, formatter Formatter, fields Fields) {
+func doLoggerBenchmark(b *testing.B, out *os.File, formatter Formatter, fields stdLogger.Fields) {
 	logger := Logger{
 		Out:       out,
 		Level:     InfoLevel,
@@ -45,7 +39,7 @@ func doLoggerBenchmark(b *testing.B, out *os.File, formatter Formatter, fields F
 	})
 }
 
-func doLoggerBenchmarkNoLock(b *testing.B, out *os.File, formatter Formatter, fields Fields) {
+func doLoggerBenchmarkNoLock(b *testing.B, out *os.File, formatter Formatter, fields stdLogger.Fields) {
 	logger := Logger{
 		Out:       out,
 		Level:     InfoLevel,

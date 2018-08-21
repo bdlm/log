@@ -9,6 +9,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	stdLogger "github.com/bdlm/std/logger"
 )
 
 // RFC3339Milli defines an RFC3339 date format with miliseconds
@@ -215,7 +217,7 @@ type Formatter interface {
 //
 // It's not exported because it's still using Data in an opinionated way. It's to
 // avoid code duplication between the two default formatters.
-func prefixFieldClashes(data Fields, fieldMap FieldMap) {
+func prefixFieldClashes(data stdLogger.Fields, fieldMap FieldMap) {
 	var key string
 	for _, field := range []FieldLabel{
 		LabelCaller,
