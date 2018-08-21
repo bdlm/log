@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	stdLogger "github.com/bdlm/std/logger"
+	"github.com/bdlm/std/logger"
 )
 
 var bufferPool *sync.Pool
@@ -33,14 +33,14 @@ type Entry struct {
 	Logger *Logger
 
 	// Contains all the fields set by the user.
-	Data stdLogger.Fields
+	Data Fields
 
 	// Time at which the log entry was created
 	Time time.Time
 
 	// Level the log entry was logged at: Debug, Info, Warn, Error, Fatal or Panic
 	// This field will be set on entry firing and the value will be equal to the one in Logger struct field.
-	Level stdLogger.Level
+	Level logger.Level
 
 	// Message passed to Debug, Info, Warn, Error, Fatal or Panic
 	Message string
@@ -56,7 +56,7 @@ func NewEntry(logger *Logger) *Entry {
 	return &Entry{
 		Logger: logger,
 		// Default is five fields, give a little extra room
-		Data: make(stdLogger.Fields, 5),
+		Data: make(Fields, 5),
 	}
 }
 
@@ -88,13 +88,13 @@ func (entry *Entry) WithError(err error) *Entry {
 
 // WithField add a single field to the Entry.
 func (entry *Entry) WithField(key string, value interface{}) *Entry {
-	return entry.WithFields(stdLogger.Fields{key: value})
+	return entry.WithFields(Fields{key: value})
 }
 
 // WithFields adds a map of fields to the Entry.
-func (entry *Entry) WithFields(fields stdLogger.Fields) *Entry {
+func (entry *Entry) WithFields(fields Fields) *Entry {
 
-	data := stdLogger.Fields{}
+	data := Fields{}
 	for k, v := range entry.Data {
 		data[k] = v
 	}
@@ -118,7 +118,7 @@ func (entry *Entry) WithTime(t time.Time) *Entry {
 
 // This function is not declared with a pointer value because otherwise
 // race conditions will occur when using multiple goroutines
-func (entry Entry) log(level stdLogger.Level, msg string) {
+func (entry Entry) log(level logger.Level, msg string) {
 	if nil == entry.Logger.Out || entry.Logger.Out == ioutil.Discard {
 		return
 	}

@@ -7,7 +7,6 @@ import (
 	"testing"
 	"time"
 
-	stdLogger "github.com/bdlm/std/logger"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +20,7 @@ func TestFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" data.test=\"foo\" caller=\"text_formatter_test.go:28 github.com/bdlm/log.TestFormatting\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" data.test=\"foo\" caller=\"text_formatter_test.go:27 github.com/bdlm/log.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -166,7 +165,7 @@ func TestTextFormatterFieldMap(t *testing.T) {
 		Message: "oh hi",
 		Level:   WarnLevel,
 		Time:    time.Date(1981, time.February, 24, 4, 28, 3, 100, time.UTC),
-		Data: stdLogger.Fields{
+		Data: Fields{
 			"field1":           "f1",
 			"msg-label":        "messagefield",
 			"level-label":      "levelfield",

@@ -70,7 +70,7 @@ func WithField(key string, value interface{}) *Entry {
 //
 // Note that it doesn't log until you call Debug, Print, Info, Warn, Fatal
 // or Panic on the Entry it returns.
-func WithFields(fields stdLogger.Fields) *Entry {
+func WithFields(fields Fields) *Entry {
 	return std.WithFields(fields)
 }
 
