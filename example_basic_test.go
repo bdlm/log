@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/bdlm/log"
-	stdLogger "github.com/bdlm/std/logger"
 )
 
 func Example_basic() {
@@ -21,30 +20,30 @@ func Example_basic() {
 		err := recover()
 		if err != nil {
 			entry := err.(*log.Entry)
-			logger.WithFields(stdLogger.Fields{
+			logger.WithFields(log.Fields{
 				"winner": entry.Data["animal"],
 				"dead":   true,
 			}).Error("That could have gone better...")
 		}
 	}()
 
-	logger.WithFields(stdLogger.Fields{
+	logger.WithFields(log.Fields{
 		"animal": "bird",
 		"count":  1,
 	}).Debug("Oh, look, a bird...")
-	logger.WithFields(stdLogger.Fields{
+	logger.WithFields(log.Fields{
 		"animal": "walrus",
 		"count":  20,
 	}).Info("A group of walrus emerges from the ocean")
-	logger.WithFields(stdLogger.Fields{
+	logger.WithFields(log.Fields{
 		"animal": "walrus",
 		"count":  100,
 	}).Warn("The group's number increased tremendously!")
-	logger.WithFields(stdLogger.Fields{
+	logger.WithFields(log.Fields{
 		"animal": "cow",
 		"run":    "wait, what?",
 	}).Error("Tremendously sized cow enters the ocean.")
-	logger.WithFields(stdLogger.Fields{
+	logger.WithFields(log.Fields{
 		"animal": "walrus",
 		"run":    true,
 	}).Panic("The walrus are attacking!")

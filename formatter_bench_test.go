@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"testing"
 	"time"
-
-	stdLogger "github.com/bdlm/std/logger"
 )
 
 // smallFields is a small size data set for benchmarking
-var smallFields = stdLogger.Fields{
+var smallFields = Fields{
 	"foo":   "bar",
 	"baz":   "qux",
 	"one":   "two",
@@ -17,7 +15,7 @@ var smallFields = stdLogger.Fields{
 }
 
 // largeFields is a large size data set for benchmarking
-var largeFields = stdLogger.Fields{
+var largeFields = Fields{
 	"foo":       "bar",
 	"baz":       "qux",
 	"one":       "two",
@@ -48,7 +46,7 @@ var largeFields = stdLogger.Fields{
 	"entries":   "yeah",
 }
 
-var errorFields = stdLogger.Fields{
+var errorFields = Fields{
 	"foo": fmt.Errorf("bar"),
 	"baz": fmt.Errorf("qux"),
 }
@@ -81,7 +79,7 @@ func BenchmarkLargeJSONFormatter(b *testing.B) {
 	doBenchmark(b, &JSONFormatter{}, largeFields)
 }
 
-func doBenchmark(b *testing.B, formatter Formatter, fields stdLogger.Fields) {
+func doBenchmark(b *testing.B, formatter Formatter, fields Fields) {
 	logger := New()
 
 	entry := &Entry{

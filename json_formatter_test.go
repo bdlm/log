@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-
-	stdLogger "github.com/bdlm/std/logger"
 )
 
 func TestErrorNotLost(t *testing.T) {
@@ -121,7 +119,7 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 		LabelData:   "@data",
 		LabelCaller: "@caller",
 	}}
-	entry := WithFields(stdLogger.Fields{
+	entry := WithFields(Fields{
 		"@time":    "@time",
 		"@level":   "@level",
 		"@message": "@message",
@@ -174,7 +172,7 @@ func TestFieldsInNestedDictionary(t *testing.T) {
 		DataKey: "args",
 	}
 
-	entry := WithFields(stdLogger.Fields{
+	entry := WithFields(Fields{
 		"level": "level",
 		"test":  "test",
 	})
