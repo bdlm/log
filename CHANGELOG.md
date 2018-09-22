@@ -1,123 +1,65 @@
-# 1.0.5
+# v0.1.13
 
-* Fix hooks race (#707)
-* Fix panic deadlock (#695)
+* TTY color scheme update
 
-# 1.0.4
+# v0.1.12: Revert "move Fields type to bdlm/std (#13)" (#14)
 
-* Fix race when adding hooks (#612)
-* Fix terminal check in AppEngine (#635)
+* This reverts commit da2feacffefce803820e8c090306bffb59d3f08c.
 
-# 1.0.3
-
-* Replace example files with testable examples
-
-# 1.0.2
-
-* bug: quote non-string values in text formatter (#583)
-* Make (*Logger) SetLevel a public method
-
-# 1.0.1
-
-* bug: fix escaping in text formatter (#575)
-
-# 1.0.0
-
-* Officially changed name to lower-case
-* bug: colors on Windows 10 (#541)
-* bug: fix race in accessing level (#512)
-
-# 0.11.5
-
-* feature: add writer and writerlevel to entry (#372)
-
-# 0.11.4
-
-* bug: fix undefined variable on solaris (#493)
-
-# 0.11.3
-
-* formatter: configure quoting of empty values (#484)
-* formatter: configure quoting character (default is `"`) (#484)
-* bug: fix not importing io correctly in non-linux environments (#481)
-
-# 0.11.2
-
-* bug: fix windows terminal detection (#476)
-
-# 0.11.1
-
-* bug: fix tty detection with custom out (#471)
-
-# 0.11.0
-
-* performance: Use bufferpool to allocate (#370)
-* terminal: terminal detection for app-engine (#343)
-* feature: exit handler (#375)
-
-# 0.10.0
-
-* feature: Add a test hook (#180)
-* feature: `ParseLevel` is now case-insensitive (#326)
-* feature: `FieldLogger` interface that generalizes `Logger` and `Entry` (#308)
-* performance: avoid re-allocations on `WithFields` (#335)
-
-# 0.9.0
-
-* logrus/text_formatter: don't emit empty msg
-* logrus/hooks/airbrake: move out of main repository
-* logrus/hooks/sentry: move out of main repository
-* logrus/hooks/papertrail: move out of main repository
-* logrus/hooks/bugsnag: move out of main repository
-* logrus/core: run tests with `-race`
-* logrus/core: detect TTY based on `stderr`
-* logrus/core: support `WithError` on logger
-* logrus/core: Solaris support
-
-# 0.8.7
-
-* logrus/core: fix possible race (#216)
-* logrus/doc: small typo fixes and doc improvements
+# v0.1.11 move Fields type to bdlm/std (#13)
 
 
-# 0.8.6
+# v0.1.10
 
-* hooks/raven: allow passing an initialized client
+* adds a stdlib compatible formatter
 
-# 0.8.5
+# v0.1.9
 
-* logrus/core: revert #208
+* don't remove empty fields
+* don't escape log messages in text TTY output
 
-# 0.8.4
+# v0.1.8
 
-* formatter/text: fix data race (#218)
+* remove message truncation in text TTY output
 
-# 0.8.3
+# v0.1.7
 
-* logrus/core: fix entry log level (#208)
-* logrus/core: improve performance of text formatter by 40%
-* logrus/core: expose `LevelHooks` type
-* logrus/core: add support for DragonflyBSD and NetBSD
-* formatter/text: print structs more verbosely
+* Documentation updates and minor cleanup.
 
-# 0.8.2
+# v0.1.6 Implement the std.Logger interface
 
-* logrus: fix more Fatal family functions
+* implements the github.com/bdlm/std:Logger interface
+* adds support for a verbose trace logging mode.
 
-# 0.8.1
+# v0.1.5 implement various PRs listed on sirupsen/logrus
 
-* logrus: fix not exiting on `Fatalf` and `Fatalln`
+* sirupsen/logrus/pull/664
+* sirupsen/logrus/pull/647
+* sirupsen/logrus/pull/687
+* sirupsen/logrus/pull/685
+* sirupsen/logrus/pull/788 (existed previously)
 
-# 0.8.0
+This also updates the string escape logic, all values are now JSON escaped fixes an issue with internal properties being included in JSON format adds new fields to unit tests (data and caller) minor cleanup of text templates
 
-* logrus: defaults to stderr instead of stdout
-* hooks/sentry: add special field for `*http.Request`
-* formatter/text: ignore Windows for colors
+# v0.1.4
 
-# 0.7.3
+* updated tty formatting
+* added tty formatting to JSON output
 
-* formatter/\*: allow configuration of timestamp layout
+# v0.1.3
 
-# 0.7.2
+* TTY format updates
+* Minor cleanup
 
-* formatter/text: Add configuration option for time format (#158)
+# v0.1.2: cleanup goreportcard errors (#5)
+
+* cleanup 'ineffassign' errors
+* reduce cyclomatic complexity
+* update documentation
+
+# v0.1.1: update build (#3)
+
+* Update TTY formatting
+
+# v0.1.0 cleanup README
+
