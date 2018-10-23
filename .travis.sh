@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-go get -v github.com/golang/lint/golint
+exit_code=0
+
+go get -u golang.org/x/lint/golint
 [ "0" = "$?" ] || exit 1
 
 go get -u github.com/golang/dep/cmd/dep
