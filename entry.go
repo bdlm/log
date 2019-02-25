@@ -118,7 +118,7 @@ func (entry *Entry) WithTime(t time.Time) *Entry {
 
 // This function is not declared with a pointer value because otherwise
 // race conditions will occur when using multiple goroutines
-func (entry Entry) log(level logger.Level, msg string) {
+func (entry Entry) Log(level logger.Level, msg string) {
 	if nil == entry.Logger.Out || entry.Logger.Out == ioutil.Discard {
 		return
 	}
@@ -193,14 +193,14 @@ func (entry *Entry) write() {
 // Debug logs a debug-level message using Println.
 func (entry *Entry) Debug(args ...interface{}) {
 	if entry.Logger.level() >= DebugLevel {
-		entry.log(DebugLevel, fmt.Sprint(args...))
+		entry.Log(DebugLevel, fmt.Sprint(args...))
 	}
 }
 
 // Info logs a info-level message using Println.
 func (entry *Entry) Info(args ...interface{}) {
 	if entry.Logger.level() >= InfoLevel {
-		entry.log(InfoLevel, fmt.Sprint(args...))
+		entry.Log(InfoLevel, fmt.Sprint(args...))
 	}
 }
 
@@ -212,7 +212,7 @@ func (entry *Entry) Print(args ...interface{}) {
 // Warn logs a warn-level message using Println.
 func (entry *Entry) Warn(args ...interface{}) {
 	if entry.Logger.level() >= WarnLevel {
-		entry.log(WarnLevel, fmt.Sprint(args...))
+		entry.Log(WarnLevel, fmt.Sprint(args...))
 	}
 }
 
@@ -224,14 +224,14 @@ func (entry *Entry) Warning(args ...interface{}) {
 // Error logs a error-level message using Println.
 func (entry *Entry) Error(args ...interface{}) {
 	if entry.Logger.level() >= ErrorLevel {
-		entry.log(ErrorLevel, fmt.Sprint(args...))
+		entry.Log(ErrorLevel, fmt.Sprint(args...))
 	}
 }
 
 // Fatal logs a fatal-level message using Println.
 func (entry *Entry) Fatal(args ...interface{}) {
 	if entry.Logger.level() >= FatalLevel {
-		entry.log(FatalLevel, fmt.Sprint(args...))
+		entry.Log(FatalLevel, fmt.Sprint(args...))
 	}
 	Exit(1)
 }
@@ -239,7 +239,7 @@ func (entry *Entry) Fatal(args ...interface{}) {
 // Panic logs a panic-level message using Println.
 func (entry *Entry) Panic(args ...interface{}) {
 	if entry.Logger.level() >= PanicLevel {
-		entry.log(PanicLevel, fmt.Sprint(args...))
+		entry.Log(PanicLevel, fmt.Sprint(args...))
 	}
 	panic(fmt.Sprint(args...))
 }
