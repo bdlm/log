@@ -1,6 +1,6 @@
-#### Please describe the reason for the change
+#### Please describe this change
 <!--
-In particular, the use case or reference issue related to this change, any questions you may have, functionality you are unsure is correct, etc.
+In particular, your use case, any related issues, any questions you may have, functionality you are unsure is correct, etc.
 -->
 
 
