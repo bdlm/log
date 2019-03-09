@@ -11,11 +11,22 @@ import (
 
 var funcMap = template.FuncMap{
 	// The name "title" is what the function will be called in the template text.
-	"inc": func(cnt int) int {
-		return cnt + 1
+	"newCounter": func(data interface{}) map[string]int {
+		var max int
+		switch v := data.(type) {
+		case map[string]interface{}:
+			max = len(v) - 1
+		case []string:
+			max = len(v) - 1
+		}
+		return map[string]int{
+			"max": max,
+			"cnt": 0,
+		}
 	},
-	"dec": func(cnt int) int {
-		return cnt - 1
+	"inc": func(counter map[string]int) map[string]int {
+		counter["cnt"] = counter["cnt"] + 1
+		return counter
 	},
 }
 var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
@@ -34,11 +45,11 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
 		// Data fields
 		"{{if .Data}}" +
-		"{{$max := dec (len .Data)}}{{$cnt := 0}}{{$comma := \",\"}}" +
+		"{{$counter := newCounter .Data}}{{$comma := \",\"}}" +
 		"    \"{{$color.Level}}{{.LabelData}}{{$color.Reset}}\": {\n{{range $k, $v := .Data}}" +
-		"{{if eq ($cnt) ($max)}}{{$comma = \"\"}}{{end}}" +
+		"{{if eq ($counter.cnt) ($counter.max)}}{{$comma = \"\"}}{{end}}" +
 		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": \"{{$color.DataValue}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
-		"{{$cnt = inc $cnt}}" +
+		"{{$_ := inc $counter}}" +
 		"{{end}}    },\n" +
 		"{{end}}" +
 		// Caller
@@ -47,11 +58,11 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{end}}" +
 		// Trace
 		"{{if .Trace}}" +
-		"{{$max := dec (len .Trace)}}{{$cnt := 0}}{{$comma := \",\"}}" +
+		"{{$counter := newCounter .Trace}}{{$comma := \",\"}}" +
 		"    \"{{$color.Level}}{{.LabelTrace}}{{$color.Reset}}\": [\n{{range $k, $v := .Trace}}" +
-		"{{if eq ($cnt) ($max)}}{{$comma = \"\"}}{{end}}" +
+		"{{if eq ($counter.cnt) ($counter.max)}}{{$comma = \"\"}}{{end}}" +
 		"        \"{{$color.Trace}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
-		"{{$cnt = inc $cnt}}" +
+		"{{$_ := inc $counter}}" +
 		"{{end}}    ]\n" +
 		"{{end}}" +
 		"}",
