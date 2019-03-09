@@ -69,13 +69,17 @@ func getCaller() string {
 	caller := ""
 	a := 0
 	for {
-		if _, file, _, ok := runtime.Caller(a); ok {
+		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
 				strings.HasSuffix(strings.ToLower(file), "_test.go") {
-				if pc, file, line, ok := runtime.Caller(a + int(callerLevel)); ok {
-					caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
-					break
+				if 0 != callerLevel {
+					if pc, file, line, ok := runtime.Caller(a - int(callerLevel)); ok {
+						caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+						break
+					}
 				}
+				caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+				break
 			}
 		} else {
 			break
