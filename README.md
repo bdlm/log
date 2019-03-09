@@ -27,7 +27,7 @@
 
 #
 
-`bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
+`bdlm/log` is a structured logger for Go and is fully API compatible with both the standard libaray `log` package as well as the [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package.
 
 ## Examples
 
