@@ -70,7 +70,7 @@ func (f *StdFormatter) Format(entry *Entry) ([]byte, error) {
 		logLine = &bytes.Buffer{}
 	}
 
-	data := getData(entry, f.FieldMap, f.EscapeHTML)
+	data := getData(entry, f.FieldMap, f.EscapeHTML, false)
 	data.LabelCaller = f.FieldMap.resolve(LabelCaller)
 	data.LabelHost = f.FieldMap.resolve(LabelHost)
 	data.LabelLevel = f.FieldMap.resolve(LabelLevel)

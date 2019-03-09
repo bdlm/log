@@ -9,10 +9,44 @@ import (
 
 var (
 	termTemplate = template.Must(template.New("tty").Parse(
-		"{{.Color}}{{printf \"%5s\" .Level}}\033[0m{{if .Hostname}} \033[38;5;39m{{.Hostname}}\033[0m{{end}}{{if .Timestamp}} \033[38;5;3m{{.Timestamp}}\033[0m{{end}} {{printf \"%s\" .Message}}\n   {{.Color}}⇢\033[0m {{range $k, $v := .Data}} \033[38;5;159m{{$k}}\033[0m=\033[38;5;180m{{$v}}\033[0m{{end}}{{if .Caller}}{{$length := len .Data }}{{if ne $length  0}}\n   {{.Color}}⇢\033[0m {{end}} \033[38;5;28m{{.Caller}}\033[0m{{end}}\033[0m{{$color := .Color}}{{$caller := .Caller}}{{range $k, $v := .Trace}}\n   {{$color}}⇢\033[0m {{if eq $v $caller}}{{$color}}{{end}}[{{$k}}] {{$v}}\033[0m{{end}}\n",
+		"{{$color := .Color}}{{$caller := .Caller}}" +
+			// Level
+			"{{$color.Level}}{{printf \"%5s\" .Level}}{{$color.Reset}}" +
+			// Hostname
+			"{{if .Hostname}} {{$color.Hostname}}{{.Hostname}}{{$color.Reset}}{{end}} " +
+			// Message
+			"{{printf \"%s\" .Message}}" +
+			// Data fields
+			"{{if .Data}}\n   {{$color.Level}}⇢{{$color.Reset}} {{range $k, $v := .Data}}" +
+			" {{$color.DataLabel}}{{$k}}{{$color.Reset}}={{$color.DataValue}}{{$v}}{{$color.Reset}}" +
+			"{{end}}{{end}}" +
+			// Caller
+			"{{if and (.Caller) (not .Trace)}}" +
+			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Caller}}{{.Caller}}{{$color.Reset}}" +
+			"{{end}}" +
+			// Trace
+			"{{range $k, $v := .Trace}}" +
+			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Trace}}#{{$k}} {{$v}}{{$color.Reset}}" +
+			"{{end}}" +
+			// Timestamp
+			"{{if .Timestamp}}\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Timestamp}}{{.Timestamp}}{{$color.Reset}}{{end}}\n",
 	))
+	//\n   {{$color}}⇢\033[0m  {{if eq $v $caller}}\033[38;5;28m{{else}}\033[38;5;240m{{end}}#{{$k}} {{$v}}\033[0m{{end}}
 	textTemplate = template.Must(template.New("log").Parse(
-		"{{if .Timestamp}} {{.LabelTime}}=\"{{.Timestamp}}\"{{end}} {{.LabelLevel}}=\"{{.Level}}\"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
+		// Timestamp
+		"{{if .Timestamp}} {{.LabelTime}}=\"{{.Timestamp}}\"{{end}} " +
+			// Level
+			"{{.LabelLevel}}=\"{{.Level}}\"" +
+			// Message
+			"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}" +
+			// Data fields
+			"{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}" +
+			// Caller
+			"{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}" +
+			// Hostname
+			"{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}" +
+			// Trace
+			"{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
 	))
 )
 
@@ -82,6 +116,7 @@ func (f *TextFormatter) init(entry *Entry) {
 // Format renders a single log entry
 func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	var err error
+	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
 	prefixFieldClashes(entry.Data, f.FieldMap)
 
 	var logLine *bytes.Buffer
@@ -93,7 +128,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	f.Do(func() { f.init(entry) })
 
-	data := getData(entry, f.FieldMap, f.EscapeHTML)
+	data := getData(entry, f.FieldMap, f.EscapeHTML, isTTY)
 	data.LabelCaller = f.FieldMap.resolve(LabelCaller)
 	data.LabelHost = f.FieldMap.resolve(LabelHost)
 	data.LabelLevel = f.FieldMap.resolve(LabelLevel)
@@ -111,7 +146,7 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	if f.DisableHostname {
 		data.Hostname = ""
 	}
-	if f.DisableCaller || f.EnableTrace {
+	if f.DisableCaller {
 		data.Caller = ""
 	}
 	if !f.EnableTrace {
@@ -122,7 +157,6 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		data.Data[k] = escape(v, f.EscapeHTML)
 	}
 
-	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
 	if isTTY {
 		err = termTemplate.Execute(logLine, data)
 	} else {

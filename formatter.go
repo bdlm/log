@@ -29,8 +29,8 @@ const (
 	LabelHost   = "host"
 	LabelLevel  = "level"
 	LabelMsg    = "msg"
-	LabelTrace  = "trace"
 	LabelTime   = "time"
+	LabelTrace  = "trace"
 )
 
 func (f FieldMap) resolve(fieldLabel FieldLabel) string {
@@ -47,9 +47,10 @@ type logData struct {
 	LabelLevel  string `json:"-"`
 	LabelMsg    string `json:"-"`
 	LabelTime   string `json:"-"`
+	LabelTrace  string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
-	Color     string                 `json:"-"`
+	Color     colors                 `json:"-"`
 	Data      map[string]interface{} `json:"data,omitempty"`
 	Hostname  string                 `json:"host,omitempty"`
 	Level     string                 `json:"level,omitempty"`
@@ -72,13 +73,15 @@ func getCaller() string {
 		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
 				strings.HasSuffix(strings.ToLower(file), "_test.go") {
-				if 0 != callerLevel {
-					if pc, file, line, ok := runtime.Caller(a + callerLevel); ok {
+				if 0 == callerLevel {
+					caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+				} else {
+					if pc2, file2, line2, ok := runtime.Caller(a + callerLevel); ok {
+						caller = fmt.Sprintf("%s:%d %s", path.Base(file2), line2, runtime.FuncForPC(pc2).Name())
+					} else {
 						caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
-						break
 					}
 				}
-				caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
 				break
 			}
 		} else {
@@ -96,7 +99,15 @@ func getTrace() []string {
 		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
 				strings.HasSuffix(strings.ToLower(file), "_test.go") {
-				trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
+				if 0 == callerLevel {
+					trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
+				} else {
+					if pc2, file2, line2, ok := runtime.Caller(a + callerLevel); ok {
+						trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file2), line2, runtime.FuncForPC(pc2).Name()))
+					} else {
+						trace = append(trace, fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name()))
+					}
+				}
 			}
 		} else {
 			break
@@ -109,11 +120,11 @@ func getTrace() []string {
 	return trace
 }
 
-const (
+var (
 	// DEFAULTColor is the default TTY 'level' color.
 	DEFAULTColor = "\033[38;5;46m"
-	// ERRColor is the TTY 'level' color for error messages.
-	ERRColor = "\033[38;5;208m"
+	// ERRORColor is the TTY 'level' color for error messages.
+	ERRORColor = "\033[38;5;208m"
 	// FATALColor is the TTY 'level' color for fatal messages.
 	FATALColor = "\033[38;5;124m"
 	// PANICColor is the TTY 'level' color for panic messages.
@@ -122,7 +133,34 @@ const (
 	WARNColor = "\033[38;5;226m"
 	// DEBUGColor is the TTY 'level' color for debug messages.
 	DEBUGColor = "\033[38;5;245m"
+
+	// CallerColor is the TTY caller color.
+	CallerColor = "\033[38;5;244m"
+	// DataLabelColor is the TTY data label color.
+	DataLabelColor = "\033[38;5;111m"
+	// DataValueColor is the TTY data value color.
+	DataValueColor = "\033[38;5;180m"
+	// HostnameColor is the TTY hostname color.
+	HostnameColor = "\033[38;5;39m"
+	// TraceColor is the TTY trace color.
+	TraceColor = "\033[38;5;244m"
+	// TimestampColor is the TTY timestamp color.
+	TimestampColor = "\033[38;5;72m"
+
+	// ResetColor resets the TTY color scheme to it's default.
+	ResetColor = "\033[0m"
 )
+
+type colors struct {
+	Caller    string
+	DataLabel string
+	DataValue string
+	Hostname  string
+	Level     string
+	Reset     string
+	Timestamp string
+	Trace     string
+}
 
 func escape(data interface{}, escapeHTML bool) string {
 	var result string
@@ -137,28 +175,11 @@ func escape(data interface{}, escapeHTML bool) string {
 }
 
 // getData is a helper function that extracts log data from the Entry.
-func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
+func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 	var levelColor string
-	switch entry.Level {
-	case DebugLevel:
-		levelColor = DEBUGColor
-	case InfoLevel:
-		levelColor = DEFAULTColor
-	case WarnLevel:
-		levelColor = WARNColor
-	case ErrorLevel:
-		levelColor = ERRColor
-	case FatalLevel:
-		levelColor = FATALColor
-	case PanicLevel:
-		levelColor = PANICColor
-	default:
-		levelColor = DEFAULTColor
-	}
 
 	data := &logData{
 		Caller:    getCaller(),
-		Color:     levelColor,
 		Data:      make(map[string]interface{}),
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     levelString(entry.Level),
@@ -166,6 +187,43 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML bool) *logData {
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Trace:     getTrace(),
 	}
+	data.LabelCaller = fieldMap.resolve(LabelCaller)
+	data.LabelHost = fieldMap.resolve(LabelHost)
+	data.LabelLevel = fieldMap.resolve(LabelLevel)
+	data.LabelMsg = fieldMap.resolve(LabelMsg)
+	data.LabelTime = fieldMap.resolve(LabelTime)
+	data.LabelData = fieldMap.resolve(LabelData)
+	data.LabelTrace = fieldMap.resolve(LabelTrace)
+
+	if isTTY {
+		switch entry.Level {
+		case DebugLevel:
+			levelColor = DEBUGColor
+		case InfoLevel:
+			levelColor = DEFAULTColor
+		case WarnLevel:
+			levelColor = WARNColor
+		case ErrorLevel:
+			levelColor = ERRORColor
+		case FatalLevel:
+			levelColor = FATALColor
+		case PanicLevel:
+			levelColor = PANICColor
+		default:
+			levelColor = DEFAULTColor
+		}
+		data.Color = colors{
+			Caller:    CallerColor,
+			DataLabel: DataLabelColor,
+			DataValue: DataValueColor,
+			Hostname:  HostnameColor,
+			Level:     levelColor,
+			Reset:     ResetColor,
+			Timestamp: TimestampColor,
+			Trace:     TraceColor,
+		}
+	}
+
 	remapData(entry, fieldMap, data)
 
 	return data

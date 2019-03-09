@@ -6,7 +6,53 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"text/template"
 )
+
+var funcMap = template.FuncMap{
+	// The name "title" is what the function will be called in the template text.
+	"inc": func(a, b int) int {
+		return a + b
+	},
+}
+var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
+	"{{$color := .Color}}{{$caller := .Caller}}{\n" +
+		// Level
+		"    \"{{$color.Level}}{{.LabelLevel}}{{$color.Reset}}\": \"{{$color.Level}}{{printf \"%5s\" .Level}}{{$color.Reset}}\",\n" +
+		// Hostname
+		"{{if .Hostname}}" +
+		"    \"{{$color.Level}}{{.LabelHostname}}{{$color.Reset}}\": \"{{$color.Hostname}}{{.Hostname}}{{$color.Reset}}\",\n" +
+		"{{end}}" +
+		// Timestamp
+		"{{if .Timestamp}}" +
+		"    \"{{$color.Level}}{{.LabelTime}}{{$color.Reset}}\": \"{{$color.Timestamp}}{{.Timestamp}}{{$color.Reset}}\",\n" +
+		"{{end}}" +
+		// Message
+		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
+		// Data fields
+		"{{if .Data}}" +
+		"{{$len := len .Data}}{{$count := 1}}{{$comma := \",\"}}" +
+		"    \"{{$color.Level}}{{.LabelData}}{{$color.Reset}}\": {\n{{range $k, $v := .Data}}" +
+		"{{if eq ($count) ($len)}}{{$comma = \"\"}}{{end}}" +
+		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": \"{{$color.DataValue}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
+		"{{$count = inc $count 1}}" +
+		"{{end}}    },\n" +
+		"{{end}}" +
+		// Caller
+		"{{if and (.Caller) (not .Trace)}}" +
+		"    \"{{$color.Level}}{{.LabelCaller}}{{$color.Reset}}\": \"{{$color.Caller}}{{.Caller}}{{$color.Reset}}\"\n" +
+		"{{end}}" +
+		// Trace
+		"{{if .Trace}}" +
+		"{{$len := len .Trace}}{{$count := 1}}{{$comma := \",\"}}" +
+		"    \"{{$color.Level}}{{.LabelTrace}}{{$color.Reset}}\": [\n{{range $k, $v := .Trace}}" +
+		"{{if eq ($count) ($len)}}{{$comma = \"\"}}{{end}}" +
+		"        \"{{$color.Trace}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
+		"{{$count = inc $count 1}}" +
+		"{{end}}    ]\n" +
+		"{{end}}" +
+		"}",
+))
 
 // JSONFormatter formats logs into parsable json.
 type JSONFormatter struct {
@@ -59,7 +105,7 @@ type JSONFormatter struct {
 	// TimestampFormat allows a custom timestamp format to be used.
 	TimestampFormat string
 
-	// Flag noting whether the logger's out is to a terminal
+	// Flag noting whether the logger's output is to a terminal
 	isTerminal bool
 
 	sync.Once
@@ -73,53 +119,78 @@ func (f *JSONFormatter) init(entry *Entry) {
 
 // Format renders a single log entry
 func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
+	var err error
+	var serialized []byte
+	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
+
 	prefixFieldClashes(entry.Data, f.FieldMap)
 	f.Do(func() { f.init(entry) })
 
-	data := getData(entry, f.FieldMap, f.EscapeHTML)
-	jsonData := map[string]interface{}{}
+	data := getData(entry, f.FieldMap, f.EscapeHTML, isTTY)
 
-	//
-	if !f.DisableCaller || f.EnableTrace {
-		jsonData[f.FieldMap.resolve(LabelCaller)] = data.Caller
+	if f.DisableTimestamp {
+		data.Timestamp = ""
+	} else if "" != f.TimestampFormat {
+		data.Timestamp = entry.Time.Format(f.TimestampFormat)
+	} else {
+		data.Timestamp = entry.Time.Format(defaultTimestampFormat)
 	}
-	if f.EnableTrace {
-		jsonData[f.FieldMap.resolve(LabelTrace)] = data.Trace
+	if f.DisableHostname {
+		data.Hostname = ""
 	}
-	if !f.DisableHostname {
-		jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
+	if f.DisableCaller {
+		data.Caller = ""
 	}
-	if !f.DisableLevel {
-		jsonData[f.FieldMap.resolve(LabelLevel)] = data.Level
+	if !f.EnableTrace {
+		data.Trace = []string{}
 	}
-	if !f.DisableMessage {
-		jsonData[f.FieldMap.resolve(LabelMsg)] = data.Message
-	}
-	if !f.DisableTimestamp {
-		if "" != f.TimestampFormat {
-			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
-		} else {
-			jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(defaultTimestampFormat)
-		}
-	}
-
-	//
-	jsonData[f.FieldMap.resolve(LabelData)] = data.Data
-	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
-	var serialized []byte
-	var err error
-
-	buf := new(bytes.Buffer)
-	encoder := json.NewEncoder(buf)
-	encoder.SetEscapeHTML(f.EscapeHTML)
 
 	if isTTY {
-		encoder.SetIndent("", "    ")
-		err = encoder.Encode(jsonData)
-		serialized = []byte(strings.Trim(buf.String(), "\n"))
-		serialized = append([]byte(data.Color), serialized...)
-		serialized = append(serialized, []byte("\033[0m")...)
+		var logLine *bytes.Buffer
+		if entry.Buffer != nil {
+			logLine = entry.Buffer
+		} else {
+			logLine = &bytes.Buffer{}
+		}
+		err = jsonTermTemplate.Execute(logLine, data)
+		if err != nil {
+			return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
+		}
+		serialized = logLine.Bytes()
+
 	} else {
+		// Relabel data for JSON output
+		jsonData := map[string]interface{}{}
+		if !f.DisableCaller || f.EnableTrace {
+			jsonData[f.FieldMap.resolve(LabelCaller)] = data.Caller
+		}
+		if f.EnableTrace {
+			jsonData[f.FieldMap.resolve(LabelTrace)] = data.Trace
+		}
+		if !f.DisableHostname {
+			jsonData[f.FieldMap.resolve(LabelHost)] = data.Hostname
+		}
+		if !f.DisableLevel {
+			jsonData[f.FieldMap.resolve(LabelLevel)] = data.Level
+		}
+		if !f.DisableMessage {
+			jsonData[f.FieldMap.resolve(LabelMsg)] = data.Message
+		}
+		if !f.DisableTimestamp {
+			if "" != f.TimestampFormat {
+				jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(f.TimestampFormat)
+			} else {
+				jsonData[f.FieldMap.resolve(LabelTime)] = entry.Time.Format(defaultTimestampFormat)
+			}
+		}
+
+		//
+		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
+
+		buf := new(bytes.Buffer)
+		encoder := json.NewEncoder(buf)
+		encoder.SetEscapeHTML(f.EscapeHTML)
+
 		err = encoder.Encode(jsonData)
 		serialized = []byte(strings.Trim(buf.String(), "\n"))
 	}
