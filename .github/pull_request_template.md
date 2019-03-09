@@ -9,7 +9,7 @@ What types of changes does your code introduce?
 <!--
 Put an `[x]` in all the boxes that apply.
 -->
-* [ ] Bugfix (bugfix related to a planned story)
+* [ ] Bugfix
 * [ ] Tech Debt (fixes an infrastructure issue, code quality issue, etc.)
 * [ ] Feature development
 * [ ] Other (please explain here)
