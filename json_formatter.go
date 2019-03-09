@@ -11,8 +11,11 @@ import (
 
 var funcMap = template.FuncMap{
 	// The name "title" is what the function will be called in the template text.
-	"inc": func(a, b int) int {
-		return a + b
+	"inc": func(cnt int) int {
+		return cnt + 1
+	},
+	"dec": func(cnt int) int {
+		return cnt - 1
 	},
 }
 var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
@@ -31,11 +34,11 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
 		// Data fields
 		"{{if .Data}}" +
-		"{{$len := len .Data}}{{$count := 1}}{{$comma := \",\"}}" +
+		"{{$max := dec (len .Data)}}{{$cnt := 0}}{{$comma := \",\"}}" +
 		"    \"{{$color.Level}}{{.LabelData}}{{$color.Reset}}\": {\n{{range $k, $v := .Data}}" +
-		"{{if eq ($count) ($len)}}{{$comma = \"\"}}{{end}}" +
+		"{{if eq ($cnt) ($max)}}{{$comma = \"\"}}{{end}}" +
 		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": \"{{$color.DataValue}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
-		"{{$count = inc $count 1}}" +
+		"{{$cnt = inc $cnt}}" +
 		"{{end}}    },\n" +
 		"{{end}}" +
 		// Caller
@@ -44,11 +47,11 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{end}}" +
 		// Trace
 		"{{if .Trace}}" +
-		"{{$len := len .Trace}}{{$count := 1}}{{$comma := \",\"}}" +
+		"{{$max := dec (len .Trace)}}{{$cnt := 0}}{{$comma := \",\"}}" +
 		"    \"{{$color.Level}}{{.LabelTrace}}{{$color.Reset}}\": [\n{{range $k, $v := .Trace}}" +
-		"{{if eq ($count) ($len)}}{{$comma = \"\"}}{{end}}" +
+		"{{if eq ($cnt) ($max)}}{{$comma = \"\"}}{{end}}" +
 		"        \"{{$color.Trace}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
-		"{{$count = inc $count 1}}" +
+		"{{$cnt = inc $cnt}}" +
 		"{{end}}    ]\n" +
 		"{{end}}" +
 		"}",
