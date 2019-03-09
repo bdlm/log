@@ -147,13 +147,20 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 		data.Trace = []string{}
 	}
 
-	for k, v := range data.Data {
-		data.Data[k] = escape(v, f.EscapeHTML)
-	}
-
 	if isTTY {
+		for k, v := range data.Data {
+			switch tv := v.(type) {
+			case string:
+				data.Data[k] = `"` + tv + `"`
+			default:
+				data.Data[k] = v
+			}
+		}
 		err = termTemplate.Execute(logLine, data)
 	} else {
+		for k, v := range data.Data {
+			data.Data[k] = escape(v, f.EscapeHTML)
+		}
 		data.Message = escape(data.Message, f.EscapeHTML)
 		err = textTemplate.Execute(logLine, data)
 	}
