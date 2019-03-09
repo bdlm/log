@@ -23,7 +23,7 @@
 * support for suppressing any default field.
 * TTY formatting and coloring of JSON output.
 * updated formatting for TTY text output.
-* updated TTY color scheme.
+* updated default TTY color scheme and color customization.
 
 #
 
