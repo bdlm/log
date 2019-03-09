@@ -59,11 +59,11 @@ type logData struct {
 }
 
 // SetCallerLevel will adjust the relative caller level in log output.
-func SetCallerLevel(level uint) {
+func SetCallerLevel(level int) {
 	callerLevel = level
 }
 
-var callerLevel uint
+var callerLevel int
 
 func getCaller() string {
 	caller := ""
@@ -73,7 +73,7 @@ func getCaller() string {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
 				strings.HasSuffix(strings.ToLower(file), "_test.go") {
 				if 0 != callerLevel {
-					if pc, file, line, ok := runtime.Caller(a - int(callerLevel)); ok {
+					if pc, file, line, ok := runtime.Caller(a + callerLevel); ok {
 						caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
 						break
 					}
