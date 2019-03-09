@@ -199,8 +199,6 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		switch entry.Level {
 		case DebugLevel:
 			levelColor = DEBUGColor
-		case InfoLevel:
-			levelColor = DEFAULTColor
 		case WarnLevel:
 			levelColor = WARNColor
 		case ErrorLevel:
