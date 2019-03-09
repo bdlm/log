@@ -20,12 +20,16 @@ var funcMap = template.FuncMap{
 			max = len(v) - 1
 		}
 		return map[string]int{
-			"max": max,
-			"cnt": 0,
+			"max":   max,
+			"cnt":   0,
+			"comma": 1,
 		}
 	},
 	"inc": func(counter map[string]int) map[string]int {
 		counter["cnt"] = counter["cnt"] + 1
+		if counter["cnt"] >= counter["max"] {
+			counter["comma"] = 0
+		}
 		return counter
 	},
 }
@@ -45,10 +49,9 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
 		// Data fields
 		"{{if .Data}}" +
-		"{{$counter := newCounter .Data}}{{$comma := \",\"}}" +
+		"{{$counter := newCounter .Data}}" +
 		"    \"{{$color.Level}}{{.LabelData}}{{$color.Reset}}\": {\n{{range $k, $v := .Data}}" +
-		"{{if eq ($counter.cnt) ($counter.max)}}{{$comma = \"\"}}{{end}}" +
-		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": \"{{$color.DataValue}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
+		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": \"{{$color.DataValue}}{{$v}}{{$color.Reset}}\"{{if eq 1 $counter.comma}},{{end}}\n" +
 		"{{$_ := inc $counter}}" +
 		"{{end}}    },\n" +
 		"{{end}}" +
@@ -58,10 +61,9 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{end}}" +
 		// Trace
 		"{{if .Trace}}" +
-		"{{$counter := newCounter .Trace}}{{$comma := \",\"}}" +
+		"{{$counter := newCounter .Trace}}" +
 		"    \"{{$color.Level}}{{.LabelTrace}}{{$color.Reset}}\": [\n{{range $k, $v := .Trace}}" +
-		"{{if eq ($counter.cnt) ($counter.max)}}{{$comma = \"\"}}{{end}}" +
-		"        \"{{$color.Trace}}{{$v}}{{$color.Reset}}\"{{$comma}}\n" +
+		"        \"{{$color.Trace}}{{$v}}{{$color.Reset}}\"{{if eq 1 $counter.comma}},{{end}}\n" +
 		"{{$_ := inc $counter}}" +
 		"{{end}}    ]\n" +
 		"{{end}}" +
