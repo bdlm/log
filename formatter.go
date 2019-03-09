@@ -58,6 +58,13 @@ type logData struct {
 	Trace     []string               `json:"trace,omitempty"`
 }
 
+// SetCallerLevel will adjust the relative caller level in log output.
+func SetCallerLevel(level uint) {
+	callerLevel = level
+}
+
+var callerLevel uint
+
 func getCaller() string {
 	caller := ""
 	a := 0
@@ -65,6 +72,12 @@ func getCaller() string {
 		if pc, file, line, ok := runtime.Caller(a); ok {
 			if !strings.Contains(strings.ToLower(file), "github.com/bdlm/log") ||
 				strings.HasSuffix(strings.ToLower(file), "_test.go") {
+				if 0 != callerLevel {
+					if pc, file, line, ok := runtime.Caller(a - int(callerLevel)); ok {
+						caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
+						break
+					}
+				}
 				caller = fmt.Sprintf("%s:%d %s", path.Base(file), line, runtime.FuncForPC(pc).Name())
 				break
 			}
