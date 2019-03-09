@@ -116,7 +116,6 @@ func (f *TextFormatter) init(entry *Entry) {
 // Format renders a single log entry
 func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	var err error
-	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
 	prefixFieldClashes(entry.Data, f.FieldMap)
 
 	var logLine *bytes.Buffer
@@ -128,13 +127,8 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 
 	f.Do(func() { f.init(entry) })
 
+	isTTY := (f.ForceTTY || f.isTerminal) && !f.DisableTTY
 	data := getData(entry, f.FieldMap, f.EscapeHTML, isTTY)
-	data.LabelCaller = f.FieldMap.resolve(LabelCaller)
-	data.LabelHost = f.FieldMap.resolve(LabelHost)
-	data.LabelLevel = f.FieldMap.resolve(LabelLevel)
-	data.LabelMsg = f.FieldMap.resolve(LabelMsg)
-	data.LabelTime = f.FieldMap.resolve(LabelTime)
-	data.LabelData = f.FieldMap.resolve(LabelData)
 
 	if f.DisableTimestamp {
 		data.Timestamp = ""

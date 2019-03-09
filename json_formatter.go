@@ -21,7 +21,7 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"    \"{{$color.Level}}{{.LabelLevel}}{{$color.Reset}}\": \"{{$color.Level}}{{printf \"%5s\" .Level}}{{$color.Reset}}\",\n" +
 		// Hostname
 		"{{if .Hostname}}" +
-		"    \"{{$color.Level}}{{.LabelHostname}}{{$color.Reset}}\": \"{{$color.Hostname}}{{.Hostname}}{{$color.Reset}}\",\n" +
+		"    \"{{$color.Level}}{{.LabelHost}}{{$color.Reset}}\": \"{{$color.Hostname}}{{.Hostname}}{{$color.Reset}}\",\n" +
 		"{{end}}" +
 		// Timestamp
 		"{{if .Timestamp}}" +
