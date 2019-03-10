@@ -11,11 +11,13 @@
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 </p>
 
+`bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package.
+
 <p align="center">
     <img src="https://github.com/bdlm/log/wiki/assets/images/tty-header.png" width="75%">
 </p>
 
-`bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package. This package adds:
+This package adds:
 
 * support for sanitizing strings from log output to aid in preventing leaking sensitive data.
 * additional default fields `host` and `caller`.
