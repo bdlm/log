@@ -6,7 +6,7 @@
 
 <p align="center">
 	<a href="https://github.com/bdlm/log/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
-	<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#release-candidate"><img src="https://img.shields.io/badge/stability-pre--release-48c9b0.svg" alt="Release Candidate"></a>
+	<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#mature"><img src="https://img.shields.io/badge/stability-mature-008000.svg" alt="Mature"></a>
 	<a href="https://travis-ci.org/bdlm/log"><img src="https://travis-ci.org/bdlm/log.svg?branch=master" alt="Build status"></a>
 	<a href="https://codecov.io/gh/bdlm/log"><img src="https://img.shields.io/codecov/c/github/bdlm/log/master.svg" alt="Coverage status"></a>
 	<a href="https://goreportcard.com/report/github.com/bdlm/log"><img src="https://goreportcard.com/badge/github.com/bdlm/log" alt="Go Report Card"></a>
@@ -23,11 +23,11 @@
 * support for suppressing any default field.
 * TTY formatting and coloring of JSON output.
 * updated formatting for TTY text output.
-* updated TTY color scheme.
+* updated default TTY color scheme and color customization.
 
 #
 
-`bdlm/log` is a structured logger for Go and is API compatible with the standard libaray `log` package.
+`bdlm/log` is a structured logger for Go and is fully API compatible with both the standard libaray `log` package as well as the [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package.
 
 ## Examples
 
