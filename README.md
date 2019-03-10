@@ -1,7 +1,3 @@
-<p align="center">
-    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-header.png" width="75%">
-</p>
-
 # log
 
 <p align="center">
@@ -13,6 +9,10 @@
 	<a href="https://github.com/bdlm/log/issues"><img src="https://img.shields.io/github/issues-raw/bdlm/log.svg" alt="Github issues"></a>
 	<a href="https://github.com/bdlm/log/pulls"><img src="https://img.shields.io/github/issues-pr/bdlm/log.svg" alt="Github pull requests"></a>
 	<a href="https://godoc.org/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
+</p>
+
+<p align="center">
+    <img src="https://github.com/bdlm/log/wiki/assets/images/tty-header.png" width="75%">
 </p>
 
 `bdlm/log` is a fork of the excellent [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package. This package adds:
