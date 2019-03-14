@@ -32,6 +32,13 @@ var funcMap = template.FuncMap{
 		}
 		return counter
 	},
+	"json": func(v interface{}, prefix, indent string) string {
+		byts, err := json.MarshalIndent(v, prefix, indent)
+		if nil == err {
+			return string(byts)
+		}
+		return ""
+	},
 }
 var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 	"{{$color := .Color}}{{$caller := .Caller}}{\n" +
@@ -51,7 +58,7 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{if .Data}}" +
 		"{{$counter := newCounter .Data}}" +
 		"    \"{{$color.Level}}{{.LabelData}}{{$color.Reset}}\": {\n{{range $k, $v := .Data}}" +
-		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": {{$color.DataValue}}{{$v}}{{$color.Reset}}{{if eq 1 $counter.comma}},{{end}}\n" +
+		"        \"{{$color.DataLabel}}{{$k}}{{$color.Reset}}\": {{$color.DataValue}}{{json $v (printf \"%s        \" $color.DataValue) \"    \"}}{{$color.Reset}}{{if eq 1 $counter.comma}},{{end}}\n" +
 		"{{$_ := inc $counter}}" +
 		"{{end}}    },\n" +
 		"{{end}}" +
@@ -162,14 +169,6 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	if isTTY {
-		for k, v := range data.Data {
-			switch tv := v.(type) {
-			case string:
-				data.Data[k] = `"` + tv + `"`
-			default:
-				data.Data[k] = v
-			}
-		}
 		var logLine *bytes.Buffer
 		if entry.Buffer != nil {
 			logLine = entry.Buffer
