@@ -169,14 +169,6 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	if isTTY {
-		//for k, v := range data.Data {
-		//	switch tv := v.(type) {
-		//	case string:
-		//		data.Data[k] = `"` + tv + `"`
-		//	default:
-		//		data.Data[k] = v
-		//	}
-		//}
 		var logLine *bytes.Buffer
 		if entry.Buffer != nil {
 			logLine = entry.Buffer
