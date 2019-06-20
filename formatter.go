@@ -182,7 +182,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		Caller:    getCaller(),
 		Data:      make(map[string]interface{}),
 		Hostname:  os.Getenv("HOSTNAME"),
-		Level:     levelString(entry.Level),
+		Level:     LevelString(entry.Level),
 		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Trace:     getTrace(),
