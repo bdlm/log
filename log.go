@@ -11,8 +11,8 @@ import (
 // Fields type, used to pass to `WithFields`.
 type Fields map[string]interface{}
 
-// Convert the Level to a string. E.g. PanicLevel becomes "panic".
-func levelString(level stdLogger.Level) string {
+// LevelString convert the Level to a human readable string. E.g. PanicLevel becomes "panic".
+func LevelString(level stdLogger.Level) string {
 	switch level {
 	case DebugLevel:
 		return "debug"
