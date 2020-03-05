@@ -265,7 +265,7 @@ func getRequestFields(ctx context.Context, intr *Interceptor) map[string]interfa
 		}
 		if "" != clientID {
 			hash := sha1.New()
-			hash.Write([]byte(clientID))
+			_, _ = hash.Write([]byte(clientID))
 			requestFields["gateway-client-id"] = base64.URLEncoding.EncodeToString(hash.Sum(nil))
 		}
 	}
@@ -311,9 +311,6 @@ var marshaller = &jsonpb.Marshaler{
 
 // CtxKey is the key to use to lookup the log field map in the context.
 type CtxKey struct{}
-
-// requestCtxKey is the key to use to lookup the request log field map in the context.
-type requestCtxKey struct{}
 
 // logResponse calculates the elapsed time and the status code, and then
 // will log out the response has finished at an appropriate level.
