@@ -1,3 +1,32 @@
+# v0.1.20
+
+* Add a gRPC request interceptor.
+
+# v0.1.19
+
+* Expose the `LevelString` function for use in custom formatters.
+
+# v0.1.18
+
+* properly encode json values in TTY output
+
+# v0.1.17
+
+* fix type display logic
+* update pr template
+* update readme
+
+
+# v0.1.16
+
+* update TTY color scheme and layout
+* cleanup template logic
+* template fixes for v1.9 and v1.10
+
+# v0.1.15
+
+* Add caller level adjustment control with SetCallerLevel(level uint)
+
 # v0.1.13
 
 * TTY color scheme update
