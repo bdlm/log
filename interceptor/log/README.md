@@ -6,8 +6,6 @@ All streaming and unary requests and responses are logged at the `debug` level a
 * [Implementation](#implementation)
 * [Adding Fields](#adding-fields)
 * [Log Output](#log-output)
-* [Scalyr Log Parser](#scalyr-log-parser)
-  * [Scalyr Metrics](#scalyr-metrics)
 
 ## Configuration
 
@@ -153,57 +151,5 @@ A typical (prettified) response log message might look like this:
         "start": "2019-03-15T21:38:50.8128519Z"
     },
     "caller": "log.go:347 github.com/bdlm/log-example/vendor/github.com/bdlm/log/interceptor/log.levelLog"
-}
-```
-
-## Scalyr Log Parser
-
-The provided [Scalyr log parser](https://github.com/bdlm/log/blob/master/interceptor/log/scalyr-log-parser.js) will convert these fields into Scalyr variables available to log filters and dashboards:
-
-```
-$level = 'info' $msg = 'response' $DataHello = 'World'
-```
-
-It can be annoying to always need to type the `$Data` part of the variable names. You can rename the data key to anything you like in your service:
-
-```go
-import "github.com/bdlm/log"
-
-func main() {
-	log.SetFormatter(&log.JSONFormatter{
-		FieldMap: log.FieldMap{
-			"data": "_",
-		},
-	})
-}
-```
-
-Which the Scaylr parser will translate to:
-
-```
-$level = 'info' $msg = 'response' $_Hello = 'World'
-```
-
-### Scalyr Metrics
-
-Structured logs are extremely useful in gathering actionable metrics from your application. To that end, response timings are automatically included in response logs and can be very useful in monitoring application performance:
-
-```json
-{
-    "graphWidth": 1200,
-    "graphHeight": 200,
-    "duration": "1w",
-    "graphs": [
-        {
-            "label": "Request performance (seconds)",
-            "plots": [
-                {
-                    "label": "Overall",
-                    "filter": "$serverHost contains 'prod' $parser = 'api-infrastructure-example' $level = 'info' $msg = 'response' $_Grpc-service = 'HelloWorld'",
-                    "facet": "mean(_Elapsed)"
-                }
-            ]
-        }
-    ]
 }
 ```
