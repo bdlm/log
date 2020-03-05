@@ -26,6 +26,7 @@ This package adds:
 * TTY formatting and coloring of JSON output.
 * updated formatting for TTY text output.
 * updated default TTY color scheme and color customization.
+* gRPC request interceptors.
 
 #
 
