@@ -112,6 +112,7 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 		Logger:  entry.Logger,
 		Message: entry.Message,
 		Time:    entry.Time,
+		Err:     entry.Err,
 	}
 }
 

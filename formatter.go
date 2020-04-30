@@ -50,9 +50,9 @@ type logData struct {
 	LabelMsg    string `json:"-"`
 	LabelTime   string `json:"-"`
 	LabelTrace  string `json:"-"`
+	Color       colors `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
-	Color     colors                 `json:"-"`
 	Data      map[string]interface{} `json:"data,omitempty"`
 	Err       error                  `json:"error,omitempty"`
 	Hostname  string                 `json:"host,omitempty"`
@@ -185,7 +185,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 	data := &logData{
 		Caller:    getCaller(),
 		Data:      make(map[string]interface{}),
-		Err:       nil,
+		Err:       entry.Err,
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     LevelString(entry.Level),
 		Message:   entry.Message,
