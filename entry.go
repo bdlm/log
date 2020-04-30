@@ -38,7 +38,7 @@ type Entry struct {
 	// Contains all the fields set by the user.
 	Data Fields
 
-	// Contains the error passed by WithError(error0)
+	// Contains the error passed by WithError(error)
 	Err error
 
 	// Level the log entry was logged at: Debug, Info, Warn, Error, Fatal or Panic
