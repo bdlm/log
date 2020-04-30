@@ -10,7 +10,7 @@ git:
 
 install: true
 env:
-    - GOMAXPROCS=4 GORACE=halt_on_error=1 GOFLAGS="-count=1" GOCACHE=
+    - GOMAXPROCS=4 GORACE=halt_on_error=1 GOFLAGS="-count=1" GOCACHE= GO111MODULE=
 
 branches:
     only:
