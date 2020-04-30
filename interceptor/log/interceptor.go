@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bdlm/log/interceptor"
-
-	"github.com/bdlm/log"
+	"github.com/bdlm/log/v2"
+	"github.com/bdlm/log/v2/interceptor"
 	std "github.com/bdlm/std/logger"
+
 	"github.com/go-chi/chi/middleware"
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"

@@ -11,7 +11,7 @@ Package-level exported logger
   package main
 
   import (
-    "github.com/bdlm/log"
+    "github.com/bdlm/log/v2"
   )
 
   func main() {
@@ -30,14 +30,14 @@ Output:
 API Compatibility
 
 Note that it is completely api-compatible with the stdlib logger, so you can replace your `log`
-imports everywhere with `"github.com/bdlm/log"` and you'll have the full flexibility of
+imports everywhere with `"github.com/bdlm/log/v2"` and you'll have the full flexibility of
 `bdlm/log` available. You can customize it further in your code:
 
   package main
 
   import (
     "os"
-    log "github.com/bdlm/log"
+    log "github.com/bdlm/log/v2"
   )
 
   func init() {
@@ -87,7 +87,7 @@ Managing secrets
 help prevent or mitigate leaking secrets into log files:
 
   import (
-      "github.com/bdlm/log"
+      "github.com/bdlm/log/v2"
   )
 
   func main() {
@@ -108,7 +108,7 @@ create an instance of the `bdlm/log` Logger:
 
   import (
     "os"
-    "github.com/bdlm/log"
+    "github.com/bdlm/log/v2"
   )
 
   // Create a new instance of the logger. You can have any number of instances.

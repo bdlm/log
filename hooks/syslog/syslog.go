@@ -7,7 +7,7 @@ import (
 	"log/syslog"
 	"os"
 
-	"github.com/bdlm/log"
+	"github.com/bdlm/log/v2"
 	stdLogger "github.com/bdlm/std/logger"
 )
 

@@ -3,7 +3,7 @@ package log_test
 import (
 	"os"
 
-	"github.com/bdlm/log"
+	"github.com/bdlm/log/v2"
 )
 
 func Example_basic() {
