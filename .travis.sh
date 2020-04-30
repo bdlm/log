@@ -6,10 +6,7 @@ exit_code=0
 go get -u golang.org/x/lint/golint
 [ "0" = "$?" ] || exit 1
 
-go get -u github.com/golang/dep/cmd/dep
-[ "0" = "$?" ] || exit 2
-
-dep ensure
+go mod download && go mod tidy && go mod vendor
 [ "0" = "$?" ] || exit 3
 
 for dir in $(go list ./... | grep -v vendor); do
