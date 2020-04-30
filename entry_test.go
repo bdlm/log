@@ -25,11 +25,11 @@ func TestEntryWithError(t *testing.T) {
 	logger.Out = &bytes.Buffer{}
 	entry := NewEntry(logger)
 
-	assert.Equal(err, entry.WithError(err).Data["error"])
+	assert.Equal(err, entry.WithError(err).Err)
 
 	ErrorKey = "err"
 
-	assert.Equal(err, entry.WithError(err).Data["err"])
+	assert.Equal(err, entry.WithError(err).Err)
 
 }
 

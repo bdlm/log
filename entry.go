@@ -32,11 +32,14 @@ var ErrorKey = "error"
 type Entry struct {
 	Logger *Logger
 
+	// When formatter is called in entry.log(), an Buffer may be set to entry
+	Buffer *bytes.Buffer
+
 	// Contains all the fields set by the user.
 	Data Fields
 
-	// Time at which the log entry was created
-	Time time.Time
+	// Contains the error passed by WithError(error0)
+	Err error
 
 	// Level the log entry was logged at: Debug, Info, Warn, Error, Fatal or Panic
 	// This field will be set on entry firing and the value will be equal to the one in Logger struct field.
@@ -45,8 +48,8 @@ type Entry struct {
 	// Message passed to Debug, Info, Warn, Error, Fatal or Panic
 	Message string
 
-	// When formatter is called in entry.log(), an Buffer may be set to entry
-	Buffer *bytes.Buffer
+	// Time at which the log entry was created
+	Time time.Time
 }
 
 var sanitizeStrings = []string{}
@@ -83,7 +86,8 @@ func (entry *Entry) String() (string, error) {
 
 // WithError add an error as single field (using the key defined in ErrorKey) to the Entry.
 func (entry *Entry) WithError(err error) *Entry {
-	return entry.WithField(ErrorKey, err)
+	entry.Err = err
+	return entry
 }
 
 // WithField add a single field to the Entry.

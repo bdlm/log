@@ -16,6 +16,8 @@ var (
 			"{{if .Hostname}} {{$color.Hostname}}{{.Hostname}}{{$color.Reset}}{{end}} " +
 			// Message
 			"{{printf \"%s\" .Message}}" +
+			// Error
+			"{{if .Err}}\n   {{$color.Level}}⇢{{$color.Reset}} {{$color.Err}}{{.Err}}{{$color.Reset}}{{end}} " +
 			// Data fields
 			"{{if .Data}}\n   {{$color.Level}}⇢{{$color.Reset}} {{range $k, $v := .Data}}" +
 			" {{$color.DataLabel}}{{$k}}{{$color.Reset}}={{$color.DataValue}}{{$v}}{{$color.Reset}}" +
@@ -39,6 +41,8 @@ var (
 			"{{.LabelLevel}}=\"{{.Level}}\"" +
 			// Message
 			"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}" +
+			// Error
+			"{{if .Err}} {{.LabelError}}={{.Err}}{{end}}" +
 			// Data fields
 			"{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}" +
 			// Caller

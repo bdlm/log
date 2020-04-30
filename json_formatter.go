@@ -54,6 +54,10 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{end}}" +
 		// Message
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
+		// Error
+		"{{if .Err}}" +
+		"    \"{{$color.Level}}{{.LabelError}}{{$color.Reset}}\": \"{{$color.Err}}{{.Err}}{{$color.Reset}}\",\n" +
+		"{{end}}" +
 		// Data fields
 		"{{if .Data}}" +
 		"{{$counter := newCounter .Data}}" +
@@ -209,6 +213,8 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 
 		//
 		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
+
+		jsonData[f.FieldMap.resolve(LabelError)] = data.Err
 
 		buf := new(bytes.Buffer)
 		encoder := json.NewEncoder(buf)

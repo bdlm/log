@@ -26,6 +26,7 @@ type FieldMap map[FieldLabel]string
 const (
 	LabelCaller = "caller"
 	LabelData   = "data"
+	LabelError  = "error"
 	LabelHost   = "host"
 	LabelLevel  = "level"
 	LabelMsg    = "msg"
@@ -43,6 +44,7 @@ func (f FieldMap) resolve(fieldLabel FieldLabel) string {
 type logData struct {
 	LabelCaller string `json:"-"`
 	LabelData   string `json:"-"`
+	LabelError  string `json:"-"`
 	LabelHost   string `json:"-"`
 	LabelLevel  string `json:"-"`
 	LabelMsg    string `json:"-"`
@@ -52,6 +54,7 @@ type logData struct {
 	Caller    string                 `json:"caller,omitempty"`
 	Color     colors                 `json:"-"`
 	Data      map[string]interface{} `json:"data,omitempty"`
+	Err       error                  `json:"error,omitempty"`
 	Hostname  string                 `json:"host,omitempty"`
 	Level     string                 `json:"level,omitempty"`
 	Message   string                 `json:"msg,omitempty"`
@@ -155,6 +158,7 @@ type colors struct {
 	Caller    string
 	DataLabel string
 	DataValue string
+	Err       string
 	Hostname  string
 	Level     string
 	Reset     string
@@ -181,6 +185,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 	data := &logData{
 		Caller:    getCaller(),
 		Data:      make(map[string]interface{}),
+		Err:       nil,
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     LevelString(entry.Level),
 		Message:   entry.Message,
@@ -188,11 +193,12 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		Trace:     getTrace(),
 	}
 	data.LabelCaller = fieldMap.resolve(LabelCaller)
+	data.LabelData = fieldMap.resolve(LabelData)
+	data.LabelError = fieldMap.resolve(LabelError)
 	data.LabelHost = fieldMap.resolve(LabelHost)
 	data.LabelLevel = fieldMap.resolve(LabelLevel)
 	data.LabelMsg = fieldMap.resolve(LabelMsg)
 	data.LabelTime = fieldMap.resolve(LabelTime)
-	data.LabelData = fieldMap.resolve(LabelData)
 	data.LabelTrace = fieldMap.resolve(LabelTrace)
 
 	if isTTY {
@@ -214,6 +220,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 			Caller:    CallerColor,
 			DataLabel: DataLabelColor,
 			DataValue: DataValueColor,
+			Err:       ERRORColor,
 			Hostname:  HostnameColor,
 			Level:     levelColor,
 			Reset:     ResetColor,
@@ -233,6 +240,8 @@ func remapData(entry *Entry, fieldMap FieldMap, data *logData) {
 		switch k {
 		case fieldMap.resolve(LabelCaller):
 			data.Caller = v.(string)
+		case fieldMap.resolve(LabelError):
+			data.Err = v.(error)
 		case fieldMap.resolve(LabelHost):
 			data.Hostname = v.(string)
 		case fieldMap.resolve(LabelLevel):
@@ -289,6 +298,7 @@ func prefixFieldClashes(data Fields, fieldMap FieldMap) {
 	for _, field := range []FieldLabel{
 		LabelCaller,
 		LabelData,
+		LabelError,
 		LabelHost,
 		LabelLevel,
 		LabelMsg,
