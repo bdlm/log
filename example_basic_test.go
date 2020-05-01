@@ -59,7 +59,7 @@ func Example_basic() {
 	// level="error" msg="That could have gone better..." data.dead=true data.winner="walrus"
 }
 
-func Example_JSON() {
+func Example_json() {
 	var logger = log.New()
 	logger.Formatter = new(log.JSONFormatter)                     //default
 	logger.Formatter.(*log.JSONFormatter).DisableTimestamp = true // remove timestamp from test output
@@ -102,15 +102,15 @@ func Example_JSON() {
 	}).Panic("The walrus are attacking!")
 
 	// Output:
-	// {"data":{"animal":"bird","count":1},"error":null,"level":"debug","msg":"Oh, look, a bird..."}
-	// {"data":{"animal":"walrus","count":20},"error":null,"level":"info","msg":"A group of walrus emerges from the ocean"}
-	// {"data":{"animal":"walrus","count":100},"error":null,"level":"warn","msg":"The group's number increased tremendously!"}
-	// {"data":{"animal":"cow","run":"wait, what?"},"error":null,"level":"error","msg":"Tremendously sized cow enters the ocean."}
-	// {"data":{"animal":"walrus","run":true},"error":null,"level":"panic","msg":"The walrus are attacking!"}
-	// {"data":{"dead":true,"winner":"walrus"},"error":null,"level":"error","msg":"That could have gone better..."}
+	// {"data":{"animal":"bird","count":1},"level":"debug","msg":"Oh, look, a bird..."}
+	// {"data":{"animal":"walrus","count":20},"level":"info","msg":"A group of walrus emerges from the ocean"}
+	// {"data":{"animal":"walrus","count":100},"level":"warn","msg":"The group's number increased tremendously!"}
+	// {"data":{"animal":"cow","run":"wait, what?"},"level":"error","msg":"Tremendously sized cow enters the ocean."}
+	// {"data":{"animal":"walrus","run":true},"level":"panic","msg":"The walrus are attacking!"}
+	// {"data":{"dead":true,"winner":"walrus"},"level":"error","msg":"That could have gone better..."}
 }
 
-func Example_JSONTTY() {
+func Example_jsontty() {
 	var logger = log.New()
 	logger.Formatter = new(log.JSONFormatter)                     //default
 	logger.Formatter.(*log.JSONFormatter).DisableTimestamp = true // remove timestamp from test output
@@ -263,7 +263,7 @@ func Example_basic_withError() {
 	// level="error" msg="That could have gone better..." error=Second mistake: a walrus cow is not cattle... data.dead=true data.winner="walrus"
 }
 
-func Example_JSON_withError() {
+func Example_json_withError() {
 	var logger = log.New()
 	logger.Formatter = new(log.JSONFormatter)                     //default
 	logger.Formatter.(*log.JSONFormatter).DisableTimestamp = true // remove timestamp from test output
@@ -309,15 +309,15 @@ func Example_JSON_withError() {
 	}).Panic("The walrus are attacking!")
 
 	// Output:
-	// {"data":{"animal":"bird","count":1},"error":null,"level":"debug","msg":"Oh, look, a bird..."}
-	// {"data":{"animal":"walrus","count":20},"error":null,"level":"info","msg":"A group of walrus emerges from the ocean"}
-	// {"data":{"animal":"walrus","count":100},"error":null,"level":"warn","msg":"The group's number increased tremendously!"}
-	// {"data":{"animal":"cow","run":"wait, what?"},"error":null,"level":"error","msg":"Tremendously sized cow enters the ocean."}
-	// {"data":{"animal":"walrus","run":true},"error":null,"level":"panic","msg":"The walrus are attacking!"}
-	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_JSON_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."},{"caller":"#1 n/a","error":"First mistake: not running when a walrus herd \"emerged\" from the ocean"}],"level":"error","msg":"That could have gone better..."}
+	// {"data":{"animal":"bird","count":1},"level":"debug","msg":"Oh, look, a bird..."}
+	// {"data":{"animal":"walrus","count":20},"level":"info","msg":"A group of walrus emerges from the ocean"}
+	// {"data":{"animal":"walrus","count":100},"level":"warn","msg":"The group's number increased tremendously!"}
+	// {"data":{"animal":"cow","run":"wait, what?"},"level":"error","msg":"Tremendously sized cow enters the ocean."}
+	// {"data":{"animal":"walrus","run":true},"level":"panic","msg":"The walrus are attacking!"}
+	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_json_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."},{"caller":"#1 n/a","error":"First mistake: not running when a walrus herd \"emerged\" from the ocean"}],"level":"error","msg":"That could have gone better..."}
 }
 
-func Example_JSONTTY_withError() {
+func Example_jsontty_withError() {
 	var logger = log.New()
 	logger.Formatter = new(log.JSONFormatter)                     //default
 	logger.Formatter.(*log.JSONFormatter).DisableTimestamp = true // remove timestamp from test output
@@ -414,7 +414,7 @@ func Example_JSONTTY_withError() {
 	//     "[38;5;208mmsg[0m": "That could have gone better...",
 	//     "[38;5;208merror[0m": "[38;5;208m[
 	//     {
-	//         "caller": "#0 example_basic_test.go:335 (github.com/bdlm/log/v2_test.Example_JSONTTY_withError.func1)",
+	//         "caller": "#0 example_basic_test.go:335 (github.com/bdlm/log/v2_test.Example_jsontty_withError.func1)",
 	//         "error": "Second mistake: a walrus cow is not cattle..."
 	//     },
 	//     {

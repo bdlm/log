@@ -66,11 +66,28 @@ func TestEscaping_Interface(t *testing.T) {
 		expected string
 	}{
 		{ts.Format(defaultTimestampFormat), ts.Format(defaultTimestampFormat)},
-		{errors.New("error: something went wrong"), "\"error: something went wrong\""},
 	}
 
 	for _, tc := range testCases {
 		b, _ := tf.Format(WithField("test", tc.value))
+		if !bytes.Contains(b, []byte(tc.expected)) {
+			t.Errorf("escaping expected for %q (result was %q instead of %q)", tc.value, string(b), tc.expected)
+		}
+	}
+}
+
+func TestEscaping_Error(t *testing.T) {
+	tf := &TextFormatter{DisableTTY: true}
+
+	testCases := []struct {
+		value    interface{}
+		expected string
+	}{
+		{errors.New("error: something went wrong"), "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" error=error: something went wrong caller=\"text_formatter_test.go:90 github.com/bdlm/log/v2.TestEscaping_Error\"\n"},
+	}
+
+	for _, tc := range testCases {
+		b, _ := tf.Format(WithError(tc.value.(error)))
 		if !bytes.Contains(b, []byte(tc.expected)) {
 			t.Errorf("escaping expected for %q (result was %q instead of %q)", tc.value, string(b), tc.expected)
 		}

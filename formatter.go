@@ -63,6 +63,54 @@ type logData struct {
 	Trace     []string               `json:"trace,omitempty"`
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (l *logData) UnmarshalJSON(d []byte) error {
+	data := map[string]interface{}{}
+
+	err := json.Unmarshal(d, &data)
+	if nil != err {
+		return err
+	}
+
+	if _, ok := data["caller"]; ok {
+		l.Caller = data["caller"].(string)
+	}
+	if _, ok := data["data"]; ok {
+		if nil == l.Data {
+			l.Data = map[string]interface{}{}
+		}
+		for k, v := range data["data"].(map[string]interface{}) {
+			if e, ok := v.(error); ok {
+				l.Data[k] = e.(error)
+			} else {
+				l.Data[k] = v
+			}
+		}
+		//l.Data = data["data"].(map[string]interface{})
+	}
+	if _, ok := data["error"]; ok && "" != data["error"] {
+		l.Err = fmt.Errorf(data["error"].(string))
+	}
+	if _, ok := data["host"]; ok {
+		l.Hostname = data["host"].(string)
+	}
+	if _, ok := data["level"]; ok {
+		l.Level = data["level"].(string)
+	}
+	if _, ok := data["msg"]; ok {
+		l.Message = data["msg"].(string)
+	}
+	if _, ok := data["time"]; ok {
+		l.Timestamp = data["time"].(string)
+	}
+	if _, ok := data["trace"]; ok {
+		l.Trace = data["trace"].([]string)
+	}
+
+	return nil
+}
+
+
 // SetCallerLevel will adjust the relative caller level in log output.
 func SetCallerLevel(level int) {
 	callerLevel = level
@@ -185,7 +233,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 
 	data := &logData{
 		Caller:    getCaller(),
-		Data:      make(map[string]interface{}),
+		Data:      map[string]interface{}{},
 		Err:       entry.Err,
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     LevelString(entry.Level),
@@ -193,6 +241,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Trace:     getTrace(),
 	}
+
 	data.LabelCaller = fieldMap.resolve(LabelCaller)
 	data.LabelData = fieldMap.resolve(LabelData)
 	data.LabelError = fieldMap.resolve(LabelError)
@@ -236,31 +285,12 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 }
 
 func remapData(entry *Entry, fieldMap FieldMap, data *logData) {
-	keys := make([]string, 0)
 	for k, v := range entry.Data {
 		switch k {
-		case fieldMap.resolve(LabelCaller):
-			data.Caller = v.(string)
-		case fieldMap.resolve(LabelError):
-			data.Err = v.(error)
-		case fieldMap.resolve(LabelHost):
-			data.Hostname = v.(string)
-		case fieldMap.resolve(LabelLevel):
-			data.Level = v.(string)
-		case fieldMap.resolve(LabelMsg):
-			data.Message = v.(string)
-		case fieldMap.resolve(LabelTime):
-			data.Timestamp = v.(string)
-
-		case fieldMap.resolve(LabelData):
-			fallthrough
 		default:
-			keys = append(keys, k)
-			switch v.(type) {
+			switch v := v.(type) {
 			case string:
 				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
-			case error:
-				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v.(error).Error()
 			default:
 				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v
 			}

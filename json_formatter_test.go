@@ -10,7 +10,8 @@ import (
 
 func TestErrorNotLost(t *testing.T) {
 	formatter := &JSONFormatter{}
-	entry := WithField("error", errors.New("wild walrus"))
+	testErr := fmt.Errorf("wild walrus")
+	entry := WithError(testErr)
 
 	b, err := formatter.Format(entry)
 	if err != nil {
@@ -18,13 +19,19 @@ func TestErrorNotLost(t *testing.T) {
 	}
 
 	result := logData{}
-	err = json.Unmarshal(b, &result)
+	err = json.Unmarshal(
+		b,
+		&result,
+	)
 	if err != nil {
 		t.Fatal("Unable to unmarshal formatted entry: ", err)
 	}
 
-	if result.Data["error"].(string) != "wild walrus" {
+	if nil == result.Err {
 		t.Fatal("Error field not set")
+	}
+	if result.Err.Error() != testErr.Error() {
+		t.Fatalf("Error value does not match: '%v' != '%v'", result.Err, testErr)
 	}
 }
 
@@ -44,7 +51,7 @@ func TestErrorNotLostOnFieldNotNamedError(t *testing.T) {
 	}
 
 	if result.Data["omg"] != "wild walrus" {
-		t.Fatal("Error field not set")
+		t.Fatal("Data field not set")
 	}
 }
 

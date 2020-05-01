@@ -8,7 +8,18 @@ import (
 
 var (
 	stdTemplate = template.Must(template.New("log").Parse(
-		"{{if .Timestamp}}{{.Timestamp}}{{end}}{{if .Message}} {{.Message}}{{end}}{{if .Level}} {{.LabelLevel}}=\"{{.Level}}\"{{end}}{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}{{if .Err}} {{.LabelError}}=\"{{.Err}}\"{{end}}{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
+		"{{if .Timestamp}}{{.Timestamp}}{{end}}"+
+		"{{if .Message}} {{.Message}}{{end}}"+
+		"{{if .Level}} {{.LabelLevel}}=\"{{.Level}}\"{{end}}"+
+		"{{$labelData := .LabelData}}"+
+		"{{range $k, $v := .Data}} "+
+			"{{if $labelData}}{{$labelData}}.{{end}}"+
+			"{{$k}}={{$v}}"+
+		"{{end}}"+
+		"{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}"+
+		"{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}"+
+		"{{if .Err}} {{.LabelError}}=\"{{.Err}}\"{{end}}"+
+		"{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
 	))
 )
 
@@ -71,13 +82,6 @@ func (f *StdFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	data := getData(entry, f.FieldMap, f.EscapeHTML, false)
-	data.LabelCaller = f.FieldMap.resolve(LabelCaller)
-	data.LabelError = f.FieldMap.resolve(LabelError)
-	data.LabelHost = f.FieldMap.resolve(LabelHost)
-	data.LabelLevel = f.FieldMap.resolve(LabelLevel)
-	data.LabelMsg = f.FieldMap.resolve(LabelMsg)
-	data.LabelTime = f.FieldMap.resolve(LabelTime)
-	data.LabelData = f.FieldMap.resolve(LabelData)
 
 	if f.DisableTimestamp {
 		data.Timestamp = ""
@@ -97,9 +101,11 @@ func (f *StdFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	for k, v := range data.Data {
+		if e, ok := v.(error); ok {
+			v = e.Error()
+		}
 		data.Data[k] = escape(v, f.EscapeHTML)
 	}
-
 	err = stdTemplate.Execute(logLine, data)
 	if nil != err {
 		return nil, err

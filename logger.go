@@ -117,8 +117,9 @@ func (logger *Logger) WithFields(fields Fields) *Entry {
 // `WithError` for the given `error`.
 func (logger *Logger) WithError(err error) *Entry {
 	entry := logger.newEntry()
-	defer logger.releaseEntry(entry)
-	return entry.WithError(err)
+	entry = entry.WithError(err)
+	logger.releaseEntry(entry)
+	return entry
 }
 
 // WithTime overrides the time of the log entry.

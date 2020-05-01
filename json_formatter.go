@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"text/template"
+	errs "github.com/bdlm/errors/v2"
 )
 
 var funcMap = template.FuncMap{
@@ -154,7 +155,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	f.Do(func() { f.init(entry) })
 
 	data := getData(entry, f.FieldMap, f.EscapeHTML, isTTY)
-	data.ErrFormat = "%v"
+	data.ErrFormat = "%#+v"
 
 	if f.DisableTimestamp {
 		data.Timestamp = ""
@@ -213,15 +214,25 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 			}
 		}
 
-		//
+		// account for weird error conversion
+		for k, v := range data.Data {
+			if e, ok := v.(error); ok {
+				data.Data[k] = e.Error()
+			}
+		}
 		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
 
-		jsonData[f.FieldMap.resolve(LabelError)] = data.Err
+		if nil != data.Err {
+			if _, ok := data.Err.(errs.E); ok {
+				jsonData[f.FieldMap.resolve(LabelError)] = data.Err
+			} else {
+				jsonData[f.FieldMap.resolve(LabelError)] = data.Err.Error()
+			}
+		}
 
 		buf := new(bytes.Buffer)
 		encoder := json.NewEncoder(buf)
 		encoder.SetEscapeHTML(f.EscapeHTML)
-
 		err = encoder.Encode(jsonData)
 		serialized = []byte(strings.Trim(buf.String(), "\n"))
 	}

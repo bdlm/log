@@ -446,7 +446,7 @@ func TestEntryWriter(t *testing.T) {
 	log := New()
 	log.Out = cw
 	log.Formatter = new(JSONFormatter)
-	log.WithField("foo", "bar").WriterLevel(WarnLevel).Write([]byte("hello\n"))
+	_, _ = log.WithField("foo", "bar").WriterLevel(WarnLevel).Write([]byte("hello\n"))
 
 	bs := <-cw
 	var data logData
