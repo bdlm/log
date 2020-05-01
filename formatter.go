@@ -51,6 +51,7 @@ type logData struct {
 	LabelTime   string `json:"-"`
 	LabelTrace  string `json:"-"`
 	Color       colors `json:"-"`
+	ErrFormat   string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
 	Data      map[string]interface{} `json:"data,omitempty"`
