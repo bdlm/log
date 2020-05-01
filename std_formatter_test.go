@@ -11,6 +11,7 @@ import (
 )
 
 func TestStdFormatting(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{
 		DisableHostname: true,
 	}
@@ -19,7 +20,7 @@ func TestStdFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "0001/01/01 00:00:00 level=\"fatal\" data.test=\"foo\" caller=\"std_formatter_test.go:26 github.com/bdlm/log/v2.TestStdFormatting\"\n"},
+		{`foo`, "0001/01/01 00:00:00 level=\"fatal\" data.test=\"foo\" caller=\"std_formatter_test.go:27 github.com/bdlm/log/v2.TestStdFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -37,6 +38,7 @@ func TestStdFormatting(t *testing.T) {
 }
 
 func TestStdEscaping(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{}
 
 	testCases := []struct {
@@ -56,6 +58,7 @@ func TestStdEscaping(t *testing.T) {
 }
 
 func TestStdEscaping_Interface(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{}
 
 	ts := time.Now()
@@ -76,6 +79,7 @@ func TestStdEscaping_Interface(t *testing.T) {
 }
 
 func TestStdEscaping_Error(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{}
 
 	testCases := []struct {
@@ -94,6 +98,7 @@ func TestStdEscaping_Error(t *testing.T) {
 }
 
 func TestStdTimestampFormat(t *testing.T) {
+	defer newStd()
 	checkTimeStr := func(format string) {
 		customFormatter := &StdFormatter{TimestampFormat: format}
 		if "" == format {
@@ -119,6 +124,7 @@ func TestStdTimestampFormat(t *testing.T) {
 }
 
 func TestStdDisableTimestampWithColoredOutput(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{DisableTimestamp: true}
 
 	b, _ := tf.Format(WithField("test", "test"))
@@ -128,6 +134,7 @@ func TestStdDisableTimestampWithColoredOutput(t *testing.T) {
 }
 
 func TestStdTextFormatterFieldMap(t *testing.T) {
+	defer newStd()
 
 	formatter := &StdFormatter{
 		DisableHostname: true,

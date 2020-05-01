@@ -11,6 +11,7 @@ import (
 )
 
 func TestFormatting(t *testing.T) {
+	defer newStd()
 	tf := &TextFormatter{
 		DisableHostname: true,
 		DisableTTY:      true,
@@ -20,7 +21,7 @@ func TestFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" data.test=\"foo\" caller=\"text_formatter_test.go:27 github.com/bdlm/log/v2.TestFormatting\"\n"},
+		{`foo`, "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" data.test=\"foo\" caller=\"text_formatter_test.go:28 github.com/bdlm/log/v2.TestFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -38,6 +39,7 @@ func TestFormatting(t *testing.T) {
 }
 
 func TestEscaping(t *testing.T) {
+	defer newStd()
 	tf := &TextFormatter{DisableTTY: true}
 
 	testCases := []struct {
@@ -57,6 +59,7 @@ func TestEscaping(t *testing.T) {
 }
 
 func TestEscaping_Interface(t *testing.T) {
+	defer newStd()
 	tf := &TextFormatter{DisableTTY: true}
 
 	ts := time.Now()
@@ -77,13 +80,14 @@ func TestEscaping_Interface(t *testing.T) {
 }
 
 func TestEscaping_Error(t *testing.T) {
+	defer newStd()
 	tf := &TextFormatter{DisableTTY: true}
 
 	testCases := []struct {
 		value    interface{}
 		expected string
 	}{
-		{errors.New("error: something went wrong"), "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" error=error: something went wrong caller=\"text_formatter_test.go:90 github.com/bdlm/log/v2.TestEscaping_Error\"\n"},
+		{errors.New("error: something went wrong"), "time=\"0001-01-01T00:00:00.000Z\" level=\"fatal\" msg=\"\" error=\"error: something went wrong\" caller=\"text_formatter_test.go:94 github.com/bdlm/log/v2.TestEscaping_Error\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -95,6 +99,7 @@ func TestEscaping_Error(t *testing.T) {
 }
 
 func TestTimestampFormat(t *testing.T) {
+	defer newStd()
 	checkTimeStr := func(format string) {
 		customFormatter := &TextFormatter{DisableTTY: true, TimestampFormat: format}
 		customStr, _ := customFormatter.Format(WithField("test", "test"))
@@ -116,6 +121,7 @@ func TestTimestampFormat(t *testing.T) {
 }
 
 //func TestDisableLevelTruncation(t *testing.T) {
+//	defer newStd()
 //	entry := &Entry{
 //		Time:    time.Now(),
 //		Message: "testing",
@@ -154,6 +160,7 @@ func TestTimestampFormat(t *testing.T) {
 //}
 
 func TestDisableTimestampWithColoredOutput(t *testing.T) {
+	defer newStd()
 	tf := &TextFormatter{DisableTimestamp: true, ForceTTY: true}
 
 	b, _ := tf.Format(WithField("test", "test"))
@@ -163,6 +170,7 @@ func TestDisableTimestampWithColoredOutput(t *testing.T) {
 }
 
 func TestTextFormatterFieldMap(t *testing.T) {
+	defer newStd()
 
 	formatter := &TextFormatter{
 		DisableTTY:      true,

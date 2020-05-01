@@ -9,6 +9,7 @@ import (
 )
 
 func TestErrorNotLost(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	testErr := fmt.Errorf("wild walrus")
 	entry := WithError(testErr)
@@ -36,6 +37,7 @@ func TestErrorNotLost(t *testing.T) {
 }
 
 func TestErrorNotLostOnFieldNotNamedError(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("omg", errors.New("wild walrus"))
 
@@ -56,6 +58,7 @@ func TestErrorNotLostOnFieldNotNamedError(t *testing.T) {
 }
 
 func TestFieldClashWithTime(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("time", "right now!")
 
@@ -80,6 +83,7 @@ func TestFieldClashWithTime(t *testing.T) {
 }
 
 func TestFieldClashWithMsg(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("msg", "something")
 
@@ -99,6 +103,7 @@ func TestFieldClashWithMsg(t *testing.T) {
 }
 
 func TestFieldClashWithLevel(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("level", "something")
 
@@ -119,6 +124,7 @@ func TestFieldClashWithLevel(t *testing.T) {
 }
 
 func TestFieldClashWithRemappedFields(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{FieldMap: FieldMap{
 		LabelTime:   "@time",
 		LabelLevel:  "@level",
@@ -175,6 +181,7 @@ func TestFieldClashWithRemappedFields(t *testing.T) {
 }
 
 func TestFieldsInNestedDictionary(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{
 		DataKey: "args",
 	}
@@ -217,6 +224,7 @@ func TestFieldsInNestedDictionary(t *testing.T) {
 }
 
 func TestJSONEntryEndsWithNewline(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("level", "something")
 
@@ -231,6 +239,7 @@ func TestJSONEntryEndsWithNewline(t *testing.T) {
 }
 
 func TestJSONMessageKey(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := &Entry{Message: "oh hai"}
 
@@ -245,6 +254,7 @@ func TestJSONMessageKey(t *testing.T) {
 }
 
 func TestJSONLevelKey(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("level", "something")
 
@@ -259,6 +269,7 @@ func TestJSONLevelKey(t *testing.T) {
 }
 
 func TestJSONTimeKey(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 
 	b, err := formatter.Format(WithField("level", "something"))
@@ -272,6 +283,7 @@ func TestJSONTimeKey(t *testing.T) {
 }
 
 func TestJSONDisableTimestamp(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{
 		DisableTimestamp: true,
 		ForceTTY:         true,
@@ -288,6 +300,7 @@ func TestJSONDisableTimestamp(t *testing.T) {
 }
 
 func TestJSONEnableTimestamp(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 
 	b, err := formatter.Format(WithField("level", "something"))

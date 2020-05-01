@@ -42,16 +42,17 @@ func (f FieldMap) resolve(fieldLabel FieldLabel) string {
 }
 
 type logData struct {
-	LabelCaller string `json:"-"`
-	LabelData   string `json:"-"`
-	LabelError  string `json:"-"`
-	LabelHost   string `json:"-"`
-	LabelLevel  string `json:"-"`
-	LabelMsg    string `json:"-"`
-	LabelTime   string `json:"-"`
-	LabelTrace  string `json:"-"`
-	Color       colors `json:"-"`
-	ErrFormat   string `json:"-"`
+	LabelCaller string   `json:"-"`
+	LabelData   string   `json:"-"`
+	LabelError  string   `json:"-"`
+	LabelHost   string   `json:"-"`
+	LabelLevel  string   `json:"-"`
+	LabelMsg    string   `json:"-"`
+	LabelTime   string   `json:"-"`
+	LabelTrace  string   `json:"-"`
+	Color       colors   `json:"-"`
+	ErrFormat   string   `json:"-"`
+	ErrData     []string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
 	Data      map[string]interface{} `json:"data,omitempty"`
@@ -109,7 +110,6 @@ func (l *logData) UnmarshalJSON(d []byte) error {
 
 	return nil
 }
-
 
 // SetCallerLevel will adjust the relative caller level in log output.
 func SetCallerLevel(level int) {
@@ -235,6 +235,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		Caller:    getCaller(),
 		Data:      map[string]interface{}{},
 		Err:       entry.Err,
+		ErrData:   []string{},
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     LevelString(entry.Level),
 		Message:   entry.Message,

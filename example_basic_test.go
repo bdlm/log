@@ -260,7 +260,7 @@ func Example_basic_withError() {
 	// level="warn" msg="The group's number increased tremendously!" data.animal="walrus" data.count=100
 	// level="error" msg="Tremendously sized cow enters the ocean." data.animal="cow" data.run="wait, what?"
 	// level="panic" msg="The walrus are attacking!" data.animal="walrus" data.run=true
-	// level="error" msg="That could have gone better..." error=Second mistake: a walrus cow is not cattle... data.dead=true data.winner="walrus"
+	// level="error" msg="That could have gone better..." error="Second mistake: a walrus cow is not cattle... - #0 example_basic_test.go:226 (github.com/bdlm/log/v2_test.Example_basic_withError.func1);" data.dead=true data.winner="walrus"
 }
 
 func Example_json_withError() {
