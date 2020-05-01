@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	errs "github.com/bdlm/errors"
+	errs "github.com/bdlm/errors/v2"
 	"github.com/bdlm/log/v2"
 )
 
@@ -314,7 +314,7 @@ func Example_JSON_withError() {
 	// {"data":{"animal":"walrus","count":100},"error":null,"level":"warn","msg":"The group's number increased tremendously!"}
 	// {"data":{"animal":"cow","run":"wait, what?"},"error":null,"level":"error","msg":"Tremendously sized cow enters the ocean."}
 	// {"data":{"animal":"walrus","run":true},"error":null,"level":"panic","msg":"The walrus are attacking!"}
-	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_JSON_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."}],"level":"error","msg":"That could have gone better..."}
+	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_JSON_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."},{"caller":"#1 n/a","error":"First mistake: not running when a walrus herd \"emerged\" from the ocean"}],"level":"error","msg":"That could have gone better..."}
 }
 
 func Example_JSONTTY_withError() {
@@ -416,6 +416,10 @@ func Example_JSONTTY_withError() {
 	//     {
 	//         "caller": "#0 example_basic_test.go:335 (github.com/bdlm/log/v2_test.Example_JSONTTY_withError.func1)",
 	//         "error": "Second mistake: a walrus cow is not cattle..."
+	//     },
+	//     {
+	//         "caller": "#1 n/a",
+	//         "error": "First mistake: not running when a walrus herd \"emerged\" from the ocean"
 	//     }
 	// ][0m",
 	//     "[38;5;208mdata[0m": {
