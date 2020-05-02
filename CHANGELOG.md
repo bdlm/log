@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - **Major**: backwards incompatible package updates
 - **Minor**: feature additions
-- **Patch**: bug fixes, API route/ingress updates, DNS updates, backward compatible protobuf model chaanges
+- **Patch**: bug fixes, backward compatible protobuf model chaanges, etc.
 
 # v2.0.0 - 2020-05-01
 #### Added

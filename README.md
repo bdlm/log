@@ -4,7 +4,7 @@
 
 - **Major**: backwards incompatible package updates
 - **Minor**: feature additions
-- **Patch**: bug fixes, API route/ingress updates, DNS updates
+- **Patch**: bug fixes, backward compatible protobuf model chaanges, etc.
 
 **[CHANGELOG](CHANGELOG.md)**<br>
 
