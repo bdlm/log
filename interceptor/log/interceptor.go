@@ -2,7 +2,6 @@
 package log
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha1"
 	"encoding/base64"
@@ -16,14 +15,14 @@ import (
 	std "github.com/bdlm/std/logger"
 
 	"github.com/go-chi/chi/middleware"
-	"github.com/golang/protobuf/jsonpb"
-	"github.com/golang/protobuf/proto"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 // Config contains the log interceptor configuration.
@@ -304,9 +303,9 @@ func logRequest(ctx context.Context, intr *Interceptor, msg string) {
 }
 
 // marshaller is the marshaller used for serializing protobuf messages.
-var marshaller = &jsonpb.Marshaler{
-	EmitDefaults: true,
-	OrigName:     true,
+var marshaller = &protojson.MarshalOptions{
+	EmitUnpopulated: true,
+	UseProtoNames:   true,
 }
 
 // CtxKey is the key to use to lookup the log field map in the context.
@@ -348,11 +347,11 @@ type jsonpbMarshaler struct {
 
 // MarshalJSON lets jsonpbMarshaler implement json interface
 func (j *jsonpbMarshaler) MarshalJSON() ([]byte, error) {
-	b := &bytes.Buffer{}
-	if err := marshaller.Marshal(b, j.Message); err != nil {
+	b, err := marshaller.Marshal(j.Message)
+	if nil != err {
 		return nil, fmt.Errorf("jsonpb serializer failed: %v", err)
 	}
-	return b.Bytes(), nil
+	return b, nil
 }
 
 // loggingServerStream wraps a ServerStream in order to log each send and
