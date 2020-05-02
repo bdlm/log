@@ -51,7 +51,6 @@ type logData struct {
 	LabelTime   string   `json:"-"`
 	LabelTrace  string   `json:"-"`
 	Color       colors   `json:"-"`
-	ErrFormat   string   `json:"-"`
 	ErrData     []string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
@@ -176,7 +175,7 @@ var (
 	// DEFAULTColor is the default TTY 'level' color.
 	DEFAULTColor = "\033[38;5;46m"
 	// ERRORColor is the TTY 'level' color for error messages.
-	ERRORColor = "\033[38;5;208m"
+	ERRORColor = "\033[38;5;166m"
 	// FATALColor is the TTY 'level' color for fatal messages.
 	FATALColor = "\033[38;5;124m"
 	// PANICColor is the TTY 'level' color for panic messages.

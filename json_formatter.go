@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"text/template"
+
 	errs "github.com/bdlm/errors/v2"
 )
 
@@ -57,7 +58,7 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
 		// Error
 		"{{if .Err}}" +
-		"    \"{{$color.Level}}{{.LabelError}}{{$color.Reset}}\": \"{{$color.Err}}{{(printf .ErrFormat .Err)}}{{$color.Reset}}\",\n" +
+		"    \"{{$color.Level}}{{.LabelError}}{{$color.Reset}}\": {{$color.Err}}{{json .Err (printf \"%s    \" $color.Err) \"    \"}}{{$color.Reset}}\n" +
 		"{{end}}" +
 		// Data fields
 		"{{if .Data}}" +
@@ -155,7 +156,6 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	f.Do(func() { f.init(entry) })
 
 	data := getData(entry, f.FieldMap, f.EscapeHTML, isTTY)
-	data.ErrFormat = "%#+v"
 
 	if f.DisableTimestamp {
 		data.Timestamp = ""
@@ -175,7 +175,6 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 
 	if isTTY {
-		data.ErrFormat = "% #+v"
 		var logLine *bytes.Buffer
 		if entry.Buffer != nil {
 			logLine = entry.Buffer
