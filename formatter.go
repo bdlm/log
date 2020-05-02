@@ -26,6 +26,7 @@ type FieldMap map[FieldLabel]string
 const (
 	LabelCaller = "caller"
 	LabelData   = "data"
+	LabelError  = "error"
 	LabelHost   = "host"
 	LabelLevel  = "level"
 	LabelMsg    = "msg"
@@ -41,22 +42,72 @@ func (f FieldMap) resolve(fieldLabel FieldLabel) string {
 }
 
 type logData struct {
-	LabelCaller string `json:"-"`
-	LabelData   string `json:"-"`
-	LabelHost   string `json:"-"`
-	LabelLevel  string `json:"-"`
-	LabelMsg    string `json:"-"`
-	LabelTime   string `json:"-"`
-	LabelTrace  string `json:"-"`
+	LabelCaller string   `json:"-"`
+	LabelData   string   `json:"-"`
+	LabelError  string   `json:"-"`
+	LabelHost   string   `json:"-"`
+	LabelLevel  string   `json:"-"`
+	LabelMsg    string   `json:"-"`
+	LabelTime   string   `json:"-"`
+	LabelTrace  string   `json:"-"`
+	Color       colors   `json:"-"`
+	ErrData     []string `json:"-"`
 
 	Caller    string                 `json:"caller,omitempty"`
-	Color     colors                 `json:"-"`
 	Data      map[string]interface{} `json:"data,omitempty"`
+	Err       error                  `json:"error,omitempty"`
 	Hostname  string                 `json:"host,omitempty"`
 	Level     string                 `json:"level,omitempty"`
 	Message   string                 `json:"msg,omitempty"`
 	Timestamp string                 `json:"time,omitempty"`
 	Trace     []string               `json:"trace,omitempty"`
+}
+
+// UnmarshalJSON implements the json.Unmarshaler interface.
+func (l *logData) UnmarshalJSON(d []byte) error {
+	data := map[string]interface{}{}
+
+	err := json.Unmarshal(d, &data)
+	if nil != err {
+		return err
+	}
+
+	if _, ok := data["caller"]; ok {
+		l.Caller = data["caller"].(string)
+	}
+	if _, ok := data["data"]; ok {
+		if nil == l.Data {
+			l.Data = map[string]interface{}{}
+		}
+		for k, v := range data["data"].(map[string]interface{}) {
+			if e, ok := v.(error); ok {
+				l.Data[k] = e.(error)
+			} else {
+				l.Data[k] = v
+			}
+		}
+		//l.Data = data["data"].(map[string]interface{})
+	}
+	if _, ok := data["error"]; ok && "" != data["error"] {
+		l.Err = fmt.Errorf(data["error"].(string))
+	}
+	if _, ok := data["host"]; ok {
+		l.Hostname = data["host"].(string)
+	}
+	if _, ok := data["level"]; ok {
+		l.Level = data["level"].(string)
+	}
+	if _, ok := data["msg"]; ok {
+		l.Message = data["msg"].(string)
+	}
+	if _, ok := data["time"]; ok {
+		l.Timestamp = data["time"].(string)
+	}
+	if _, ok := data["trace"]; ok {
+		l.Trace = data["trace"].([]string)
+	}
+
+	return nil
 }
 
 // SetCallerLevel will adjust the relative caller level in log output.
@@ -124,7 +175,7 @@ var (
 	// DEFAULTColor is the default TTY 'level' color.
 	DEFAULTColor = "\033[38;5;46m"
 	// ERRORColor is the TTY 'level' color for error messages.
-	ERRORColor = "\033[38;5;208m"
+	ERRORColor = "\033[38;5;166m"
 	// FATALColor is the TTY 'level' color for fatal messages.
 	FATALColor = "\033[38;5;124m"
 	// PANICColor is the TTY 'level' color for panic messages.
@@ -155,6 +206,7 @@ type colors struct {
 	Caller    string
 	DataLabel string
 	DataValue string
+	Err       string
 	Hostname  string
 	Level     string
 	Reset     string
@@ -180,19 +232,23 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 
 	data := &logData{
 		Caller:    getCaller(),
-		Data:      make(map[string]interface{}),
+		Data:      map[string]interface{}{},
+		Err:       entry.Err,
+		ErrData:   []string{},
 		Hostname:  os.Getenv("HOSTNAME"),
 		Level:     LevelString(entry.Level),
 		Message:   entry.Message,
 		Timestamp: entry.Time.Format(RFC3339Milli),
 		Trace:     getTrace(),
 	}
+
 	data.LabelCaller = fieldMap.resolve(LabelCaller)
+	data.LabelData = fieldMap.resolve(LabelData)
+	data.LabelError = fieldMap.resolve(LabelError)
 	data.LabelHost = fieldMap.resolve(LabelHost)
 	data.LabelLevel = fieldMap.resolve(LabelLevel)
 	data.LabelMsg = fieldMap.resolve(LabelMsg)
 	data.LabelTime = fieldMap.resolve(LabelTime)
-	data.LabelData = fieldMap.resolve(LabelData)
 	data.LabelTrace = fieldMap.resolve(LabelTrace)
 
 	if isTTY {
@@ -214,6 +270,7 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 			Caller:    CallerColor,
 			DataLabel: DataLabelColor,
 			DataValue: DataValueColor,
+			Err:       ERRORColor,
 			Hostname:  HostnameColor,
 			Level:     levelColor,
 			Reset:     ResetColor,
@@ -228,29 +285,12 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 }
 
 func remapData(entry *Entry, fieldMap FieldMap, data *logData) {
-	keys := make([]string, 0)
 	for k, v := range entry.Data {
 		switch k {
-		case fieldMap.resolve(LabelCaller):
-			data.Caller = v.(string)
-		case fieldMap.resolve(LabelHost):
-			data.Hostname = v.(string)
-		case fieldMap.resolve(LabelLevel):
-			data.Level = v.(string)
-		case fieldMap.resolve(LabelMsg):
-			data.Message = v.(string)
-		case fieldMap.resolve(LabelTime):
-			data.Timestamp = v.(string)
-
-		case fieldMap.resolve(LabelData):
-			fallthrough
 		default:
-			keys = append(keys, k)
-			switch v.(type) {
+			switch v := v.(type) {
 			case string:
 				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = strings.Trim(strconv.QuoteToASCII(fmt.Sprintf("%v", v)), `"`)
-			case error:
-				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v.(error).Error()
 			default:
 				data.Data[strings.TrimPrefix(k, fieldMap.resolve(LabelData)+".")] = v
 			}
@@ -289,6 +329,7 @@ func prefixFieldClashes(data Fields, fieldMap FieldMap) {
 	for _, field := range []FieldLabel{
 		LabelCaller,
 		LabelData,
+		LabelError,
 		LabelHost,
 		LabelLevel,
 		LabelMsg,

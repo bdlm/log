@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 )
 
 // Fields type, used to pass to `WithFields`.

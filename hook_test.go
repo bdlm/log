@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -6,31 +6,38 @@ import (
 	"testing"
 )
 
+// Reset the standard loger
+func newStd() {
+	std = New()
+}
+
 func TestSetCallerLevel(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{}
 	entry := WithField("error", errors.New("wild walrus"))
 
 	data := getData(entry, formatter.FieldMap, formatter.EscapeHTML, false)
-	if !strings.Contains(data.Caller, "formatter_test.go:13") {
+	if !strings.Contains(data.Caller, "formatter_test.go:19") {
 		t.Fatal("invalid caller: ", data.Caller)
 	}
 
 	SetCallerLevel(-1)
 	data = getData(entry, formatter.FieldMap, formatter.EscapeHTML, false)
-	if strings.Contains(data.Caller, "formatter_test.go:13") {
+	if strings.Contains(data.Caller, "formatter_test.go:19") {
 		t.Fatal("invalid caller: ", data.Caller)
 	}
 
 	// Test error fallback
 	SetCallerLevel(10)
 	data = getData(entry, formatter.FieldMap, formatter.EscapeHTML, false)
-	if !strings.Contains(data.Caller, "formatter_test.go:26") {
+	if !strings.Contains(data.Caller, "formatter_test.go:32") {
 		t.Fatal("invalid caller: ", data.Caller)
 	}
 	SetCallerLevel(0)
 }
 
 func TestLevelColors(t *testing.T) {
+	defer newStd()
 	formatter := &JSONFormatter{ForceTTY: true}
 	SetLevel(DebugLevel)
 	entry := WithField("debug", errors.New("wild walrus"))

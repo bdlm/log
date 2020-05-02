@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 )
 
 // Logger defines properties for managing logs and implements the std.Logger

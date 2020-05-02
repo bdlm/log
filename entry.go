@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bdlm/std/logger"
+	"github.com/bdlm/std/v2/logger"
 )
 
 var bufferPool *sync.Pool
@@ -32,11 +32,14 @@ var ErrorKey = "error"
 type Entry struct {
 	Logger *Logger
 
+	// When formatter is called in entry.log(), an Buffer may be set to entry
+	Buffer *bytes.Buffer
+
 	// Contains all the fields set by the user.
 	Data Fields
 
-	// Time at which the log entry was created
-	Time time.Time
+	// Contains the error passed by WithError(error)
+	Err error
 
 	// Level the log entry was logged at: Debug, Info, Warn, Error, Fatal or Panic
 	// This field will be set on entry firing and the value will be equal to the one in Logger struct field.
@@ -45,8 +48,8 @@ type Entry struct {
 	// Message passed to Debug, Info, Warn, Error, Fatal or Panic
 	Message string
 
-	// When formatter is called in entry.log(), an Buffer may be set to entry
-	Buffer *bytes.Buffer
+	// Time at which the log entry was created
+	Time time.Time
 }
 
 var sanitizeStrings = []string{}
@@ -83,7 +86,14 @@ func (entry *Entry) String() (string, error) {
 
 // WithError add an error as single field (using the key defined in ErrorKey) to the Entry.
 func (entry *Entry) WithError(err error) *Entry {
-	return entry.WithField(ErrorKey, err)
+	return &Entry{
+		Data:    entry.Data,
+		Err:     err,
+		Level:   entry.Level,
+		Logger:  entry.Logger,
+		Message: entry.Message,
+		Time:    entry.Time,
+	}
 }
 
 // WithField add a single field to the Entry.
@@ -104,6 +114,7 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 
 	return &Entry{
 		Data:    data,
+		Err:     entry.Err,
 		Level:   entry.Level,
 		Logger:  entry.Logger,
 		Message: entry.Message,
@@ -113,7 +124,7 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 
 // WithTime overrides the time of the Entry.
 func (entry *Entry) WithTime(t time.Time) *Entry {
-	return &Entry{Logger: entry.Logger, Data: entry.Data, Time: t}
+	return &Entry{Logger: entry.Logger, Data: entry.Data, Err: entry.Err, Time: t}
 }
 
 // This function is not declared with a pointer value because otherwise

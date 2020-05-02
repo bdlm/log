@@ -4,7 +4,7 @@ import (
 	"io"
 	"time"
 
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 )
 
 var (
@@ -52,7 +52,7 @@ func AddHook(hook Hook) {
 
 // WithError creates an entry from the standard logger and adds an error to it, using the value defined in ErrorKey as key.
 func WithError(err error) *Entry {
-	return std.WithField(ErrorKey, err)
+	return std.WithError(err)
 }
 
 // WithField creates an entry from the standard logger and adds a field to

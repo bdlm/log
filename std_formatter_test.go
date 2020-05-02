@@ -11,6 +11,7 @@ import (
 )
 
 func TestStdFormatting(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{
 		DisableHostname: true,
 	}
@@ -19,7 +20,7 @@ func TestStdFormatting(t *testing.T) {
 		value    string
 		expected string
 	}{
-		{`foo`, "0001/01/01 00:00:00 level=\"fatal\" data.test=\"foo\" caller=\"std_formatter_test.go:26 github.com/bdlm/log.TestStdFormatting\"\n"},
+		{`foo`, "0001/01/01 00:00:00 level=\"fatal\" data.test=\"foo\" caller=\"std_formatter_test.go:27 github.com/bdlm/log/v2.TestStdFormatting\"\n"},
 	}
 
 	for _, tc := range testCases {
@@ -37,6 +38,7 @@ func TestStdFormatting(t *testing.T) {
 }
 
 func TestStdEscaping(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{}
 
 	testCases := []struct {
@@ -56,6 +58,7 @@ func TestStdEscaping(t *testing.T) {
 }
 
 func TestStdEscaping_Interface(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{}
 
 	ts := time.Now()
@@ -65,7 +68,6 @@ func TestStdEscaping_Interface(t *testing.T) {
 		expected string
 	}{
 		{ts.Format(defaultTimestampFormat), ts.Format(defaultTimestampFormat)},
-		{errors.New("error: something went wrong"), "\"error: something went wrong\""},
 	}
 
 	for _, tc := range testCases {
@@ -76,7 +78,27 @@ func TestStdEscaping_Interface(t *testing.T) {
 	}
 }
 
+func TestStdEscaping_Error(t *testing.T) {
+	defer newStd()
+	tf := &StdFormatter{}
+
+	testCases := []struct {
+		value    interface{}
+		expected string
+	}{
+		{errors.New("error: something went wrong"), "\"error: something went wrong\""},
+	}
+
+	for _, tc := range testCases {
+		b, _ := tf.Format(WithError(tc.value.(error)))
+		if !bytes.Contains(b, []byte(tc.expected)) {
+			t.Errorf("escaping expected for %q (result was %q instead of %q)", tc.value, string(b), tc.expected)
+		}
+	}
+}
+
 func TestStdTimestampFormat(t *testing.T) {
+	defer newStd()
 	checkTimeStr := func(format string) {
 		customFormatter := &StdFormatter{TimestampFormat: format}
 		if "" == format {
@@ -102,6 +124,7 @@ func TestStdTimestampFormat(t *testing.T) {
 }
 
 func TestStdDisableTimestampWithColoredOutput(t *testing.T) {
+	defer newStd()
 	tf := &StdFormatter{DisableTimestamp: true}
 
 	b, _ := tf.Format(WithField("test", "test"))
@@ -111,6 +134,7 @@ func TestStdDisableTimestampWithColoredOutput(t *testing.T) {
 }
 
 func TestStdTextFormatterFieldMap(t *testing.T) {
+	defer newStd()
 
 	formatter := &StdFormatter{
 		DisableHostname: true,
@@ -131,9 +155,9 @@ func TestStdTextFormatterFieldMap(t *testing.T) {
 		Time:    time.Date(1981, time.February, 24, 4, 28, 3, 100, time.UTC),
 		Data: Fields{
 			"field1":           "f1",
-			"msg-label":        "messagefield",
-			"level-label":      "levelfield",
-			"time-field-label": "timefield",
+			"msg-label":        "messageData",
+			"level-label":      "levelData",
+			"time-field-label": "timeData",
 		},
 	}
 
@@ -147,9 +171,9 @@ func TestStdTextFormatterFieldMap(t *testing.T) {
 		`1981/02/24 04:28:03 oh hi `+
 			`level-label="warn" `+
 			`data-label.field1="f1" `+
-			`data-label.level-label="levelfield" `+
-			`data-label.msg-label="messagefield" `+
-			`data-label.time-field-label="timefield"`+"\n",
+			`data-label.level-label="levelData" `+
+			`data-label.msg-label="messageData" `+
+			`data-label.time-field-label="timeData"`+"\n",
 		string(b),
 		"Formatted output doesn't respect FieldMap")
 }

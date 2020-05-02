@@ -2,9 +2,12 @@ package log
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"sync"
 	"text/template"
+
+	"github.com/bdlm/errors/v2"
 )
 
 var (
@@ -24,6 +27,10 @@ var (
 			"{{if and (.Caller) (not .Trace)}}" +
 			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Caller}}{{.Caller}}{{$color.Reset}}" +
 			"{{end}}" +
+			// Error
+			"{{if .Err}}{{range $k, $v := .ErrData}}" +
+			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Err}}#{{$k}}: {{$v}}{{$color.Reset}}" +
+			"{{end}}{{end}}" +
 			// Trace
 			"{{range $k, $v := .Trace}}" +
 			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Trace}}#{{$k}} {{$v}}{{$color.Reset}}" +
@@ -39,6 +46,8 @@ var (
 			"{{.LabelLevel}}=\"{{.Level}}\"" +
 			// Message
 			"{{if .Message}} {{.LabelMsg}}={{.Message}}{{end}}" +
+			// Error
+			"{{if .Err}} {{.LabelError}}=\"{{(printf \"%-v\" .Err)}}\"{{end}}" +
 			// Data fields
 			"{{$labelData := .LabelData}}{{range $k, $v := .Data}} {{if $labelData}}{{$labelData}}.{{end}}{{$k}}={{$v}}{{end}}" +
 			// Caller
@@ -145,6 +154,12 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 	if !f.EnableTrace {
 		data.Trace = []string{}
+	}
+
+	e := data.Err
+	for nil != e {
+		data.ErrData = append(data.ErrData, escape(fmt.Sprintf("%-v", e), f.EscapeHTML))
+		e = errors.Unwrap(e)
 	}
 
 	if isTTY {

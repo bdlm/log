@@ -4,7 +4,7 @@ import (
 	"log/syslog"
 	"testing"
 
-	"github.com/bdlm/log"
+	"github.com/bdlm/log/v2"
 )
 
 func TestLocalhostAddAndPrint(t *testing.T) {

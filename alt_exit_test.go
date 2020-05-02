@@ -53,7 +53,7 @@ var testprog = []byte(`
 package main
 
 import (
-	"github.com/bdlm/log"
+	"github.com/bdlm/log/v2"
 	"flag"
 	"fmt"
 	"io/ioutil"

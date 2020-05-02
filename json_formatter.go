@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"text/template"
+
+	errs "github.com/bdlm/errors/v2"
 )
 
 var funcMap = template.FuncMap{
@@ -54,6 +56,10 @@ var jsonTermTemplate = template.Must(template.New("tty").Funcs(funcMap).Parse(
 		"{{end}}" +
 		// Message
 		"    \"{{$color.Level}}{{.LabelMsg}}{{$color.Reset}}\": \"{{printf \"%s\" .Message}}\",\n" +
+		// Error
+		"{{if .Err}}" +
+		"    \"{{$color.Level}}{{.LabelError}}{{$color.Reset}}\": {{$color.Err}}{{json .Err (printf \"%s    \" $color.Err) \"    \"}}{{$color.Reset}}\n" +
+		"{{end}}" +
 		// Data fields
 		"{{if .Data}}" +
 		"{{$counter := newCounter .Data}}" +
@@ -207,13 +213,25 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 			}
 		}
 
-		//
+		// account for weird error conversion
+		for k, v := range data.Data {
+			if e, ok := v.(error); ok {
+				data.Data[k] = e.Error()
+			}
+		}
 		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
+
+		if nil != data.Err {
+			if _, ok := data.Err.(errs.E); ok {
+				jsonData[f.FieldMap.resolve(LabelError)] = data.Err
+			} else {
+				jsonData[f.FieldMap.resolve(LabelError)] = data.Err.Error()
+			}
+		}
 
 		buf := new(bytes.Buffer)
 		encoder := json.NewEncoder(buf)
 		encoder.SetEscapeHTML(f.EscapeHTML)
-
 		err = encoder.Encode(jsonData)
 		serialized = []byte(strings.Trim(buf.String(), "\n"))
 	}
