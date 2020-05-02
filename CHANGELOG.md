@@ -1,21 +1,27 @@
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Major**: backwards incompatible package updates
 - **Minor**: feature additions
-- **Patch**: bug fixes, backward compatible protobuf model chaanges, etc.
+- **Patch**: bug fixes, backward compatible model and function changes, etc.
 
 # v2.0.0 - 2020-05-01
+`v2.0.0` is the production release of the `v0.1.0` development branch.
+
 #### Added
 * `go.mod`
-* `github.com/bdlm/std` error interface
+* `github.com/bdlm/std/v2/log` interfaces
+* extended error handling, including `github.com/bdlm/errors/v2` support
 
 #### Changed
-*
+* Enhanced error logging support
+  * `error` values logged via calls to `WithError` will be logged with `github.com/bdlm/error` formatting verbs to provide detailed error traces in log output.
+* Errors are diferentiated from structured fields with respect to `WithError` and `WithField`/`WithFields`
+  * `WithError` will track the error value separately from fields added via `WithField` and `WithFields` calls. This means that an error logged as a structured field will not have enhanced error logging support.
 
 #### Removed
-* gRPC request interceptor.
+* gRPC request interceptor. Will be replaced in a separate package.
 
 # v0.1.20
 
