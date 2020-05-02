@@ -86,8 +86,14 @@ func (entry *Entry) String() (string, error) {
 
 // WithError add an error as single field (using the key defined in ErrorKey) to the Entry.
 func (entry *Entry) WithError(err error) *Entry {
-	entry.Err = err
-	return entry
+	return &Entry{
+		Data:    entry.Data,
+		Err:     err,
+		Level:   entry.Level,
+		Logger:  entry.Logger,
+		Message: entry.Message,
+		Time:    entry.Time,
+	}
 }
 
 // WithField add a single field to the Entry.
@@ -108,17 +114,17 @@ func (entry *Entry) WithFields(fields Fields) *Entry {
 
 	return &Entry{
 		Data:    data,
+		Err:     entry.Err,
 		Level:   entry.Level,
 		Logger:  entry.Logger,
 		Message: entry.Message,
 		Time:    entry.Time,
-		Err:     entry.Err,
 	}
 }
 
 // WithTime overrides the time of the Entry.
 func (entry *Entry) WithTime(t time.Time) *Entry {
-	return &Entry{Logger: entry.Logger, Data: entry.Data, Time: t}
+	return &Entry{Logger: entry.Logger, Data: entry.Data, Err: entry.Err, Time: t}
 }
 
 // This function is not declared with a pointer value because otherwise
