@@ -29,7 +29,7 @@ var (
 			"{{end}}" +
 			// Error
 			"{{if .Err}}{{range $k, $v := .ErrData}}" +
-			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Err}}#{{$k}}:{{$color.Reset}}{{$v}}" +
+			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Err}}#{{$k}}: {{$v}}{{$color.Reset}}" +
 			"{{end}}{{end}}" +
 			// Trace
 			"{{range $k, $v := .Trace}}" +
