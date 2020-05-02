@@ -1,8 +1,15 @@
 # log
 
+<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#mature"><img src="https://img.shields.io/badge/stability-mature-008000.svg" alt="Mature"></a> This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). This package is considered mature, you should expect package stability in <strong>Minor</strong> and <strong>Patch</strong> version releases
+
+- **Major**: backwards incompatible package updates
+- **Minor**: feature additions
+- **Patch**: bug fixes, API route/ingress updates, DNS updates
+
+**[CHANGELOG](CHANGELOG.md)**<br>
+
 <p align="center">
 	<a href="https://github.com/bdlm/log/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT"></a>
-	<a href="https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#mature"><img src="https://img.shields.io/badge/stability-mature-008000.svg" alt="Mature"></a>
 	<a href="https://travis-ci.com/bdlm/log"><img src="https://travis-ci.com/bdlm/log.svg?branch=master" alt="Build status"></a>
 	<a href="https://codecov.io/gh/bdlm/log"><img src="https://img.shields.io/codecov/c/github/bdlm/log/master.svg" alt="Coverage status"></a>
 	<a href="https://goreportcard.com/report/github.com/bdlm/log"><img src="https://goreportcard.com/badge/github.com/bdlm/log" alt="Go Report Card"></a>
