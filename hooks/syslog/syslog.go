@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/bdlm/log/v2"
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 )
 
 // Hook to send logs via syslog.
