@@ -37,6 +37,12 @@ This package adds:
 
 `bdlm/log` is a structured logger for Go and is fully API compatible with both the standard libaray `log` package as well as the [`sirupsen/logrus`](https://github.com/sirupsen/logrus) package.
 
+## Install
+
+```
+go get github.com/bdlm/log/v2
+```
+
 ## Examples
 
 #### [User documentation](https://github.com/bdlm/log/wiki)
