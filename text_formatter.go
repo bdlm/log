@@ -19,10 +19,6 @@ var (
 			"{{if .Hostname}} {{$color.Hostname}}{{.Hostname}}{{$color.Reset}}{{end}} " +
 			// Message
 			"{{printf \"%s\" .Message}}" +
-			// Error
-			"{{if .Err}}{{range $k, $v := .ErrData}}" +
-			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Err}}#{{$k}}: {{$color.Err}}{{$v}}{{$color.Reset}}" +
-			"{{end}}{{end}}" +
 			// Data fields
 			"{{if .Data}}\n   {{$color.Level}}⇢{{$color.Reset}} {{range $k, $v := .Data}}" +
 			" {{$color.DataLabel}}{{$k}}{{$color.Reset}}={{$color.DataValue}}{{$v}}{{$color.Reset}}" +
@@ -31,6 +27,10 @@ var (
 			"{{if and (.Caller) (not .Trace)}}" +
 			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Caller}}{{.Caller}}{{$color.Reset}}" +
 			"{{end}}" +
+			// Error
+			"{{if .Err}}{{range $k, $v := .ErrData}}" +
+			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Err}}#{{$k}}:{{$color.Reset}} {{$color.Err}}{{$v}}" +
+			"{{end}}{{end}}" +
 			// Trace
 			"{{range $k, $v := .Trace}}" +
 			"\n   {{$color.Level}}⇢{{$color.Reset}}  {{$color.Trace}}#{{$k}} {{$v}}{{$color.Reset}}" +
