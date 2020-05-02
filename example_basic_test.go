@@ -184,9 +184,9 @@ func Example_jsontty() {
 	//     },
 	// }
 	// {
-	//     "[38;5;208mlevel[0m": "[38;5;208merror[0m",
-	//     "[38;5;208mmsg[0m": "Tremendously sized cow enters the ocean.",
-	//     "[38;5;208mdata[0m": {
+	//     "[38;5;166mlevel[0m": "[38;5;166merror[0m",
+	//     "[38;5;166mmsg[0m": "Tremendously sized cow enters the ocean.",
+	//     "[38;5;166mdata[0m": {
 	//         "[38;5;111manimal[0m": [38;5;180m"cow"[0m,
 	//         "[38;5;111mrun[0m": [38;5;180m"wait, what?"[0m
 	//     },
@@ -200,9 +200,9 @@ func Example_jsontty() {
 	//     },
 	// }
 	// {
-	//     "[38;5;208mlevel[0m": "[38;5;208merror[0m",
-	//     "[38;5;208mmsg[0m": "That could have gone better...",
-	//     "[38;5;208mdata[0m": {
+	//     "[38;5;166mlevel[0m": "[38;5;166merror[0m",
+	//     "[38;5;166mmsg[0m": "That could have gone better...",
+	//     "[38;5;166mdata[0m": {
 	//         "[38;5;111mdead[0m": [38;5;180mtrue[0m,
 	//         "[38;5;111mwinner[0m": [38;5;180m"walrus"[0m
 	//     },
@@ -394,9 +394,9 @@ func Example_jsontty_withError() {
 	//     },
 	// }
 	// {
-	//     "[38;5;208mlevel[0m": "[38;5;208merror[0m",
-	//     "[38;5;208mmsg[0m": "Tremendously sized cow enters the ocean.",
-	//     "[38;5;208mdata[0m": {
+	//     "[38;5;166mlevel[0m": "[38;5;166merror[0m",
+	//     "[38;5;166mmsg[0m": "Tremendously sized cow enters the ocean.",
+	//     "[38;5;166mdata[0m": {
 	//         "[38;5;111manimal[0m": [38;5;180m"cow"[0m,
 	//         "[38;5;111mrun[0m": [38;5;180m"wait, what?"[0m
 	//     },
@@ -410,19 +410,19 @@ func Example_jsontty_withError() {
 	//     },
 	// }
 	// {
-	//     "[38;5;208mlevel[0m": "[38;5;208merror[0m",
-	//     "[38;5;208mmsg[0m": "That could have gone better...",
-	//     "[38;5;208merror[0m": "[38;5;208m[
-	//     {
-	//         "caller": "#0 example_basic_test.go:335 (github.com/bdlm/log/v2_test.Example_jsontty_withError.func1)",
-	//         "error": "Second mistake: a walrus cow is not cattle..."
-	//     },
-	//     {
-	//         "caller": "#1 n/a",
-	//         "error": "First mistake: not running when a walrus herd \"emerged\" from the ocean"
-	//     }
-	// ][0m",
-	//     "[38;5;208mdata[0m": {
+	//     "[38;5;166mlevel[0m": "[38;5;166merror[0m",
+	//     "[38;5;166mmsg[0m": "That could have gone better...",
+	//     "[38;5;166merror[0m": [38;5;166m[
+	// [38;5;166m        {
+	// [38;5;166m            "caller": "#0 example_basic_test.go:335 (github.com/bdlm/log/v2_test.Example_jsontty_withError.func1)",
+	// [38;5;166m            "error": "Second mistake: a walrus cow is not cattle..."
+	// [38;5;166m        },
+	// [38;5;166m        {
+	// [38;5;166m            "caller": "#1 n/a",
+	// [38;5;166m            "error": "First mistake: not running when a walrus herd \"emerged\" from the ocean"
+	// [38;5;166m        }
+	// [38;5;166m    ][0m
+	//     "[38;5;166mdata[0m": {
 	//         "[38;5;111mdead[0m": [38;5;180mtrue[0m,
 	//         "[38;5;111mwinner[0m": [38;5;180m"walrus"[0m
 	//     },
