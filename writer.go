@@ -5,7 +5,7 @@ import (
 	"io"
 	"runtime"
 
-	stdLogger "github.com/bdlm/std/logger"
+	stdLogger "github.com/bdlm/std/v2/logger"
 )
 
 // Writer returns an info-level log writer.

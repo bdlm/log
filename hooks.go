@@ -1,6 +1,8 @@
 package log
 
-import "github.com/bdlm/std/logger"
+import (
+	"github.com/bdlm/std/v2/logger"
+)
 
 // Hook defines a hook to be fired when logging on the logging levels returned
 // from `Levels()` on your implementation of the interface. Note that this is

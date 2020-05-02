@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bdlm/std/logger"
+	"github.com/bdlm/std/v2/logger"
 )
 
 var bufferPool *sync.Pool
