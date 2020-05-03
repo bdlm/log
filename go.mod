@@ -3,7 +3,7 @@ module github.com/bdlm/log/v2
 go 1.14
 
 require (
-	github.com/bdlm/errors/v2 v2.0.1-alpha.1
+	github.com/bdlm/errors/v2 v2.0.1-alpha.2
 	github.com/bdlm/std/v2 v2.0.0
 	github.com/stretchr/testify v1.5.1
 	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2

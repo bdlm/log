@@ -314,7 +314,7 @@ func Example_json_withError() {
 	// {"data":{"animal":"walrus","count":100},"level":"warn","msg":"The group's number increased tremendously!"}
 	// {"data":{"animal":"cow","run":"wait, what?"},"level":"error","msg":"Tremendously sized cow enters the ocean."}
 	// {"data":{"animal":"walrus","run":true},"level":"panic","msg":"The walrus are attacking!"}
-	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_json_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."},{"caller":"#1 encode.go:477 (encoding/json.marshalerEncoder)","error":"First mistake: not running when a walrus herd \"emerged\" from the ocean"}],"level":"error","msg":"That could have gone better..."}
+	// {"data":{"dead":true,"winner":"walrus"},"error":[{"caller":"#0 example_basic_test.go:280 (github.com/bdlm/log/v2_test.Example_json_withError.func1)","error":"Second mistake: a walrus cow is not cattle..."},{"caller":"#1 n/a","error":"First mistake: not running when a walrus herd \"emerged\" from the ocean"}],"level":"error","msg":"That could have gone better..."}
 }
 
 func Example_jsontty_withError() {
@@ -418,7 +418,7 @@ func Example_jsontty_withError() {
 	// [38;5;166m            "error": "Second mistake: a walrus cow is not cattle..."
 	// [38;5;166m        },
 	// [38;5;166m        {
-	// [38;5;166m            "caller": "#1 encode.go:477 (encoding/json.marshalerEncoder)",
+	// [38;5;166m            "caller": "#1 n/a",
 	// [38;5;166m            "error": "First mistake: not running when a walrus herd \"emerged\" from the ocean"
 	// [38;5;166m        }
 	// [38;5;166m    ][0m
