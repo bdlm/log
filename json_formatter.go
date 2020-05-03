@@ -7,8 +7,6 @@ import (
 	"strings"
 	"sync"
 	"text/template"
-
-	errs "github.com/bdlm/errors/v2"
 )
 
 var funcMap = template.FuncMap{
@@ -222,7 +220,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
 
 		if nil != data.Err {
-			if _, ok := data.Err.(errs.E); ok {
+			if _, ok := data.Err.(fmt.Formatter); ok {
 				jsonData[f.FieldMap.resolve(LabelError)] = data.Err
 			} else {
 				jsonData[f.FieldMap.resolve(LabelError)] = data.Err.Error()
