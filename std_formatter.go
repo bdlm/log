@@ -2,24 +2,26 @@ package log
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"text/template"
 )
 
 var (
 	stdTemplate = template.Must(template.New("log").Parse(
-		"{{if .Timestamp}}{{.Timestamp}}{{end}}"+
-		"{{if .Message}} {{.Message}}{{end}}"+
-		"{{if .Level}} {{.LabelLevel}}=\"{{.Level}}\"{{end}}"+
-		"{{$labelData := .LabelData}}"+
-		"{{range $k, $v := .Data}} "+
-			"{{if $labelData}}{{$labelData}}.{{end}}"+
-			"{{$k}}={{$v}}"+
-		"{{end}}"+
-		"{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}"+
-		"{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}"+
-		"{{if .Err}} {{.LabelError}}=\"{{.Err}}\"{{end}}"+
-		"{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
+		"{{if .Timestamp}}{{.Timestamp}}{{end}}" +
+			"{{if .Message}} {{.Message}}{{end}}" +
+			"{{if .Level}} {{.LabelLevel}}=\"{{.Level}}\"{{end}}" +
+			"{{$labelData := .LabelData}}" +
+			"{{range $k, $v := .Data}} " +
+			"{{if $labelData}}{{$labelData}}.{{end}}" +
+			"{{$k}}={{$v}}" +
+			"{{end}}" +
+			"{{if .Err}} {{.LabelError}}=\"{{.Err}}\"{{end}}" +
+			"{{if .Caller}} {{.LabelCaller}}=\"{{.Caller}}\"{{end}}" +
+			"{{if .Hostname}} {{.LabelHost}}=\"{{.Hostname}}\"{{end}}" +
+			"{{if .Err}} {{.LabelError}}=\"{{.Err}}\"{{end}}" +
+			"{{range $k, $v := .Trace}} trace.{{$k}}=\"{{$v}}\"{{end}}",
 	))
 )
 
@@ -98,6 +100,13 @@ func (f *StdFormatter) Format(entry *Entry) ([]byte, error) {
 	}
 	if !f.EnableTrace {
 		data.Trace = []string{}
+	}
+	if nil != data.Err {
+		if _, ok := data.Err.(fmt.Formatter); !ok {
+			if e, ok := data.Err.(error); ok {
+				data.Err = e.Error()
+			}
+		}
 	}
 
 	for k, v := range data.Data {

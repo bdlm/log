@@ -31,7 +31,7 @@ func TestErrorNotLost(t *testing.T) {
 	if nil == result.Err {
 		t.Fatal("Error field not set")
 	}
-	if result.Err.Error() != testErr.Error() {
+	if result.Err.(error).Error() != testErr.Error() {
 		t.Fatalf("Error value does not match: '%v' != '%v'", result.Err, testErr)
 	}
 }
