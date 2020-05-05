@@ -55,7 +55,7 @@ type logData struct {
 
 	Caller    string                 `json:"caller,omitempty"`
 	Data      map[string]interface{} `json:"data,omitempty"`
-	Err       error                  `json:"error,omitempty"`
+	Err       interface{}            `json:"error,omitempty"`
 	Hostname  string                 `json:"host,omitempty"`
 	Level     string                 `json:"level,omitempty"`
 	Message   string                 `json:"msg,omitempty"`

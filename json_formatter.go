@@ -171,6 +171,13 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 	if !f.EnableTrace {
 		data.Trace = []string{}
 	}
+	if nil != data.Err {
+		if _, ok := data.Err.(json.Marshaler); !ok {
+			if e, ok := data.Err.(error); ok {
+				data.Err = e.Error()
+			}
+		}
+	}
 
 	if isTTY {
 		var logLine *bytes.Buffer
@@ -220,11 +227,7 @@ func (f *JSONFormatter) Format(entry *Entry) ([]byte, error) {
 		jsonData[f.FieldMap.resolve(LabelData)] = data.Data
 
 		if nil != data.Err {
-			if _, ok := data.Err.(fmt.Formatter); ok {
-				jsonData[f.FieldMap.resolve(LabelError)] = data.Err
-			} else {
-				jsonData[f.FieldMap.resolve(LabelError)] = data.Err.Error()
-			}
+			jsonData[f.FieldMap.resolve(LabelError)] = data.Err
 		}
 
 		buf := new(bytes.Buffer)

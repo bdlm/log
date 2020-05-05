@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Minor**: feature additions
 - **Patch**: bug fixes, backward compatible model and function changes, etc.
 
+# v2.0.2 - 2020-05-04
+#### Changed
+* Bugfix around error formatting
+
 # v2.0.1 - 2020-05-02
 #### Changed
 * Update `github.com/bdlm/errors` package

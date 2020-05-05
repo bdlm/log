@@ -155,11 +155,11 @@ func (f *TextFormatter) Format(entry *Entry) ([]byte, error) {
 	if !f.EnableTrace {
 		data.Trace = []string{}
 	}
-
-	e := data.Err
-	for nil != e {
-		data.ErrData = append(data.ErrData, escape(fmt.Sprintf("%-v", e), f.EscapeHTML))
-		e = errors.Unwrap(e)
+	if e, ok := data.Err.(error); ok {
+		for nil != e {
+			data.ErrData = append(data.ErrData, escape(fmt.Sprintf("%-v", e), f.EscapeHTML))
+			e = errors.Unwrap(e.(error))
+		}
 	}
 
 	if isTTY {
