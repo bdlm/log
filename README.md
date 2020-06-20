@@ -8,6 +8,7 @@
 
 **[CHANGELOG](CHANGELOG.md)**<br>
 
+<a href="https://github.com/bdlm/log/blob/master/CHANGELOG.md"><img src="https://img.shields.io/github/v/release/bdlm/log" alt="Release"></a>
 <a href="https://pkg.go.dev/github.com/bdlm/log"><img src="https://godoc.org/github.com/bdlm/log?status.svg" alt="GoDoc"></a>
 <a href="https://travis-ci.com/bdlm/log"><img src="https://travis-ci.com/bdlm/log.svg?branch=master" alt="Build status"></a>
 <a href="https://codecov.io/gh/bdlm/log"><img src="https://img.shields.io/codecov/c/github/bdlm/log/master.svg" alt="Coverage status"></a>
