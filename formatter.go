@@ -242,6 +242,13 @@ func getData(entry *Entry, fieldMap FieldMap, escapeHTML, isTTY bool) *logData {
 		Trace:     getTrace(),
 	}
 
+	if data.Hostname == "" {
+		hostname, err := os.Hostname()
+		if err == nil {
+			data.Hostname = hostname
+		}
+	}
+
 	data.LabelCaller = fieldMap.resolve(LabelCaller)
 	data.LabelData = fieldMap.resolve(LabelData)
 	data.LabelError = fieldMap.resolve(LabelError)

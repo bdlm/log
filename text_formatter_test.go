@@ -81,7 +81,7 @@ func TestEscaping_Interface(t *testing.T) {
 
 func TestEscaping_Error(t *testing.T) {
 	defer newStd()
-	tf := &TextFormatter{DisableTTY: true}
+	tf := &TextFormatter{DisableTTY: true, DisableHostname: true}
 
 	testCases := []struct {
 		value    interface{}
