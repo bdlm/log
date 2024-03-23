@@ -458,27 +458,26 @@ func TestEntryWriter(t *testing.T) {
 
 func TestLogSecrets(t *testing.T) {
 	AddSecret("my-secret-text")
-	AddSecret("secret2")
-	AddSecret("secret3")
+	AddSecret("secret2", "secret3")
 
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Debugln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
 	}, func(data logData) {
-		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
+		assert.Equal(t, "my secret text is '[REDACTED]'. and I know [REDACTED] and [REDACTED]", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Infoln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
 	}, func(data logData) {
-		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
+		assert.Equal(t, "my secret text is '[REDACTED]'. and I know [REDACTED] and [REDACTED]", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Warnln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
 	}, func(data logData) {
-		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
+		assert.Equal(t, "my secret text is '[REDACTED]'. and I know [REDACTED] and [REDACTED]", data.Message)
 	})
 	LogAndAssertJSON(t, func(log *Logger) {
 		log.Errorln("my secret text is 'my-secret-text'. and I know secret2 and secret3")
 	}, func(data logData) {
-		assert.Equal(t, "my secret text is '**************'. and I know ******* and *******", data.Message)
+		assert.Equal(t, "my secret text is '[REDACTED]'. and I know [REDACTED] and [REDACTED]", data.Message)
 	})
 }

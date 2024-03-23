@@ -63,14 +63,21 @@ func NewEntry(logger *Logger) *Entry {
 	}
 }
 
-// AddSecret adds a string to the sanitization list.
-func AddSecret(secret string) {
-	for _, str := range sanitizeStrings {
-		if str == secret {
-			return
+// AddSecret adds strings to the sanitization list.
+func AddSecret(secrets ...string) {
+	newStrings := []string{}
+	for _, secret := range secrets {
+		duplicate := false
+		for _, str := range sanitizeStrings {
+			if str == secret {
+				duplicate = true
+			}
+		}
+		if !duplicate {
+			newStrings = append(newStrings, secret)
 		}
 	}
-	sanitizeStrings = append(sanitizeStrings, secret)
+	sanitizeStrings = append(sanitizeStrings, newStrings...)
 }
 
 // String returns the string representation from the reader and ultimately the
@@ -190,7 +197,7 @@ func (entry *Entry) write() {
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				secret,
-				strings.Repeat("*", len(secret)),
+				"[REDACTED]",
 				-1,
 			))
 		}
