@@ -8,10 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 # v2.0.4 - 2024-03-22
 #### Changed
+* Use os.Hostname in addition to Getenv("HOSTNAME") (#29)
+  Populate the hostname from the OS, not just the environment.
+
+  The environment variable `HOSTNAME` is not necessarily set on a machine, making a call to `os.Hostname()` a useful replacement.
+
+* Disable hostname resolution in TestEscaping_Error.
+
+  The test output does not expect the hostname to be printed; fixing #28
+  breaks the test.
+
 * Updated addSecret() to allow multiple arguments
-```go
-func AddSecret(secrets ...string)
-```
+
+  ```go
+  func AddSecret(secrets ...string)
+  ```
 
 # v2.0.3 - 2020-05-21
 #### Changed
