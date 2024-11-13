@@ -2,6 +2,7 @@ package log
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -197,6 +198,18 @@ func (entry *Entry) write() {
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				secret,
+				"[REDACTED]",
+				-1,
+			))
+
+			// Sanitize JSON-encoded secrets
+			jsonSecret, _ := json.Marshal(secret)
+			jsonSecret = []byte(strings.Replace(
+				string(jsonSecret), `"`, "", -1,
+			))
+			serialized = []byte(strings.Replace(
+				string(serialized),
+				string(jsonSecret),
 				"[REDACTED]",
 				-1,
 			))
