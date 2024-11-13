@@ -2,6 +2,7 @@ package log
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -193,10 +194,19 @@ func (entry *Entry) write() {
 		fmt.Fprintf(os.Stderr, "Failed to obtain reader, %v\n", err)
 	} else {
 		for _, secret := range sanitizeStrings {
+			jsonSecret, _ := json.Marshal(secret)
+
 			// Sanitize secrets
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				secret,
+				"[REDACTED]",
+				-1,
+			))
+
+			serialized = []byte(strings.Replace(
+				string(serialized),
+				string(jsonSecret),
 				"[REDACTED]",
 				-1,
 			))
