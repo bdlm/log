@@ -202,11 +202,14 @@ func (entry *Entry) write() {
 				-1,
 			))
 
+			leadingQuote = false
+			trailingQuote = false
+			if `"` == []byte(secret)[:1] && `"` == []byte(secret)[len(secret)-1:] {
+
 			// Sanitize JSON-encoded secrets
 			jsonSecret, _ := json.Marshal(secret)
-			jsonSecret = []byte(strings.Replace(
-				string(jsonSecret), `"`, "", -1,
-			))
+			// Trim " from json.Marshal
+			jsonSecret = jsonSecret[1 : len(jsonSecret)-1]
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				string(jsonSecret),
