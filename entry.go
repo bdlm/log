@@ -204,9 +204,8 @@ func (entry *Entry) write() {
 
 			// Sanitize JSON-encoded secrets
 			jsonSecret, _ := json.Marshal(secret)
-			jsonSecret = []byte(strings.Replace(
-				string(jsonSecret), `"`, "", -1,
-			))
+			// Trim " from json.Marshal
+			jsonSecret = jsonSecret[1 : len(jsonSecret)-1]
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				string(jsonSecret),
