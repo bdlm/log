@@ -194,8 +194,6 @@ func (entry *Entry) write() {
 		fmt.Fprintf(os.Stderr, "Failed to obtain reader, %v\n", err)
 	} else {
 		for _, secret := range sanitizeStrings {
-			jsonSecret, _ := json.Marshal(secret)
-
 			// Sanitize secrets
 			serialized = []byte(strings.Replace(
 				string(serialized),
@@ -204,6 +202,11 @@ func (entry *Entry) write() {
 				-1,
 			))
 
+			// Sanitize JSON-encoded secrets
+			jsonSecret, _ := json.Marshal(secret)
+			jsonSecret = []byte(strings.Replace(
+				string(jsonSecret), `"`, "", -1,
+			))
 			serialized = []byte(strings.Replace(
 				string(serialized),
 				string(jsonSecret),
