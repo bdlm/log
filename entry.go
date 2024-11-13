@@ -202,10 +202,6 @@ func (entry *Entry) write() {
 				-1,
 			))
 
-			leadingQuote = false
-			trailingQuote = false
-			if `"` == []byte(secret)[:1] && `"` == []byte(secret)[len(secret)-1:] {
-
 			// Sanitize JSON-encoded secrets
 			jsonSecret, _ := json.Marshal(secret)
 			// Trim " from json.Marshal
