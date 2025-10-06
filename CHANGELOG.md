@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Minor**: feature additions
 - **Patch**: bug fixes, backward compatible model and function changes, etc.
 
+# v2.0.7 - 2025-10-06
+#### Changed
+* Prevent sanitizing empty strings
+
+# v2.0.6 - 2024-11-13
+#### Changed
+* Replace `strings.Replace` call with byte slice manipulation
+
+# v2.0.5 - 2024-11-13
+#### Changed
+* Replace `strings.Replace` call with byte slice manipulation
+
 # v2.0.4 - 2024-03-22
 #### Changed
 * Use os.Hostname in addition to Getenv("HOSTNAME") (#29)

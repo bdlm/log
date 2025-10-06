@@ -194,6 +194,10 @@ func (entry *Entry) write() {
 		fmt.Fprintf(os.Stderr, "Failed to obtain reader, %v\n", err)
 	} else {
 		for _, secret := range sanitizeStrings {
+			if secret == "" {
+				continue
+			}
+
 			// Sanitize secrets
 			serialized = []byte(strings.Replace(
 				string(serialized),
